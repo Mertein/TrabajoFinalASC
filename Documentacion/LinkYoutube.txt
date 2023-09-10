@@ -1,0 +1,8 @@
+Elevator Pitch - Martin Aguayo - Trabajo Final
+https://www.youtube.com/watch?v=XHl7yzB0GEU&ab_channel=Mertein
+
+Link Presentacion Proyecto 20 Minutos:
+
+
+
+Falta: Manual de Usuarios, pruebas Unitarias.

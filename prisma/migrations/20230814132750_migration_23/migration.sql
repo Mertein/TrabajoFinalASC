@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "schedules" ALTER COLUMN "end_time" SET DATA TYPE VARCHAR,
+ALTER COLUMN "start_time" SET DATA TYPE VARCHAR;

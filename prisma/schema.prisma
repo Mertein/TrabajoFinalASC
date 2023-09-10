@@ -1,0 +1,464 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model branch_offices {
+  people_capacity Int
+  branch_name     String        @unique(map: "branch_offices_branch_name_uindex") @db.VarChar(30)
+  branch_address  String        @db.VarChar(40)
+  branch_id       Int           @id @default(autoincrement())
+  created_at      DateTime      @default(now())
+  deleted_at      DateTime?
+  updated_at      DateTime?  @updatedAt
+  course          course[]
+  course_hist     course_hist[]
+  schedules       schedules[]
+}
+
+model category_course {
+  category_name String        @unique(map: "category_course__index_name") @db.VarChar(40)
+  category_id   Int           @id @default(autoincrement())
+  created_at    DateTime      @default(now())
+  deleted_at    DateTime?
+  updated_at    DateTime?  @updatedAt
+  file_category String
+  course        course[]
+  course_hist   course_hist[]
+  files         files[]
+}
+
+model certificate {
+  certificate_id Int       @id @default(autoincrement())
+  created_at     DateTime  @default(now())
+  deleted_at     DateTime?
+  updated_at     DateTime?  @updatedAt
+  files          files[]
+}
+
+model class_course {
+  class_id          Int         @id @default(autoincrement())
+  description_class String      @db.VarChar(255)
+  course_id         Int         @default(autoincrement())
+  created_at        DateTime    @default(now())
+  deleted_at        DateTime?
+  updated_at        DateTime?   @updatedAt
+  isVirtual         Boolean?
+  course            course      @relation(fields: [course_id], references: [course_id], onDelete: Cascade)
+  files             files[]
+  schedules         schedules[]
+
+  @@map("class")
+}
+
+model course {
+  course_id              Int                      @id @default(autoincrement())
+  course_name            String                   @db.VarChar(100)
+  price_course           Float
+  description_course     String
+  user_id                Int                      @default(autoincrement())
+  category_id            Int                      @default(autoincrement())
+  id_branch              Int                      @default(autoincrement())
+  created_at             DateTime                 @default(now())
+  deleted_at             DateTime?
+  updated_at             DateTime?  @updatedAt
+  end_date               DateTime
+  start_date             DateTime
+  description            String[]
+  isFree                 Boolean?
+  isVirtual              Boolean?
+  apply_discount         Boolean?
+  discount_percentage    Int?
+  end_date_discount      DateTime?                @db.Date
+  start_date_discount    DateTime?                @db.Date
+  class_course           class_course[]
+  class_hist             class_hist[]
+  category_course        category_course          @relation(fields: [category_id], references: [category_id], onDelete: Cascade)
+  branch_offices         branch_offices           @relation(fields: [id_branch], references: [branch_id], onDelete: Cascade)
+  usser                  usser                    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  enrollment_course      enrollment_course[]
+  enrollment_course_hist enrollment_course_hist[]
+  files                  files?
+}
+
+model enrollment_course {
+  enrollment_id     Int            @id @default(autoincrement())
+  feedback_course   String?        @db.VarChar(400)
+  enrollment_date   DateTime       @db.Date
+  user_id           Int
+  course_id         Int
+  created_at        DateTime       @default(now())
+  deleted_at        DateTime?
+  updated_at        DateTime?  @updatedAt
+  payment_status    Boolean?
+  completion_status Boolean
+  course            course         @relation(fields: [course_id], references: [course_id], onDelete: Cascade)
+  usser             usser          @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  files             files[]
+  grade             grade[]
+  grade_hist        grade_hist[]
+  payment           payment[]
+  payment_hist      payment_hist[]
+}
+
+model grade {
+  grade_id          Int                @id @default(autoincrement())
+  value             Float?
+  enrollment_id     Int?               @default(autoincrement())
+  created_at        DateTime           @default(now())
+  deleted_at        DateTime?
+  updated_at        DateTime?  @updatedAt
+  enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model payment {
+  payment_id        Int               @id @default(autoincrement())
+  payment_amount    Float
+  payment_date      DateTime          @db.Date
+  payment_method    String            @db.VarChar(30)
+  payment_status    Int
+  transaction_id    Int
+  enrollment_id     Int
+  created_at        DateTime          @default(now())
+  deleted_at        DateTime?
+  updated_at        DateTime?  @updatedAt
+  enrollment_course enrollment_course @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: NoAction, onUpdate: NoAction, map: "payment_enrollment_course_enrollment_id_fk")
+}
+
+model rol {
+  rol_id        Int             @id @default(autoincrement())
+  rol_name      String          @db.VarChar(20)
+  created_at    DateTime        @default(now())
+  deleted_at    DateTime?
+  updated_at    DateTime?
+  user_rol      user_rol[]
+  user_rol_hist user_rol_hist[]
+}
+
+model schedules {
+  shedule_id     Int             @id @default(autoincrement())
+  created_at     DateTime        @default(now())
+  deleted_at     DateTime?
+  updated_at     DateTime?  @updatedAt
+  branch_id      Int?
+  date           DateTime?       @db.Date
+  end_time       String          @db.VarChar
+  start_time     String          @db.VarChar
+  class_id       Int
+  Renamedclass   class_course    @relation(fields: [class_id], references: [class_id], onDelete: NoAction, onUpdate: NoAction, map: "schedules___fk")
+  branch_offices branch_offices? @relation(fields: [branch_id], references: [branch_id], onDelete: Cascade, onUpdate: NoAction, map: "schedules_branch_offices_branch_id_fk")
+}
+
+model user_rol {
+  user_id    Int       @default(autoincrement())
+  rol_id     Int       @default(autoincrement())
+  created_at DateTime  @default(now())
+  deleted_at DateTime?
+  updated_at DateTime? @updatedAt
+  rol        rol       @relation(fields: [rol_id], references: [rol_id], onDelete: Cascade)
+  usser      usser     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@id([user_id, rol_id])
+}
+
+model usser {
+  user_id                Int                      @id @default(autoincrement())
+  email                  String                   @unique @db.VarChar(50)
+  date_of__birth         DateTime                 @db.Date
+  password               String                   @db.VarChar(1000)
+  gender                 String                   @db.VarChar(20)
+  first_name             String                   @db.VarChar(30)
+  dni                    Decimal                  @db.Decimal
+  last_name              String                   @db.VarChar(30)
+  address                String                   @db.VarChar(50)
+  emergency_contact      Decimal                  @db.Decimal
+  phone_number           Decimal                  @db.Decimal
+  created_at             DateTime                 @default(now())
+  deleted_at             DateTime?
+  updated_at             DateTime?  @updatedAt
+  course                 course[]
+  course_hist            course_hist[]
+  enrollment_course      enrollment_course[]
+  enrollment_course_hist enrollment_course_hist[]
+  files                  files[]
+  user_interactions      user_interactions[]
+  user_rol               user_rol[]
+  user_rol_hist          user_rol_hist[]
+}
+
+model files {
+  id                Int                @id(map: "files_pk") @default(autoincrement())
+  link              String?
+  path              String?            @db.VarChar(250)
+  thumbnail         String?
+  name              String             @db.VarChar(100)
+  size              Decimal?           @db.Decimal(9, 0)
+  type              String?            @db.VarChar(250)
+  created_at        DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?  @updatedAt
+  certificate_id    Int?
+  class_id          Int?
+  user_id           Int?
+  category_id       Int?
+  course_id         Int?               @unique(map: "files_course_id_uindex")
+  enrollment_id     Int?
+  title             String?            @db.VarChar(100)
+  format            Format
+  identifier        Identifier?
+  deleted_at        DateTime?          @db.Timestamp(6)
+  category_course   category_course?   @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction, map: "files_category_course_category_id_fk")
+  certificate       certificate?       @relation(fields: [certificate_id], references: [certificate_id], onDelete: NoAction, onUpdate: NoAction, map: "files_certificate_certificate_id_fk")
+  Renamedclass      class_course?      @relation(fields: [class_id], references: [class_id], onDelete: Cascade, map: "files_class_class_id_fk")
+  course            course?            @relation(fields: [course_id], references: [course_id], onDelete: Cascade, map: "files_course_course_id_fk")
+  enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: NoAction, onUpdate: NoAction, map: "files_enrollment_course_enrollment_id_fk")
+  usser             usser?             @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "files_usser_user_id_fk")
+
+  @@unique([enrollment_id, identifier], map: "idx_unique_user_id_identifier")
+}
+
+model branch_offices_hist {
+  branch_id_hist   Int       @id(map: "branch_offices_hist_pk") @default(autoincrement())
+  branch_name      String    @db.VarChar(30)
+  branch_address   String    @db.VarChar(40)
+  people_capacity  Int
+  created_at       DateTime  @default(now()) @db.Timestamp(6)
+  updated_at       DateTime? @updatedAt
+  deleted_at       DateTime? @db.Timestamp(6)
+  d_operation      DateTime  @default(now()) @db.Timestamp(6)
+  c_user_operation String?   @db.VarChar(100)
+  c_operation      String    @db.VarChar(1)
+  branch_id        Int
+}
+
+model category_course_hist {
+  category_id_hist Int       @id(map: "category_course_hist_pk") @default(autoincrement())
+  category_id      Int?
+  d_operation      DateTime  @default(now()) @db.Timestamp(6)
+  c_user_operation String?   @db.VarChar(100)
+  c_operation      String    @db.VarChar(1)
+  category_name    String    @db.VarChar(40)
+  created_at       DateTime  @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?  @updatedAt
+  deleted_at       DateTime? @db.Timestamp(6)
+}
+
+model class_hist {
+  class_id_hist    Int       @id(map: "class_hist_pk") @default(autoincrement())
+  d_operation      DateTime  @default(now()) @db.Timestamp(6)
+  c_user_operation String?   @db.VarChar(100)
+  c_operation      String    @db.VarChar(1)
+  class_id         Int
+  course_id        Int?
+  isVirtual        Boolean
+  created_at       DateTime  @default(now()) @db.Timestamp(6)
+  updated_at       DateTime? @updatedAt
+  deleted_at       DateTime? @db.Timestamp(6)
+  course           course?   @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction, map: "class_hist_course_course_id_fk")
+}
+
+model course_hist {
+  course_id_hist     Int              @id(map: "course_hist_pk") @default(autoincrement())
+  d_operation        DateTime         @default(now()) @db.Timestamp(6)
+  c_user_operation   String?          @db.VarChar(100)
+  c_operation        String           @db.VarChar(1)
+  course_id          Int?
+  course_name        String           @db.VarChar(40)
+  price_course       Float
+  description_course String           @db.VarChar(400)
+  user_id            Int
+  category_id        Int?
+  branch_id          Int?
+  start_date         DateTime         @db.Timestamp(6)
+  end_date           DateTime         @db.Timestamp(6)
+  description        String[]
+  isFree             Boolean
+  isVirtual          Boolean?
+  created_at         DateTime         @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?  @updatedAt
+  deleted_at         DateTime?        @db.Timestamp(6)
+  branch_offices     branch_offices?  @relation(fields: [branch_id], references: [branch_id], onDelete: NoAction, onUpdate: NoAction, map: "course_hist_branch_offices_branch_id_fk")
+  category_course    category_course? @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction, map: "course_hist_category_course_category_id_fk")
+  usser              usser            @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "course_hist_usser_user_id_fk")
+}
+
+model enrollment_course_hist {
+  enrollment_id_hist Int       @id(map: "enrollment_course_hist_pk") @default(autoincrement())
+  d_operation        DateTime  @default(now()) @db.Timestamp(6)
+  c_user_operation   String?   @db.VarChar(100)
+  c_operation        String    @db.VarChar(1)
+  enrollment_id      Int
+  user_id            Int
+  course_id          Int?
+  enrollment_date    DateTime  @db.Date
+  payment_status     Boolean?
+  completion_status  Boolean?
+  feedback_course    String    @db.VarChar(400)
+  created_at         DateTime  @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?  @updatedAt
+  deleted_at         DateTime? @db.Timestamp(6)
+  course             course?   @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction, map: "enrollment_course_hist_course_course_id_fk")
+  usser              usser     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "enrollment_course_hist_usser_user_id_fk")
+}
+
+model files_hist {
+  id_hist          Int         @id(map: "files_hist_pk") @default(autoincrement())
+  d_operation      DateTime    @default(now()) @db.Timestamp(6)
+  c_user_operation String?     @db.VarChar(100)
+  c_operation      String      @db.VarChar(1)
+  link             String?
+  path             String      @db.VarChar(250)
+  thumbnail        String?
+  name             String      @db.VarChar(100)
+  size             Decimal     @db.Decimal(9, 0)
+  type             String      @db.VarChar(250)
+  title            String?     @db.VarChar
+  format           Format
+  identifier       Identifier?
+  certificate_id   Int?
+  class_id         Int?
+  user_id          Int?
+  category_id      Int?
+  course_id        Int?
+  enrollment_id    Int?
+  created_at       DateTime?   @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?  @updatedAt
+  deleted_at       DateTime?   @db.Timestamp(6)
+}
+
+model grade_hist {
+  grade_id_hist     Int                @id(map: "grade_hist_pk") @default(autoincrement())
+  d_operation       DateTime           @default(now()) @db.Timestamp(6)
+  c_user_operation  String?            @db.VarChar(100)
+  c_operation       String             @db.VarChar(1)
+  grade_id          Int?
+  value             Float?
+  enrollment_id     Int?
+  created_at        DateTime           @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?  @updatedAt
+  deleted_at        DateTime?          @db.Timestamp(6)
+  enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: NoAction, onUpdate: NoAction, map: "grade_hist_enrollment_course_enrollment_id_fk")
+}
+
+model payment_hist {
+  payment_id_hist   Int                @id(map: "payment_hist_pk") @default(autoincrement())
+  d_operation       DateTime           @default(now()) @db.Timestamp(6)
+  c_user_operation  String?            @db.VarChar(100)
+  c_operation       String             @db.VarChar(1)
+  payment_id        Int?
+  payment_amount    Float?
+  payment_date      DateTime?          @db.Date
+  payment_method    String?            @db.VarChar(30)
+  payment_status    Int?
+  transaction_id    Int?
+  enrollment_id     Int?
+  created_at        DateTime           @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?  @updatedAt
+  deleted_at        DateTime?          @db.Timestamp(6)
+  enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: NoAction, onUpdate: NoAction, map: "payment_hist_enrollment_course_enrollment_id_fk")
+}
+
+model schedules_hist {
+  schedule_id_hist Int       @id(map: "schedules_hist_pk") @default(autoincrement())
+  d_operation      DateTime  @default(now()) @db.Timestamp(6)
+  c_user_operation String?   @db.VarChar(100)
+  c_operation      String    @db.VarChar(1)
+  schedule_id      Int?
+  class_id         Int?
+  start_time       String?   @db.VarChar(20)
+  end_time         String?   @db.VarChar(20)
+  created_at       DateTime  @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?  @updatedAt
+  deleted_at       DateTime? @db.Timestamp(6)
+  date             DateTime? @db.Date
+}
+
+model user_hist {
+  user_id_hist      Int       @id(map: "user_hist_pk") @default(autoincrement())
+  d_operation       DateTime  @default(now()) @db.Timestamp(6)
+  c_user_operation  String?   @db.VarChar(100)
+  c_operation       String    @db.VarChar(1)
+  user_id           Int
+  email             String    @db.VarChar(50)
+  date_of_birth     DateTime  @db.Date
+  password          String    @db.VarChar(100)
+  gender            String    @db.VarChar(20)
+  dni               Decimal   @db.Decimal
+  first_name        String    @db.VarChar(30)
+  last_name         String    @db.VarChar(30)
+  address           String    @db.VarChar(50)
+  emergency_contact Decimal   @db.Decimal
+  phone_number      Decimal   @db.Decimal
+  created_at        DateTime  @db.Timestamp(6)
+  deleted_at        DateTime? @db.Timestamp(6)
+  updated_at        DateTime?  @updatedAt
+}
+
+model user_rol_hist {
+  user_id_hist     Int
+  rol_id_hist      Int
+  d_operation      DateTime  @default(now()) @db.Timestamp(6)
+  c_user_operation String?   @db.VarChar(100)
+  c_operation      String    @db.VarChar(1)
+  created_at       DateTime  @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?  @updatedAt
+  deleted_at       DateTime? @db.Timestamp(6)
+  user_rol_id      Int       @id(map: "user_rol_hist_pk") @default(autoincrement())
+  rol              rol       @relation(fields: [rol_id_hist], references: [rol_id], onDelete: NoAction, onUpdate: NoAction, map: "user_rol_hist_rol_rol_id_fk")
+  usser            usser     @relation(fields: [user_id_hist], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "user_rol_hist_usser_user_id_fk")
+}
+
+model faqs {
+  id                Int                 @id(map: "faqs_pk") @default(autoincrement())
+  question          String
+  answer            String
+  category          String?
+  tags              String[]
+  created_at        DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?           @updatedAt
+  user_interactions user_interactions[]
+}
+
+model user_interactions {
+  id         Int       @id(map: "user_interactions_pk") @default(autoincrement())
+  user_id    Int?
+  faq_id     Int?
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @updatedAt
+  deleted_at DateTime? @db.Timestamp(6) 
+  feedback   String?
+  isLike     Boolean?
+  faqs       faqs?     @relation(fields: [faq_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_interactions_faqs_id_fk")
+  usser      usser?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "user_interactions_usser_user_id_fk")
+
+  @@unique([user_id, faq_id], map: "user_interactions_user_id_faq_id_uindex")
+}
+
+model updateTime {
+  id         Int       @id(map: "update_time_pk") @default(autoincrement())
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @updatedAt @db.Timestamp(6)
+  deleted_at DateTime? @db.Timestamp(6) 
+  type String?
+} 
+
+enum Format {
+  link
+  file
+}
+
+enum Identifier {
+  studentCertificateCourse
+  studentCertificateWorkshop
+  userDniFront
+  userDniBack
+  userPicture
+  coursePicture
+  categoryPicture
+  branchPicture
+  userSignature
+}
+

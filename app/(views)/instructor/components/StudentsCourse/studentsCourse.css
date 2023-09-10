@@ -1,0 +1,19 @@
+/* Estilos CSS */
+.aprobado-cell {
+    background-color: green;
+    color: white;
+    font-size: large;
+  }
+  
+  .desaprobado-cell {
+    background-color: red;
+    color: white;
+    font-size: large;
+  }
+  
+  .sin-nota-cell {
+    background-color: darkslategrey;
+    color: white;
+    font-size: large;
+    /* Otras propiedades de estilo para celdas sin nota */
+  }
