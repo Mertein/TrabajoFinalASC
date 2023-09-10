@@ -95,7 +95,7 @@ const OneFaqForm = ({faqId} : any) => {
         margin="dense"
       />
       <Button variant="outlined" color="success" onClick={handleSubmit}>
-        "Guardar Edición" 
+        Guardar Edición
       </Button>
     </div>
     <FaqGraph />

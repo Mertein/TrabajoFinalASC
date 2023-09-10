@@ -46,7 +46,7 @@ export const MercadoPagoButton = ({ course, studentEnrollment, user_id, discount
           className="py-2 px-4 rounded-full text-green-300 font-bold  "
           disabled={studentEnrollment}
         >
-          "Ya estas Inscripto"
+          Ya estas Inscripto
         </Button>
       ) : loading ? (
         <button className={styles.button} disabled>
