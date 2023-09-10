@@ -1,5 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
-
 import getMyCoursesByID from '@/app/actions/getMyCoursesByID';
 import ViewCourse from '../../../../components/ViewCourses/viewCourse/viewCourse';
 import React from 'react'
@@ -12,6 +10,7 @@ export default  async function ({params}: any) {
   const studentEnrollment = await getStudentEnrollment(params.id);
   const studentsCourseEnrollments = await getEnrollmentCourse()
   return (
+    
     <ViewCourse courses={courses} params={params} schedules={schedules} studentEnrollment={studentEnrollment} studentsCourseEnrollments={studentsCourseEnrollments} />
   )
 }

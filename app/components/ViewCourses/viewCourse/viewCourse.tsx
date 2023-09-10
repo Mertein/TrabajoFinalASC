@@ -139,7 +139,8 @@ function ViewCourse({courses, params, schedules} : any) {
     : price_course;
 
     return   (
-      mounted &&
+      <div>
+      {mounted &&
       <Grid container spacing={4} className="flex course-container shadow-2xl rounded-lg p-8">
           <Grid item xs={12} md={8}>
           {
@@ -380,6 +381,8 @@ function ViewCourse({courses, params, schedules} : any) {
       )}
         </Grid>
       </Grid>
+      }
+      </div>
     );
     
 }
