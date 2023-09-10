@@ -1,7 +1,7 @@
 import React from 'react';
 import FaqManagement from '../../../components/FaqManagement/FaqManagement';
 
-export default function() {
+function FaqsPage() {
   return (
     <div>
       <FaqManagement />
@@ -9,4 +9,6 @@ export default function() {
   );
 
 }
+FaqsPage.displayName = 'FaqsPage';
+export default FaqsPage;
   
