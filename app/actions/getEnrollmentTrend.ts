@@ -4,7 +4,7 @@ const getEnrollmentTrend = async () => {
   try {
     const enrollments = await prisma.enrollment_course.findMany();
 
-    const enrollmentData = enrollments.reduce((accumulator, enrollment) => {
+    const enrollmentData = enrollments.reduce((accumulator: Record<string, any>, enrollment) => {
       const month = enrollment.created_at.getMonth(); // Months are zero-based
       const year = enrollment.created_at.getFullYear();
       const key = `${year}-${month}`;

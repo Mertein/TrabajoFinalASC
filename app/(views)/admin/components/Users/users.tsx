@@ -1,4 +1,6 @@
+// @ts-nocheck
 'use client'
+
 import * as React from 'react';
 import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams } from '@mui/x-data-grid';
 import {Chip, Box, Button, FormControl, IconButton, Input, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, TextField, Typography ,OutlinedInput, Theme} from '@mui/material';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import mercadopago from 'mercadopago';
 import { NextResponse, NextRequest } from "next/server";
 

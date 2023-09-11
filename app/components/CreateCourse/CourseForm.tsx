@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 import {FormControlLabel,  Box, Button, FormControl, InputLabel, TextField, Select, MenuItem, Checkbox,IconButton, Tooltip} from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";

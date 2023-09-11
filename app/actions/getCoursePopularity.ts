@@ -1,5 +1,10 @@
 import prisma from "../../lib/prismadb";
 
+interface CourseData {
+  course_name: string;
+  popularity: number;
+}
+
 const getCoursePopularity = async () => {
   try {
     const enrollments = await prisma.enrollment_course.findMany({
@@ -8,7 +13,7 @@ const getCoursePopularity = async () => {
       },
     });
 
-    const fieldsPromise = enrollments.reduce((accumulator, enrollment) => {
+    const fieldsPromise = enrollments.reduce((accumulator: Record<string, CourseData>, enrollment) => {
       const key = enrollment.course.course_id.toString();
 
       if (!accumulator[key]) {
