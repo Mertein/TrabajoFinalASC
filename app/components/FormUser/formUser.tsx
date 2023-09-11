@@ -10,42 +10,44 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const Form = ({user} : any) => {
+const Form = ({ user }: any) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const router = useRouter();
-  const [avatarPreview, setAvatarPreview] = useState(user.files[0] ?  `/Users/ProfilePicture/${user.files[0].name}` : '/images/defaultProfile.jpg');
+
+  const [avatarPreview, setAvatarPreview] = useState(
+    user?.files && user.files[0]
+      ? `/Users/ProfilePicture/${user.files[0].name}`
+      : '/images/defaultProfile.jpg'
+  );
   const [avatar, setAvatar] = useState("");
   const [file, setFile] = useState<File | undefined>();
 
   const handleFormSubmit = async (values: any) => {
-    console.log(values)
+    console.log(values);
     try {
-     
-      const res = await axios.put(`/api/users/userProfile`, {values});
+      const res = await axios.put(`/api/users/userProfile`, { values });
       console.log(res);
 
       if (res.status === 200) {
-        console.log("Usuario actualizado con exito");
-        toast.success("Usuario actualizado con exito");
+        console.log("Usuario actualizado con éxito");
+        toast.success("Usuario actualizado con éxito");
       }
     } catch (error) {
       console.error(error);
       toast.error("Error al actualizar el usuario");
     }
   };
- 
-  const { data: session, status } = useSession() 
+
+  const { data: session, status } = useSession()
   if (status === "unauthenticated") {
     alert("No has iniciado sesión");
     router.push('/')
   }
 
-
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!file) return;
-    console.log(file)
+    console.log(file);
     try {
       const data = new FormData();
       data.set("file", file);
@@ -66,8 +68,6 @@ const Form = ({user} : any) => {
     }
   };
 
-
-
   const onChange = (e: any) => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -76,12 +76,11 @@ const Form = ({user} : any) => {
       }
     };
 
-    if(e.target.files) {
+    if (e.target.files) {
       setAvatar(e.target.files[0]);
       setFile(e.target.files[0])
       reader.readAsDataURL(e.target.files[0]);
     }
-   
   };
 
   const initialValues = {
@@ -97,6 +96,7 @@ const Form = ({user} : any) => {
     gender: user?.gender as string,
     dni: user?.dni as number,
   };
+
   return (
     <Box m="20px">
       <Header title="Mi Perfil" subtitle="Editar mi Perfil" />

@@ -107,26 +107,44 @@ const Sidebar = ({user}: any) => {
           {!isCollapsed && (
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
-                <Image
-                  alt="profile-user"
-                  width={100}
-                  height={100}
-                  src={user.files[0] ?  `/Users/ProfilePicture/${user.files[0].name}` : '/images/defaultProfile.jpg'}
-                  style={{ cursor: "pointer", borderRadius: "50%" }}
-                />
+                {user && user.files && user.files[0] ? (
+                  <Image
+                    alt="profile-user"
+                    width={100}
+                    height={100}
+                    src={`/Users/ProfilePicture/${user.files[0].name}`}
+                    style={{ cursor: "pointer", borderRadius: "50%" }}
+                  />
+                ) : (
+                  <Image
+                    alt="default-profile"
+                    width={100}
+                    height={100}
+                    src="/images/defaultProfile.jpg"
+                    style={{ cursor: "pointer", borderRadius: "50%" }}
+                  />
+                )}
               </Box>
               <Box textAlign="center">
-                <Typography
-                  variant="h2"
-                  color={colors.grey[100]}
-                  fontWeight="bold"
-                  sx={{ m: "10px 0 0 0" }}
-                >
-                  {user.first_name}  {user.last_name}
-                </Typography>
-                <Typography variant="h5" color={colors.greenAccent[500]}>
-                  Academia A.L
-                </Typography>
+                {user && user.first_name && user.last_name ? (
+                  <>
+                    <Typography
+                      variant="h2"
+                      color={colors.grey[100]}
+                      fontWeight="bold"
+                      sx={{ m: "10px 0 0 0" }}
+                    >
+                      {user.first_name}  {user.last_name}
+                    </Typography>
+                    <Typography variant="h5" color={colors.greenAccent[500]}>
+                      Academia A.L
+                    </Typography>
+                  </>
+                ) : (
+                  <Typography variant="h2" color={colors.grey[100]} fontWeight="bold" sx={{ m: "10px 0 0 0" }}>
+                    Usuario Desconocido
+                  </Typography>
+                )}
               </Box>
             </Box>
           )}

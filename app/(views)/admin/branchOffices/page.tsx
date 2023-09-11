@@ -1,6 +1,5 @@
 import { BranchOffices } from "../components"
 
-
 function branchPage() {
   return (
    <BranchOffices/>

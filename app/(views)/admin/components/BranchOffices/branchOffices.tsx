@@ -37,7 +37,7 @@ function BranchOffices() {
   const [branch_name, setBranchName] = useState('');
   const [branch_address, setBranchAddress] = useState('');
   const [people_capacity, setPeopleCapacity] = useState('');
-  const [editingBranch, setEditingBranch] = useState<any>(undefined);
+  const [editingBranch, setEditingBranch] = useState<any>(null);
   const [editBranchAdress, setEditBranchAddress] = useState('');
   const [editPeopleCapacity, setEditPeopleCapacity] = useState('');
   const [editBranchName, setEditBranchName] = useState('');
@@ -49,7 +49,7 @@ function BranchOffices() {
   const handleClose = () =>  {
     setOpen(false);
     setBranchName('');
-    setEditingBranch(undefined);
+    setEditingBranch(null);
     setBranchAddress('');
     setPeopleCapacity('');
   };
@@ -85,7 +85,7 @@ function BranchOffices() {
       }
     })
     .then((response) => {
-      setEditingBranch(undefined);
+      setEditingBranch(null);
       setEditBranchName('');
       handleClose();
       toast.success('Sucursal actualizada con éxito');
