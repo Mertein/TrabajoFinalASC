@@ -105,18 +105,27 @@ const CourseForm =  ({categories, branchOffices, class_course}  : any) => {
       };
     });
     
-    for(let i = 0; i < startAndEnd.length; i++) {
-      const newScheduleStartTime = startAndEnd[i].start_time
-      const newScheduleEndTime = startAndEnd[i].end_time
-      for(let j = 0; j < startAndEnd.length; j++) {
+    for (let i = 0; i < startAndEnd.length; i++) {
+      const newScheduleStartTime = startAndEnd[i].start_time;
+      const newScheduleEndTime = startAndEnd[i].end_time;
+      const newScheduleDate = new Date(startAndEnd[i].date); // Convertir la fecha a un objeto Date
+    
+      for (let j = 0; j < startAndEnd.length; j++) {
         if (i !== j) {
-          const existingScheduleStartTime = startAndEnd[j].start_time
-          const existingScheduleEndTime = startAndEnd[j].end_time
-          if (newScheduleStartTime >= existingScheduleStartTime && newScheduleStartTime < existingScheduleEndTime) {
-            return toast.error('El horario de inicio de una clase no puede estar dentro del horario de otra clase.');
-          }
-          if (newScheduleEndTime > existingScheduleStartTime && newScheduleEndTime <= existingScheduleEndTime) {
-            return toast.error('El Horario de Finalización de una Clase no puede estar dentro del horario de otra Clase que vas a crear.');
+          const existingScheduleStartTime = startAndEnd[j].start_time;
+          const existingScheduleEndTime = startAndEnd[j].end_time;
+          const existingScheduleDate = new Date(startAndEnd[j].date); // Convertir la fecha a un objeto Date
+    
+          // Comprobar que las fechas coinciden
+          if (newScheduleDate.getTime() === existingScheduleDate.getTime()) {
+            if (
+              (newScheduleStartTime >= existingScheduleStartTime &&
+                newScheduleStartTime < existingScheduleEndTime) ||
+              (newScheduleEndTime > existingScheduleStartTime &&
+                newScheduleEndTime <= existingScheduleEndTime)
+            ) {
+              return toast.error('El horario de una clase coincide con otra en la misma fecha.');
+            }
           }
         }
       }

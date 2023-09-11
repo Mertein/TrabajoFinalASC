@@ -51,11 +51,11 @@ export async function GET(req: Request, {params} : {params: {id: string}}) {
     );
 
     const sortedClasses = classesWithFiles.sort((a, b) => {
-      const dateA = new Date(a.schedules.date);
-      const dateB = new Date(b.schedules.date);
+      const dateA = new Date(a.schedules[0].date); // Tomamos la primera fecha en el array.
+      const dateB = new Date(b.schedules[0].date); // Tomamos la primera fecha en el array.
       return dateA - dateB;
     });
-
+    
     return NextResponse.json(sortedClasses);
   } catch (error) {
     console.log(error);
