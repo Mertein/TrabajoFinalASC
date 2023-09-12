@@ -13,7 +13,6 @@ import { useRouter } from "next/navigation";
 const Form = ({ user }: any) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const router = useRouter();
-
   const [avatarPreview, setAvatarPreview] = useState(
     user?.files && user.files[0]
       ? `/Users/ProfilePicture/${user.files[0].name}`
@@ -57,7 +56,7 @@ const Form = ({ user }: any) => {
         body: data,
       });
       console.log(res);
-
+      console.log(res.ok)
       if (res.ok) {
         console.log("File uploaded successfully");
         toast.success("Foto de perfil actualizado correctamente");

@@ -101,7 +101,6 @@ function ViewCourses() {
       slidesToSlide: 1,
     },
   };
-  console.log(courses)
   return (
     <Box m="20px">
       <Header title="Ver Cursos" subtitle="Ver todos los cursos" />

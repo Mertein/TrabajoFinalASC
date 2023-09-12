@@ -5,10 +5,8 @@ mercadopago.configure({
     access_token: process.env.MERCADOPAGO_API_KEY!
 });
 
-
 export async function POST(req: NextRequest, res: NextResponse ) {
 	const body = await req.json();
-	const URL = "https://8f6f-2803-9800-9540-7ac5-4024-4247-f857-e359.ngrok-free.app";
 	try {
 		const unit_price = body.discountedPrice !== undefined
       ? body.discountedPrice
@@ -25,20 +23,10 @@ export async function POST(req: NextRequest, res: NextResponse ) {
 		  ],
 		  auto_return: "approved",
 		  back_urls: {
-			success: `${URL}/student/viewCourses/${body.course.course_id}`,
-			failure: `${URL}/student/viewCourses/${body.course.course_id}`,
+			success: `${process.env.NEXTAUTH_URL}/student/viewCourses/${body.course.course_id}`,
+			failure: `${process.env.NEXTAUTH_URL}/student/viewCourses/${body.course.course_id}`,
 		  },
-			// payment_methods: {
-      //   "excluded_payment_types": [
-      //       {
-      //           "id": "ticket"
-      //       },
-      //       {
-      //           "id": "credit_card"
-      //       }
-      //   ],
-			// },
-		  notification_url: `${URL}/api/notify`,
+		  notification_url: `${process.env.NEXTAUTH_URL}/api/notify`,
 		};
   
 		const response = await mercadopago.preferences.create(preference);

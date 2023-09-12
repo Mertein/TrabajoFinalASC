@@ -50,7 +50,6 @@ export async function POST(request: NextRequest) {
           identifier: 'userPicture'
         }
      })
-  
      if(filesPromise) {
       const filePath = path.join(process.cwd(), "public/Users/ProfilePicture", file.name);
       await writeFile(filePath, buffer);

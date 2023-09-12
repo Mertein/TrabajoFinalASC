@@ -88,15 +88,12 @@ const BarChart = ({ categoryDistribution }: { categoryDistribution: CategoryData
     <>
       <Box m="20px">
         <Header title="Gráfico de barras" subtitle="Simple Gráfico de barras" />
-         {/* Selector de filtro por categoría */}
-         <Select value={selectedCategoryFilter} onChange={(e) => setSelectedCategoryFilter(e.target.value as string)}>
+         {/* <Select value={selectedCategoryFilter} onChange={(e) => setSelectedCategoryFilter(e.target.value as string)}>
           <MenuItem value="">Todas las categorías</MenuItem>
           <MenuItem value="categoria1">Categoría 1</MenuItem>
           <MenuItem value="categoria2">Categoría 2</MenuItem>
-          {/* Agrega más categorías según tus necesidades */}
         </Select>
 
-        {/* Selector de filtro por fecha */}
         <Select
           value={selectedDateFilter ? selectedDateFilter.label : ''}
           onChange={(e) => {
@@ -109,7 +106,7 @@ const BarChart = ({ categoryDistribution }: { categoryDistribution: CategoryData
           {dateRanges.map(range => (
             <MenuItem key={range.label} value={range.label}>{range.label}</MenuItem>
           ))}
-        </Select>
+        </Select> */}
         <Box height="75vh">
         <div className='w-10/12 md:col-span-2 relative lg:h-[70vh] h-[50vh] m-auto p-4 border rounded-lg bg-opacity-95 bg-white'>
           <Bar data={chartData} options={chartOptions} />

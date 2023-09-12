@@ -148,7 +148,7 @@ function Feedback() {
                   ¿Le sirvió?
                 </TableSortLabel>
               </TableCell>
-              <TableCell>Acciones</TableCell>
+              {/* <TableCell>Acciones</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -160,7 +160,7 @@ function Feedback() {
                 <TableCell>{feedback.faqs.question}</TableCell>
                 <TableCell>{feedback.faqs.answer}</TableCell>
                 <TableCell>{feedback.isLike === true ? 'Si' : 'No'}</TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <Button
                     variant="contained"
                     className='bg-red-500 hover:bg-red-700'
@@ -172,8 +172,7 @@ function Feedback() {
                   >
                     Eliminar
                   </Button>
-                  {/* Agrega más botones de administración si es necesario */}
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

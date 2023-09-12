@@ -34,7 +34,6 @@ const NoticeAutomatic = () => {
   const route = useRouter()
 
   useEffect(() => {
-    // Realiza la solicitud a la API para obtener los datos
     obtenerDatosDesdeAPI();
   }, []);
   
@@ -69,11 +68,9 @@ const NoticeAutomatic = () => {
     };
   
     // Llama a la función asincrónica
-    handleUpdate();
+      handleUpdate();
   }, [ultimaActualizacion]);
-   
-
-  
+     
   const handleClose = () => {
     setMostrarModal(false);
   };

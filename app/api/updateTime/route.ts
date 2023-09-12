@@ -4,7 +4,7 @@ import prisma from "../../../lib/prismadb";
 export async function GET(request: Request) {
   try {
     const fieldsPromise = await prisma.updateTime.findFirst({
-      where : { id : 2 },
+      where : { id : 1 },
     });
 
     const fields = await Promise.all([fieldsPromise]);
@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 export async function PUT(request: Request) {
   try {
     const fieldsPromise = await prisma.updateTime.update({
-      where : { id : 2 },
+      where : { id : 1 },
       data : { updated_at : new Date() }
     });
 

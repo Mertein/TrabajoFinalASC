@@ -32,33 +32,41 @@ export async function GET(request: Request) {
         };
       })
     );
-
+    
     const obtenerUltimaActualizacionPromise = await prisma.updateTime.findFirst({
-      where: { id: 2 },
+      where: { id: 1 },
     });
 
-    const ultimaActualizacion = await Promise.all([obtenerUltimaActualizacionPromise]);
+    if(!obtenerUltimaActualizacionPromise) {
 
-    const preguntasOrdenadas = await Promise.all(preguntasPopulares);
+      const createUltimaActualizacion = await prisma.updateTime.create({
+        data: {
+          id: 1,
+        },
+      });
 
-    // Ordena las preguntas por likes para obtener la más popular
-    const preguntaMasPopular = preguntasOrdenadas.reduce((prev, current) => (prev.likes > current.likes ? prev : current));
+      const ultimaActualizacion = await Promise.all([createUltimaActualizacion]);
+      const preguntasOrdenadas = await Promise.all(preguntasPopulares);
+      const preguntaMasPopular = preguntasOrdenadas.reduce((prev, current) => (prev.likes > current.likes ? prev : current));
+      // Encuentra una pregunta menos popular (sin likes ni dislikes)
+      const preguntaMenosPopular = preguntasOrdenadas.find((pregunta) => pregunta.likes === 0 && pregunta.dislikes === 0);
+      // Ordena las preguntas por dislikes para obtener la más disgustada
+      const preguntaMasDisgustada = preguntasOrdenadas.reduce((prev, current) => (prev.dislikes > current.dislikes ? prev : current));
+      // Puedes retornar respuestas en formato JSON con los resultados si lo deseas
+      return new NextResponse(JSON.stringify({ preguntaMasPopular, preguntaMenosPopular, preguntaMasDisgustada, ultimaActualizacion  }), { status: 200 });
+    } else {
 
-    // Encuentra una pregunta menos popular (sin likes ni dislikes)
-    const preguntaMenosPopular = preguntasOrdenadas.find((pregunta) => pregunta.likes === 0 && pregunta.dislikes === 0);
-
-    // Ordena las preguntas por dislikes para obtener la más disgustada
-    const preguntaMasDisgustada = preguntasOrdenadas.reduce((prev, current) => (prev.dislikes > current.dislikes ? prev : current));
-
-    console.log('Pregunta más popular:');
-    console.log(preguntaMasPopular);
-    console.log('Pregunta menos popular (sin likes ni dislikes):');
-    console.log(preguntaMenosPopular);
-    console.log('Pregunta más disgustada:');
-    console.log(preguntaMasDisgustada);
-    // Puedes retornar respuestas en formato JSON con los resultados si lo deseas
-    return new NextResponse(JSON.stringify({ preguntaMasPopular, preguntaMenosPopular, preguntaMasDisgustada, ultimaActualizacion  }), { status: 200 });
-    
+      const ultimaActualizacion = await Promise.all([obtenerUltimaActualizacionPromise]);
+      const preguntasOrdenadas = await Promise.all(preguntasPopulares);
+      // Ordena las preguntas por likes para obtener la más popular
+      const preguntaMasPopular = preguntasOrdenadas.reduce((prev, current) => (prev.likes > current.likes ? prev : current));
+      // Encuentra una pregunta menos popular (sin likes ni dislikes)
+      const preguntaMenosPopular = preguntasOrdenadas.find((pregunta) => pregunta.likes === 0 && pregunta.dislikes === 0);
+      // Ordena las preguntas por dislikes para obtener la más disgustada
+      const preguntaMasDisgustada = preguntasOrdenadas.reduce((prev, current) => (prev.dislikes > current.dislikes ? prev : current));
+      // Puedes retornar respuestas en formato JSON con los resultados si lo deseas
+      return new NextResponse(JSON.stringify({ preguntaMasPopular, preguntaMenosPopular, preguntaMasDisgustada, ultimaActualizacion  }), { status: 200 });
+    }    
   } catch (error) {
     // Maneja el error según tus necesidades
     console.error('Error al verificar preguntas populares:', error);
