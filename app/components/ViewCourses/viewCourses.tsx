@@ -126,7 +126,7 @@ function ViewCourses() {
       </Box> */}
       
       <FormControl sx={{ m: 1, width: 300 }}>
-        <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+        <InputLabel id="demo-multiple-checkbox-label">Filtrar por categoría/s</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
           id="demo-multiple-checkbox"
@@ -134,7 +134,7 @@ function ViewCourses() {
           defaultValue={[]}
           value={selectedCategory}
           onChange={handleChange}
-          input={<OutlinedInput label="Tag" />}
+          input={<OutlinedInput label="Filtrar por categoría/s" />}
           renderValue={(selected) => selected.join(', ')}
           MenuProps={MenuProps}
           color='success'
