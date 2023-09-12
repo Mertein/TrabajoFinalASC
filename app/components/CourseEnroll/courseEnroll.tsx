@@ -398,6 +398,7 @@ function ClassCourse({ courses }: any) {
                       variant="filled"
                       className="mb-4"
                       fullWidth
+                      size='medium'
                       value={clase.description_class}
                       onChange={handleClassDescriptionChange}
                       multiline
@@ -485,8 +486,8 @@ function ClassCourse({ courses }: any) {
                     </form>
                   </>
                 ) : (
-                  <>
-                    <p>{clase.description_class}</p>
+                  <><h1 className='text-2xl font-serif'>Descripción de la Clase:</h1>
+                    <p className='text-lg'>{clase.description_class}</p>
                     {clase.files.length > 0 && (
                       <>
                         <h6 className="text-2xl font-semibold mt-4">Archivos</h6>

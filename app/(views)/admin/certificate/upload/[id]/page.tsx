@@ -86,7 +86,7 @@ function CertificateDetailPage({ params } : any) {
           </div>
         </div>
       ) : (
-        <p>Loading certificate...</p>
+        <p>Cargando Certificado...</p>
       )}
     </div>
   );

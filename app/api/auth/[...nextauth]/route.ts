@@ -41,14 +41,14 @@ export const authOptions: NextAuthOptions = {
                   throw new Error('Invalid credentials');
                 }
 
-                // const isCorrectPassword = await bcrypt.compare(
-                //   credentials.password,
-                //   user.password
-                // );
+                const isCorrectPassword = await bcrypt.compare(
+                  credentials.password,
+                  user.password
+                );
 
-                // if (!isCorrectPassword) {
-                //   throw new Error('Invalid credentials');
-                // }
+                if (!isCorrectPassword) {
+                  throw new Error('Invalid credentials');
+                }
 
                 const userWithFiles = await prisma.usser.findUnique({
                   where: {
@@ -93,7 +93,6 @@ export const authOptions: NextAuthOptions = {
           token.roles = roleNames;
           token.id = user.user_id;
           token.user = user;
-          console.log(user)
         }
         return token;       
     },
