@@ -50,7 +50,7 @@ const RegisterModal= () => {
 
     axios.post('/api/register', data)
     .then(() => {
-      toast.success('Registered!');
+      toast.success('Registrado!');
       registerModal.onClose();
       loginModal.onOpen();
     })
@@ -169,12 +169,12 @@ const RegisterModal= () => {
   const footerContent = (
     <div className="flex flex-col gap-4 mt-3">
       <hr />
-      <Button 
+      {/* <Button 
         outline 
         label="Continue con Google"
         icon={FcGoogle}
         onClick={() => signIn('google')} 
-      />
+      /> */}
       <div 
         className="
           text-neutral-500 
@@ -201,8 +201,8 @@ const RegisterModal= () => {
     <Modal
       disabled={isLoading}
       isOpen={registerModal.isOpen}
-      title="Register"
-      actionLabel="Continue"
+      title="Registrarse"
+      actionLabel="Registrarse"
       onClose={registerModal.onClose}
       onSubmit={handleSubmit(onSubmit)}
       body={bodyContent}

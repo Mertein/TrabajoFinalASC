@@ -8,8 +8,6 @@ import MenuItem from "./menuItem";
 import Avatar from "../Avatar/avatar";
 import {useLoginModal, useRegisterModal, useRolModal} from "../../hooks";
 import { useSession } from "next-auth/react";
-// import useRentModal from "@/app/hooks/useRentModal";
-// import { SafeUser } from "@/app/types";
 
 interface UserMenuProps {
   currentUser: null | undefined;
@@ -67,12 +65,13 @@ const UserMenu: React.FC<UserMenuProps> = ({
             rounded-xl
             shadow-md
             w-[6vw]
-            bg-black
+            bg-white
+            text-neutral-950
             overflow-hidden 
-            right-0
-            left-0
-            top-12
+            -right-4
+            top-14
             text-sm
+            hover:shadow-2xl
           "
         >
           <div className="flex flex-col cursor-pointer">
@@ -104,7 +103,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
             ) : (
               <>
                 <MenuItem 
-                  label="Iniciar sesión" 
+                  label="Iniciar Sesión" 
                   onClick={loginModal.onOpen}
                 />
                 <MenuItem 

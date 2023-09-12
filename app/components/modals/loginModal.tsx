@@ -99,12 +99,12 @@ const LoginModal = () => {
   const footerContent = (
     <div className="flex flex-col gap-4 mt-3">
       <hr />
-      <Button 
+      {/* <Button 
         outline 
         label="Continue con Google"
         icon={FcGoogle}
         onClick={() => signIn('google')}
-      />
+      /> */}
       <div className="
       text-neutral-500 text-center mt-4 font-light">
         <p>Primera vez usando Academia A.L?
@@ -126,7 +126,7 @@ const LoginModal = () => {
       disabled={isLoading}
       isOpen={loginModal.isOpen}
       title="Inicio de Sesión"
-      actionLabel="Continue"
+      actionLabel="Iniciar Sesión"
       onClose={loginModal.onClose}
       onSubmit={handleSubmit(onSubmit)}
       body={bodyContent}
