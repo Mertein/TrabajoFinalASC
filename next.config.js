@@ -22,6 +22,7 @@ const nextConfig = {
       'i.imgur.com',
       'plus.unsplash.com',
       'dummyimage.com',
+      'img.freepik.com',
     ],    
   }
 }

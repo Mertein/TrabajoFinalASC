@@ -47,12 +47,12 @@ const Navbar = ({
           <li className='p-4'>
             <Link href='/#courses'>Cursos</Link>
           </li>
-          <li className='p-4'>
+          {/* <li className='p-4'>
             <Link href='/work'>Nuestro Trabajo</Link>
-          </li>
-          <li className='p-4'>
+          </li> */}
+          {/* <li className='p-4'>
             <Link href='/contact'>Contactanos</Link>
-          </li>
+          </li> */}
           <UserMenu user={user} currentUser={undefined} />
         </ul>
 

@@ -21,7 +21,7 @@ const Slider = ({ slides } : {slides: any}) => {
 
   return (
     <div id='courses' className='max-w-[1240px] mx-auto'>
-      <h1 className='text-2xl font-bold text-center p-4'>Cursos</h1>
+      <h1 className='text-2xl font-bold text-center p-4 bg-gray-900 shadow-2xl  text-white rounded-full'>Cursos</h1>
       <div className='relative flex justify-center p-4'>
 
       {SliderData.map((slide, index) => {
@@ -40,13 +40,15 @@ const Slider = ({ slides } : {slides: any}) => {
                 size={50}
               />
               {index === current && (
-                <Image
-                  src={slide.image}
-                  alt='/'
-                  width='1440'
-                  height='600'
-    
-                />
+                <div>
+                  <h2 className="bg-pink-300 rounded-full text-2xl font-bold text-center mb-2 text-pink-900">{slide.title}</h2>
+                  <Image
+                    src={slide.image}
+                    alt={slide.title} // Use the title as alt text
+                    width='1440'
+                    height='600'
+                  />
+                </div>
               )}
               <FaArrowCircleRight
                 onClick={nextSlide}
