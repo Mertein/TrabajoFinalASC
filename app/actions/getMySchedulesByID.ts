@@ -8,7 +8,7 @@ type Schedules = {
 
 
 async function getMySchedules(id: number): Promise<Schedules[]> {
-  const res = await fetch(`http://localhost:3000/api/schedules/${id}`, {
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/schedules/${id}`, {
     cache: 'no-store',
   });
 
