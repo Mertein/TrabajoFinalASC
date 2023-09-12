@@ -50,7 +50,7 @@
     "jspdf-autotable": "^3.6.0",
     "mercadopago": "^1.5.17",
     "moment": "^2.29.4",
-    "next": "^13.4.20-canary.1",
+    "next": "^13.4.12-canary.1",
     "next-auth": "^4.21.1",
     "pdfjs-dist": "^3.7.107",
     "pg": "^8.10.0",
