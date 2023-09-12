@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
 
   if(url.includes('/student')) {
     if(!isStudent) {
-      return NextResponse.redirect('http://localhost:3000/');
+      return NextResponse.redirect('https://trabajo-final-asc.vercel.app/');
     }
   }
 
@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
 
   if(url.includes('/instructor')) {
     if(!isInstructor) {
-      return NextResponse.redirect('http://localhost:3000/');
+      return NextResponse.redirect('https://trabajo-final-asc.vercel.app/');
     }
   }
 
@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
 
   if(url.includes('/admin')) {
     if(!isAdmin) {
-      return NextResponse.redirect('http://localhost:3000/');
+      return NextResponse.redirect('https://trabajo-final-asc.vercel.app/');
     }
   }
     return NextResponse.next();
