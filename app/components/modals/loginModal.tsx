@@ -8,7 +8,6 @@ import {
   SubmitHandler, 
   useForm
 } from "react-hook-form";
-import { FcGoogle } from "react-icons/fc";
 
 
 import useRegisterModal from "@/app/hooks/useRegisterModal";
@@ -17,7 +16,6 @@ import useLoginModal from "@/app/hooks/useLoginModal";
 import Modal from "./modal";
 import Input from "../Inputs/input";
 import Heading from "../Heading/heading";
-import Button from "../Button/button";
 import { useRouter } from "next/navigation";
 import { useRolModal } from "@/app/hooks";
 

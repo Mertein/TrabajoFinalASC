@@ -16,7 +16,7 @@ interface InputProps {
   required?: boolean;
   register: UseFormRegister<FieldValues>,
   errors: FieldErrors,
-  helperText: string,
+  helperText?: string,
 }
 
 const Input: React.FC<InputProps> = ({
