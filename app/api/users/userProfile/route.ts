@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
               address: address,
               emergency_contact: formatted_emergency_contact,
               phone_number : formatted_phone_number,
-              gender: gender,
+              // gender: gender,
               dni: formatted_dni,
               updated_at: new Date()
           }
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
               address: address,
               emergency_contact: formatted_emergency_contact,
               phone_number : formatted_phone_number,
-              gender: gender,
+              // gender: gender,
               dni: formatted_dni,
               password: hashedPassword ,
               updated_at: new Date()

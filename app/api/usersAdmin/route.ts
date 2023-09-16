@@ -77,7 +77,7 @@ export async function POST(
         address: address,
         emergency_contact: formatted_emergency_contact,
         phone_number : formatted_phone_number,
-        gender: gender,
+        // gender: gender,
         dni: formatted_dni,
     }
   });

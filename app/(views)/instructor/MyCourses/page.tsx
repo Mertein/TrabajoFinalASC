@@ -178,7 +178,9 @@ const handleEditClick = (id: number) => {
           density='comfortable'
           rows={data}
           columns={columns}
-          components={{ Toolbar: GridToolbar }}
+          slots={{
+            toolbar: GridToolbar,
+          }}
           getRowId={(row) => row.course_id}
         />}        
       </Box>

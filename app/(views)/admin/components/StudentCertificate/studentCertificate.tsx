@@ -261,7 +261,9 @@ function StudentCertificate({data} : any) {
           <DataGrid
             rows={dataWithIds}
             columns={columns}
-            components={{ Toolbar: GridToolbar }}
+            slots={{
+              toolbar: GridToolbar,
+            }}
             getRowId={(row) => row.id}
             autoHeight={true}
           />

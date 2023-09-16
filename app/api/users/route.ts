@@ -60,7 +60,7 @@ export async function POST(
 ) {
   const body = await request.json();
     
-  const {first_name, last_name, password, email, date_of__birth, emergency_contact, phone_number, dni, gender, address} = body.user;
+  const {first_name, last_name, password, email, date_of__birth, emergency_contact, phone_number, dni, address} = body.user;
   const rolesLength = body.user.roles[0].length;
    const formattedDateOfBirth = new Date(date_of__birth);
    const hashedPassword = await bcrypt.hash(password, 12);
@@ -77,7 +77,7 @@ export async function POST(
         address: address,
         emergency_contact: formatted_emergency_contact,
         phone_number : formatted_phone_number,
-        gender: gender,
+        gender: 'Nan',
         dni: formatted_dni,
     }
   });
@@ -99,7 +99,7 @@ export async function PUT(req: Request, res: Response) {
   const {user} = data;
   const {rolesLength} = data;
   const {rolesID} = data;
-  const {first_name, last_name, email, date_of__birth, emergency_contact, phone_number, dni,  gender, address, user_id, roles} = user;
+  const {first_name, last_name, email, date_of__birth, emergency_contact, phone_number, dni, address, user_id, roles} = user;
    
    const formattedDateOfBirth = new Date(date_of__birth);
    const formatted_phone_number = parseInt(phone_number);
@@ -118,7 +118,7 @@ export async function PUT(req: Request, res: Response) {
           address: address,
           emergency_contact: formatted_emergency_contact,
           phone_number : formatted_phone_number,
-          gender: gender,
+          gender: 'Nan',
           dni: formatted_dni,
       }
       })

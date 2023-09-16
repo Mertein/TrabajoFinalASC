@@ -5,20 +5,20 @@ import * as React from 'react';
 import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams } from '@mui/x-data-grid';
 import {Chip, Box, Button, FormControl, IconButton, Input, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, TextField, Typography ,OutlinedInput, Theme} from '@mui/material';
 import {useTheme} from '@mui/system';
-import { Add, Delete, Edit, Visibility } from '@mui/icons-material';
+
+import { Delete, Edit } from '@mui/icons-material';
 import Loading from '@/app/(views)/instructor/MyCourses/loading';
 import Header from '@/app/components/Header/header';
 import { tokens } from '@/app/theme';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import toast, { ToastIcon } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import useSWR, { mutate } from 'swr';
-import { format, set } from 'date-fns';
-import style from 'styled-jsx/style';
+import { format} from 'date-fns';
 import { useEffect, useState } from 'react';
 import { Close as CloseIcon } from "@mui/icons-material";
-import useMediaQuery from "@mui/material/useMediaQuery";
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -59,7 +59,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
       address:'',
       phone_number:'',
       emergency_contact:'',
-      gender:'',
+      // gender:'',
       dni: '',
       roles: [],
   });
@@ -74,7 +74,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
     address:'',
     phone_number:'',
     emergency_contact:'',
-    gender:'',
+    // gender:'',
     dni: '',
     roles: [],    
   });
@@ -152,7 +152,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
         address:'',
         phone_number:'',
         emergency_contact:'',
-        gender:'',
+        // gender:'',
         dni: '',
         roles: [],      
       }
@@ -167,7 +167,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
         address:'',
         phone_number:'',
         emergency_contact:'',
-        gender:'',
+        // gender:'',
         dni: '',
         roles: [],
       }
@@ -212,8 +212,8 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
       !editUser.date_of__birth ||
       !editUser.address ||
       !editUser.phone_number ||
-      !editUser.emergency_contact ||
-      !editUser.gender ||
+      // !editUser.emergency_contact ||
+      // !editUser.gender ||
       !editUser.dni ||
       editUser.roles.length === 0
     ) {
@@ -239,7 +239,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
       address:'',
       phone_number:'',
       emergency_contact:'',
-      gender:'',
+      // gender:'',
       dni: '',
       roles: [],       
     });
@@ -267,8 +267,6 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
       !user.date_of__birth ||
       !user.address ||
       !user.phone_number ||
-      !user.emergency_contact ||
-      !user.gender ||
       !user.dni ||
       user.roles.length === 0
     ) {
@@ -288,7 +286,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
       address:'',
       phone_number:'',
       emergency_contact:'',
-      gender:'',
+      // gender:'',
       dni: '',
       roles: [],    
     });
@@ -430,7 +428,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                  fullWidth
                  variant="filled"
                  type="text"
-                 label="Primer nombre"
+                 label="Nombre"
                  onChange={(e) => setEditUser({ ...editUser, first_name: e.target.value })}
                  value={editUser.first_name}
                  name="firstName"
@@ -440,7 +438,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                  fullWidth
                  variant="filled"
                  type="text"
-                 label="Segundo nombre"
+                 label="Apellido"
                  onChange={(e) => setEditUser({ ...editUser, last_name: e.target.value })}
                  value={editUser.last_name}
                  name="lastName"
@@ -499,7 +497,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                  name="contact_emergency"
               
                />
-                 <TextField
+                 {/* <TextField
                  fullWidth
                  variant="filled"
                  type="text"
@@ -509,7 +507,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                  name="gender"
                
              
-               />
+               /> */}
                  <TextField
                  fullWidth
                  variant="filled"
@@ -635,7 +633,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                 name="address2"
              
               />
-                <TextField
+                {/* <TextField
                 fullWidth
                 variant="filled"
                 type="text"
@@ -645,7 +643,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                 name="address2"
               
             
-              />
+              /> */}
                 <TextField
                 fullWidth
                 variant="filled"

@@ -15,7 +15,8 @@ interface InputProps {
   formatPrice?: boolean;
   required?: boolean;
   register: UseFormRegister<FieldValues>,
-  errors: FieldErrors
+  errors: FieldErrors,
+  helperText: string,
 }
 
 const Input: React.FC<InputProps> = ({
@@ -27,6 +28,7 @@ const Input: React.FC<InputProps> = ({
   register,
   required,
   errors,
+  helperText,
 }) => {
   return (
     <div className="w-full relative">
@@ -45,7 +47,7 @@ const Input: React.FC<InputProps> = ({
         id={id}
         disabled={disabled}
         {...register(id, { required })}
-        placeholder=" "
+        placeholder=""
         type={type}
         className={`
           peer
@@ -85,6 +87,9 @@ const Input: React.FC<InputProps> = ({
       >
         {label}
       </label>
+      {helperText && errors[id] && (
+        <div className="text-sm text-rose-500 mt-1">{helperText}</div>
+      )}
     </div>
    );
 }

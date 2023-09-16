@@ -9,8 +9,8 @@ interface RequestBody {
   date_of_birth: string;
   address: string;
   phone_number: string;
-  emergency_contact: string;
-  gender: string;
+  // emergency_contact: string;
+  // gender: string;
   dni: string;
 }
 
@@ -22,7 +22,7 @@ export async function POST(
    const formattedDateOfBirth = new Date(body.date_of_birth);
    const hashedPassword = await bcrypt.hash(body.password, 12);
    const formatted_phone_number = parseInt(body.phone_number);
-   const formatted_emergency_contact = parseInt(body.emergency_contact);
+  //  const formatted_emergency_contact = parseInt(body.emergency_contact);
    const formatted_dni = parseInt(body.dni);
    const user = await prisma.usser.create({
     data: {
@@ -32,9 +32,9 @@ export async function POST(
         password: hashedPassword,
         date_of__birth: formattedDateOfBirth,
         address: body.address,
-        emergency_contact: formatted_emergency_contact,
+        // emergency_contact: formatted_emergency_contact,
         phone_number : formatted_phone_number,
-        gender: body.gender,
+        // gender: body.gender,
         dni: formatted_dni,
     }
   });

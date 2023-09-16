@@ -258,8 +258,8 @@ function Auditoria({ data }: { data: any }) {
    <DataGrid
           rows={filteredData}
           columns={columns}
-          components={{
-            Toolbar: GridToolbar,
+          slots={{
+            toolbar: GridToolbar, // Cambia 'Toolbar' a 'toolbar'
           }}
           getRowId={(row) => row[idFieldMapping[selectedTable]]}
           autoHeight={true}

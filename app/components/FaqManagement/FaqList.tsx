@@ -88,7 +88,9 @@ const FaqList: React.FC<FaqListProps> = ({ faqs, onEditFaq, onDeleteFaq }) => {
       <DataGrid
         rows={faqs}
         columns={columns}
-        components={{ Toolbar: GridToolbar }}
+        slots={{
+          toolbar: GridToolbar,
+        }}
         autoHeight={true}
       />
   </Box>

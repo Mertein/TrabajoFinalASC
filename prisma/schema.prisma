@@ -170,12 +170,12 @@ model usser {
   email                  String                   @unique @db.VarChar(50)
   date_of__birth         DateTime                 @db.Date
   password               String                   @db.VarChar(1000)
-  gender                 String                   @db.VarChar(20)
+  gender                 String?                  @db.VarChar(20)
   first_name             String                   @db.VarChar(30)
   dni                    Decimal                  @db.Decimal
   last_name              String                   @db.VarChar(30)
   address                String                   @db.VarChar(50)
-  emergency_contact      Decimal                  @db.Decimal
+  emergency_contact      Decimal?                  @db.Decimal
   phone_number           Decimal                  @db.Decimal
   created_at             DateTime                 @default(now())
   deleted_at             DateTime?
@@ -385,12 +385,12 @@ model user_hist {
   email             String    @db.VarChar(50)
   date_of_birth     DateTime  @db.Date
   password          String    @db.VarChar(100)
-  gender            String    @db.VarChar(20)
+  gender            String?    @db.VarChar(20)
   dni               Decimal   @db.Decimal
   first_name        String    @db.VarChar(30)
   last_name         String    @db.VarChar(30)
   address           String    @db.VarChar(50)
-  emergency_contact Decimal   @db.Decimal
+  emergency_contact Decimal?   @db.Decimal
   phone_number      Decimal   @db.Decimal
   created_at        DateTime  @db.Timestamp(6)
   deleted_at        DateTime? @db.Timestamp(6)

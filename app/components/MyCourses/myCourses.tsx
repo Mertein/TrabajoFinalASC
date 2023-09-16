@@ -8,7 +8,6 @@ import { Alert, Box, Button, CardActionArea, CardActions, Checkbox, FormControl,
 import Image from 'next/image';
 import useSWR from 'swr';
 import  { useRouter } from 'next/navigation';
-import { MenuProps } from 'react-pro-sidebar';
 
 const MyCourses = () => {
   const fetcherCourses = (arg: any, ...args: any) => fetch(arg, ...args).then(res => res.json())
@@ -26,9 +25,6 @@ const MyCourses = () => {
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]); // Initialize with an empty array
   const [showFinishedCourses, setShowFinishedCourses] = useState(false);
   const [showOngoingCourses, setShowOngoingCourses] = useState(false);
-  console.log("Selected Category:", selectedCategory);
-  console.log("Courses:", courses);
-  // console.log(courses)
   const handleCourse= (course_id : number) => {
     router.push(`/student/MyCourses/${course_id}`)
   }

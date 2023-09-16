@@ -297,7 +297,9 @@ function BranchOffices() {
           <DataGrid
             rows={data}
             columns={columns}
-            components={{ Toolbar: GridToolbar }}
+            slots={{
+              toolbar: GridToolbar,
+            }}
             getRowId={(row) => row.branch_id}
             autoHeight={true}
           />

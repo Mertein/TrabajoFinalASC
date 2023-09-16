@@ -1,9 +1,7 @@
 import { getServerSession } from "next-auth/next"
-
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import prisma from '../../lib/prismadb'
 import { differenceInYears, parse } from "date-fns";
-import { Identifier } from "@prisma/client";
 
 export async function getSession() {
   return await getServerSession(authOptions)

@@ -9,6 +9,7 @@ import React, { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Form = ({ user }: any) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -22,7 +23,6 @@ const Form = ({ user }: any) => {
   const [file, setFile] = useState<File | undefined>();
 
   const handleFormSubmit = async (values: any) => {
-    console.log(values);
     try {
       const res = await axios.put(`/api/users/userProfile`, { values });
       console.log(res);
@@ -92,7 +92,7 @@ const Form = ({ user }: any) => {
     emergency_contact: user?.emergency_contact as number,
     address: user?.address as string,
     date_of__birth: user?.date_of__birth.substr(0, 10),
-    gender: user?.gender as string,
+    // gender: user?.gender as string,
     dni: user?.dni as number,
   };
 
@@ -106,18 +106,17 @@ const Form = ({ user }: any) => {
             <div className="flex items-center justify-center flex-col mb-4 space-x-3 mt-4 cursor-pointer md:w-1/5 lg:w-1/4">
               <p className="text-lg font-semibold mb-2">Avatar</p>
               <label htmlFor="avatarInput" className="relative cursor-pointer">
-                <div
-                  className="w-40 h-40 rounded-full bg-center bg-cover relative"
-                  style={{
-                    backgroundImage: `url(${avatarPreview})`,
-                  }}
+                <Image
+                  src={avatarPreview}
+                  alt="Avatar"
+                  width={300} 
+                  height={300} 
                   onClick={onChange}
-                >
-                  <div className="absolute inset-0 bg-black opacity-30 rounded-full transition-opacity  hover:opacity-100"></div>
+                />
+                  <div className="absolute inset-0 bg-black opacity-30 rounded-full transition-opacity  hover:opacity-100">I</div>
                   <div className="absolute inset-0 flex items-center justify-center w-full h-full text-white opacity-0 hover:opacity-100">
                     Cambiar Imagen
                   </div>
-                </div>
               </label>
               <Button
                 variant="outlined"
@@ -170,7 +169,7 @@ const Form = ({ user }: any) => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Primer nombre"
+                label="Nombre"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.firstName}
@@ -183,7 +182,7 @@ const Form = ({ user }: any) => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Segundo nombre"
+                label="Apellido"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.lastName}
@@ -257,7 +256,7 @@ const Form = ({ user }: any) => {
                 helperText={touched.emergency_contact && errors.emergency_contact}
                 sx={{ gridColumn: "span 4" }}
               />
-                <TextField
+                {/* <TextField
                 fullWidth
                 variant="filled"
                 type="text"
@@ -269,7 +268,7 @@ const Form = ({ user }: any) => {
                 error={!!touched.gender && !!errors.gender}
                 helperText={touched.gender && errors.gender}
                 sx={{ gridColumn: "span 4" }}
-              />
+              /> */}
                 <TextField
                 fullWidth
                 variant="filled"
@@ -325,11 +324,11 @@ const phoneRegExp =
       .required("Este campo es requerido"),
     address: yup.string().required("Este campo es requerido"),
     date_of__birth: yup.date().required("Este campo es requerido"),
-    emergency_contact: yup
-      .string()
-      .matches(phoneRegExp, "Número de contacto de emergencia inválido")
-      .required("Este campo es requerido"),
-    gender: yup.string().required("Este campo es requerido"),
+    // emergency_contact: yup
+    //   .string()
+    //   .matches(phoneRegExp, "Número de contacto de emergencia inválido"),
+      // .required("Este campo es requerido"),
+    // gender: yup.string().required("Este campo es requerido"),
     dni: yup.number().required("Este campo es requerido"),
   // ... otras reglas de validación ...
   });
