@@ -187,7 +187,6 @@ model usser {
   files                  files[]
   user_interactions      user_interactions[]
   user_rol               user_rol[]
-  user_rol_hist          user_rol_hist[]
 }
 
 model files {
@@ -408,7 +407,6 @@ model user_rol_hist {
   deleted_at       DateTime? @db.Timestamp(6)
   user_rol_id      Int       @id(map: "user_rol_hist_pk") @default(autoincrement())
   rol              rol       @relation(fields: [rol_id_hist], references: [rol_id], onDelete: NoAction, onUpdate: NoAction, map: "user_rol_hist_rol_rol_id_fk")
-  usser            usser     @relation(fields: [user_id_hist], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "user_rol_hist_usser_user_id_fk")
 }
 
 model faqs {

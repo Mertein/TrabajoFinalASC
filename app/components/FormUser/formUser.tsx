@@ -25,10 +25,9 @@ const Form = ({ user }: any) => {
   const handleFormSubmit = async (values: any) => {
     try {
       const res = await axios.put(`/api/users/userProfile`, { values });
-      console.log(res);
+      console.log('RES',res);
 
       if (res.status === 200) {
-        console.log("Usuario actualizado con éxito");
         toast.success("Usuario actualizado con éxito");
       }
     } catch (error) {
@@ -84,8 +83,8 @@ const Form = ({ user }: any) => {
 
   const initialValues = {
     user_id: user?.user_id as number,
-    firstName: user?.first_name as string,
-    lastName: user?.last_name as string,
+    first_name: user?.first_name as string,
+    last_name: user?.last_name as string,
     email: user?.email as string,
     password: '',
     phone_number: user?.phone_number as number,
@@ -140,8 +139,7 @@ const Form = ({ user }: any) => {
         </div>
       </div>
       </form>
-      
-
+  
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
@@ -172,10 +170,10 @@ const Form = ({ user }: any) => {
                 label="Nombre"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.firstName}
-                name="firstName"
-                error={!!touched.firstName && !!errors.firstName}
-                helperText={touched.firstName && errors.firstName}
+                value={values.first_name}
+                name="first_name"
+                error={!!touched.first_name && !!errors.first_name}
+                helperText={touched.first_name && errors.first_name}
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -185,10 +183,10 @@ const Form = ({ user }: any) => {
                 label="Apellido"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.lastName}
-                name="lastName"
-                error={!!touched.lastName && !!errors.lastName}
-                helperText={touched.lastName && errors.lastName}
+                value={values.last_name}
+                name="last_name"
+                error={!!touched.last_name && !!errors.last_name}
+                helperText={touched.last_name && errors.last_name}
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -285,7 +283,7 @@ const Form = ({ user }: any) => {
               <TextField
                 fullWidth
                 variant="filled"
-                type="password" // Cambiado a tipo contraseña
+                type="password" 
                 label="Contraseña"
                 onBlur={handleBlur}
                 onChange={handleChange}
@@ -310,27 +308,17 @@ const Form = ({ user }: any) => {
     </Box>
   );
 };
-
-const phoneRegExp =
-  /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
-
   const checkoutSchema = yup.object().shape({
-    firstName: yup.string().required("Este campo es requerido"),
-    lastName: yup.string().required("Este campo es requerido"),
-    email: yup.string().email("Email inválido").required("Este campo es requerido"),
-    phone_number: yup
-      .string()
-      .matches(phoneRegExp, "Número de teléfono inválido")
-      .required("Este campo es requerido"),
-    address: yup.string().required("Este campo es requerido"),
-    date_of__birth: yup.date().required("Este campo es requerido"),
-    // emergency_contact: yup
-    //   .string()
-    //   .matches(phoneRegExp, "Número de contacto de emergencia inválido"),
-      // .required("Este campo es requerido"),
-    // gender: yup.string().required("Este campo es requerido"),
-    dni: yup.number().required("Este campo es requerido"),
-  // ... otras reglas de validación ...
+    first_name: yup.string().required("El nombre es obligatorio").min(3, "El nombre debe tener al menos 3 caracteres").max(25, "El nombre debe tener como maximo 25 caracteres"),
+    last_name: yup.string().required("El apellido es obligatorio").min(3, "El apellido debe tener al menos 3 caracteres").max(20, "El apellido debe tener como maximo 20 caracteres"),
+    email: yup.string().email("Ingrese un correo electrónico válido, por ej: ejemplo@ejemplo.com").required("El correo electrónico es obligatorio"),
+    address: yup.string().required("La dirección es obligatoria").min(5, "La dirección debe tener al menos 5 caracteres").max(50, "La dirección debe tener como maximo 50 caracteres"),
+    date_of__birth: yup.string().required("La fecha de nacimiento es obligatoria"),
+    phone_number: yup.string().required("El numero de telefono es obligatorio").min(7, "El numero de telefono debe tener al menos 7 digitos").max(13, "El numero de telefono debe tener como maximo 13 digitos"),
+    dni: yup.string().required("El DNI es obligatorio").min(7, "El DNI debe tener al menos 7 digitos").max(12, "El DNI debe tener como maximo 12 digitos"),
+    // emergency_contact: yup.string().required("El numero de contacto es obligatorio"),
+    // Agrega más campos y reglas de validación según tus necesidades
   });
+  
 
 export default Form;

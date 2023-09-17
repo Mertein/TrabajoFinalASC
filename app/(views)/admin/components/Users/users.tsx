@@ -1,24 +1,21 @@
 // @ts-nocheck
 'use client'
-
 import * as React from 'react';
 import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams } from '@mui/x-data-grid';
 import {Chip, Box, Button, FormControl, IconButton, Input, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, TextField, Typography ,OutlinedInput, Theme} from '@mui/material';
 import {useTheme} from '@mui/system';
-
+import * as yup from 'yup';
 import { Delete, Edit } from '@mui/icons-material';
 import Loading from '@/app/(views)/instructor/MyCourses/loading';
 import Header from '@/app/components/Header/header';
 import { tokens } from '@/app/theme';
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import useSWR, { mutate } from 'swr';
 import { format} from 'date-fns';
 import { useEffect, useState } from 'react';
 import { Close as CloseIcon } from "@mui/icons-material";
-
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -31,7 +28,6 @@ const MenuProps = {
   },
 };
 
-
 function getStyles(name: string, personName: readonly string[], theme: Theme) {
   return {
     fontWeight:
@@ -42,6 +38,7 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
 }
 
  function Users ({roles} : any) {
+  const [formErrors, setFormErrors] = useState({});
   const fetcher = (arg: any, ...args: any) => fetch(arg, ...args).then(res => res.json())
   const { data, error, isLoading } = useSWR('/api/users', fetcher)
   const [loading, setIsLoading] = useState(false);
@@ -49,8 +46,6 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
   const [rolesID, setRolesID] =  useState<string[]>([]);
   const [editUserRol, setEditUserRol] =  useState<string[]>([]);
   const [user, setUser] = useState({
-    
-      
       email: '',
       first_name: '',
       last_name: '',
@@ -65,8 +60,6 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
   });
   const [editingUser, setEditingUser] = useState(null);
   const [editUser, setEditUser] = useState({
-      
-        
     email: '',
     first_name: '',
     last_name: '',
@@ -96,7 +89,6 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
       target: { value },
     } = event;
     setUserRol(
-      // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
     setUser({ ...user, roles: [value] });
@@ -111,7 +103,6 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
       target: { value },
     } = event;
     setEditUserRol(
-      // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
     const selectedRoles = typeof value === 'string' ? value.split(',') : value;
@@ -142,9 +133,9 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
     setUserRol([]);
     setEditUserRol([]);
     setEditingUser(null);
+    setFormErrors({});
     setEditUser(
       {
-        
         email: '',
         first_name: '',
         last_name: '',
@@ -174,18 +165,12 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
     )
   };
 
-  const { data: session, status } = useSession() 
-
-  // if (status === "unauthenticated") {
-  //   alert("No has iniciado sesión");
-  //   router.push('/')
-  // }
-
   useEffect(() => {
     const selectedRoles = typeof editUserRol === 'string' ? value.split(',') : editUserRol ;
     const numericRoles = selectedRoles.map((role) => roleMap[role]);
     setRolesID(numericRoles);
   }, [editUserRol]);
+
   const handleDeleteClick =  (id: number ): void => {
     const confirmed = window.confirm('¿Estás seguro de que quieres eliminar este usuario?');
     setIsLoading(true);
@@ -204,103 +189,109 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
         });
     }
   }
-  const handleEditUser = () => {
-    if (
-      !editUser.email ||
-      !editUser.first_name ||
-      !editUser.last_name ||
-      !editUser.date_of__birth ||
-      !editUser.address ||
-      !editUser.phone_number ||
-      // !editUser.emergency_contact ||
-      // !editUser.gender ||
-      !editUser.dni ||
-      editUser.roles.length === 0
-    ) {
-      toast.error('Por favor, complete todos los campos obligatorios.');
-      return;
-    }
-   
+
+  const handleEditUser = async () => {
   
-    setIsLoading(true);
-    axios.put('/api/users', {
-      data: {
-        user: editUser,
-        rolesLength : editUserRol.length,
-        rolesID: rolesID,
-      }
-    }).then((response) => {
-        setEditingUser(null);
-        setEditUser({
-      email: '',
-      first_name: '',
-      last_name: '',
-      date_of__birth:'',
-      address:'',
-      phone_number:'',
-      emergency_contact:'',
-      // gender:'',
-      dni: '',
-      roles: [],       
-    });
-        handleClose();
-        toast.success('Usuario actualizado con éxito');
-        // Invalidar la caché y realizar una nueva solicitud para obtener los datos actualizados
-        mutate('/api/users');
-      })
-      .catch((error) => {
-        toast.error('Error al actualizar el usuario');
-      })
-      .finally(() => {
-        setIsLoading(false);
+    const isValid = await checkoutEditSchema.isValid(editUser);
+      if (isValid) {
+      console.log('entre');
+      setIsLoading(true);
+      axios.put('/api/users', {
+        data: {
+          user: editUser,
+          rolesLength : editUserRol.length,
+          rolesID: rolesID,
+        }
+      }).then((response) => {
+          setEditingUser(null);
+          setEditUser({
+        email: '',
+        first_name: '',
+        last_name: '',
+        date_of__birth:'',
+        address:'',
+        phone_number:'',
+        emergency_contact:'',
+        // gender:'',
+        dni: '',
+        roles: [],       
       });
+          handleClose();
+          toast.success('Usuario actualizado con éxito');
+          // Invalidar la caché y realizar una nueva solicitud para obtener los datos actualizados
+          mutate('/api/users');
+        })
+        .catch((error) => {
+          toast.error('Error al actualizar el usuario');
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+        setFormErrors({});
+      } else {
+          try {
+            await checkoutEditSchema.validate(editUser, { abortEarly: false });
+          } catch (errors) {
+            const errorMessages = errors.inner.map((error) => error.message);
+            console.log('Errores de validación edicion:', errorMessages);
+            // Puedes mostrar estos mensajes de error al usuario
+            const newFormErrors = {};
+            errors.inner.forEach((error) => {
+              newFormErrors[error.path] = error.message;
+            });
+            setFormErrors(newFormErrors);
+          }
+    }
   }
 
 
 
-  const handleAddClick = () => {
-    if (
-      !user.email ||
-      !user.first_name ||
-      !user.last_name ||
-      !user.password ||
-      !user.date_of__birth ||
-      !user.address ||
-      !user.phone_number ||
-      !user.dni ||
-      user.roles.length === 0
-    ) {
-      toast.error('Por favor, complete todos los campos obligatorios.');
-      return;
-    }
-    setIsLoading(true);
-    axios
-      .post('/api/users', { user })
-      .then((response) => {
-        setUser({
-      email: '',
-      first_name: '',
-      last_name: '',
-      password: '',
-      date_of__birth:'',
-      address:'',
-      phone_number:'',
-      emergency_contact:'',
-      // gender:'',
-      dni: '',
-      roles: [],    
-    });
-        handleClose();
-        toast.success('Usuario registrado con éxito');
-        // Invalidar la caché y realizar una nueva solicitud para obtener los datos actualizados
-        mutate('/api/users');
-      })
-      .catch((error) => {
-        toast.error('Error a registrar usuario');
-      })
-      .finally(() => {
-        setIsLoading(false);
+
+  const handleAddClick = async () => {
+    const isValid = await checkoutSchema.isValid(user);
+    if (isValid) {
+      setIsLoading(true);
+      axios
+        .post('/api/users', { user })
+        .then((response) => {
+          setUser({
+        email: '',
+        first_name: '',
+        last_name: '',
+        password: '',
+        date_of__birth:'',
+        address:'',
+        phone_number:'',
+        emergency_contact:'',
+        // gender:'',
+        dni: '',
+        roles: [],    
       });
+          handleClose();
+          toast.success('Usuario registrado con éxito');
+          mutate('/api/users');
+        })
+        .catch((error) => {
+          toast.error('Error a registrar usuario');
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+        setFormErrors({});
+      } else {
+        try {
+          await checkoutSchema.validate(user, { abortEarly: false });
+        } catch (errors) {
+          const errorMessages = errors.inner.map((error) => error.message);
+          console.log('Errores de validación creacion:', errorMessages);
+          // Puedes mostrar estos mensajes de error al usuario
+          const newFormErrors = {};
+          errors.inner.forEach((error) => {
+            newFormErrors[error.path] = error.message;
+          });
+          setFormErrors(newFormErrors);
+        }
+    }
   };
 
   const roleColors = {
@@ -431,7 +422,9 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                  label="Nombre"
                  onChange={(e) => setEditUser({ ...editUser, first_name: e.target.value })}
                  value={editUser.first_name}
-                 name="firstName"
+                 name="first_name"
+                 error={!!formErrors.first_name}
+                 helperText={formErrors.first_name}
                 
                />
                <TextField
@@ -441,8 +434,9 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                  label="Apellido"
                  onChange={(e) => setEditUser({ ...editUser, last_name: e.target.value })}
                  value={editUser.last_name}
-                 name="lastName"
-                 
+                 name="last_name"
+                 error={!!formErrors.last_name}
+                 helperText={formErrors.last_name}
                />
                <TextField
                  fullWidth
@@ -452,7 +446,8 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                  onChange={(e) => setEditUser({ ...editUser, email: e.target.value })}
                  value={editUser.email}
                  name="email"
-              
+                 error={!!formErrors.email}
+                 helperText={formErrors.email}
                />
                <TextField
                  fullWidth
@@ -462,7 +457,8 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                  onChange={(e) => setEditUser({ ...editUser, address: e.target.value })}
                  value={editUser.address}
                  name="address"
-                 
+                 error={!!formErrors.address}
+                 helperText={formErrors.address}
                  sx={{ gridColumn: "span 4" }}
                />
                <TextField
@@ -474,7 +470,9 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                   setEditUser({ ...editUser, date_of__birth: e.target.value });
                 }}
                 value={editUser.date_of__birth || ''}
-                name="date_of_birth"
+                name="date_of__birth"
+                error={!!formErrors.date_of__birth}
+                helperText={formErrors.date_of__birth}
                 />
                
                 <TextField
@@ -485,7 +483,8 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                  onChange={(e) => setEditUser({ ...editUser, phone_number: e.target.value })}
                  value={editUser.phone_number}
                  name="phone_number"
-                 
+                 error={!!formErrors.phone_number}
+                 helperText={formErrors.phone_number}
                />
                <TextField
                  fullWidth
@@ -494,8 +493,9 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                  label="Contacto/Nro de emergencia"
                  onChange={(e) => setEditUser({ ...editUser, emergency_contact: e.target.value })}
                  value={editUser.emergency_contact}
-                 name="contact_emergency"
-              
+                 name="emergency_contact"
+                 error={!!formErrors.emergency_contact}
+                 helperText={formErrors.emergency_contact}
                />
                  {/* <TextField
                  fullWidth
@@ -505,8 +505,6 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                  onChange={(e) => setEditUser({ ...editUser, gender: e.target.value })}
                  value={editUser.gender}
                  name="gender"
-               
-             
                /> */}
                  <TextField
                  fullWidth
@@ -516,7 +514,8 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                  onChange={(e) => setEditUser({ ...editUser, dni: e.target.value })}
                  value={editUser.dni}
                  name="dni"
-                 
+                 error={!!formErrors.dni}
+                 helperText={formErrors.dni}
                />
                  <FormControl sx={{ m: 1, width: 300 }}>
                 <InputLabel id="demo-multiple-chip-label">Roles</InputLabel>
@@ -559,7 +558,9 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                 label="Primer nombre"
                 onChange={(e) => setUser({ ...user, first_name: e.target.value })}
                 value={user.first_name}
-                name="firstName"
+                name="first_name"
+                error={!!formErrors.first_name}
+                helperText={formErrors.first_name}
                
               />
               <TextField
@@ -569,8 +570,9 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                 label="Segundo nombre"
                 onChange={(e) => setUser({ ...user, last_name: e.target.value })}
                 value={user.last_name}
-                name="lastName"
-                
+                name="last_name"
+                error={!!formErrors.last_name}
+                helperText={formErrors.last_name}
               />
               <TextField
                 fullWidth
@@ -580,7 +582,8 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                 onChange={(e) => setUser({ ...user, email: e.target.value })}
                 value={user.email}
                 name="email"
-             
+                error={!!formErrors.email}
+                helperText={formErrors.email}
               />
               <TextField
                 fullWidth
@@ -589,8 +592,9 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                 label="Contraseña"
                 onChange={(e) => setUser({ ...user, password: e.target.value })}
                 value={user.password}
-                name="contact"
-               
+                name="password"
+                error={!!formErrors.password}
+                helperText={formErrors.password}
               />
               <TextField
                 fullWidth
@@ -600,7 +604,8 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                 onChange={(e) => setUser({ ...user, address: e.target.value })}
                 value={user.address}
                 name="address"
-                
+                error={!!formErrors.address}
+                helperText={formErrors.address}
                 sx={{ gridColumn: "span 4" }}
               />
               <TextField
@@ -610,8 +615,9 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                 label="Fecha de Nacimiento"
                 onChange={(e) => setUser({ ...user, date_of__birth: e.target.value })}
                 value={user.date_of__birth}
-                name="address2"
-              
+                name="date_of__birth"
+                error={!!formErrors.date_of__birth}
+                helperText={formErrors.date_of__birth}
               />
                <TextField
                 fullWidth
@@ -620,8 +626,9 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                 label="Numero de Telefono"
                 onChange={(e) => setUser({ ...user, phone_number: e.target.value })}
                 value={user.phone_number}
-                name="address2"
-                
+                name="phone_number"
+                error={!!formErrors.phone_number}
+                helperText={formErrors.phone_number}
               />
               <TextField
                 fullWidth
@@ -630,8 +637,9 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                 label="Contacto/Nro de emergencia"
                 onChange={(e) => setUser({ ...user, emergency_contact: e.target.value })}
                 value={user.emergency_contact}
-                name="address2"
-             
+                name="emergency_contact"
+                error={!!formErrors.emergency_contact}
+                helperText={formErrors.emergency_contact}
               />
                 {/* <TextField
                 fullWidth
@@ -641,8 +649,6 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                 onChange={(e) => setUser({ ...user, gender: e.target.value })}
                 value={user.gender}
                 name="address2"
-              
-            
               /> */}
                 <TextField
                 fullWidth
@@ -651,8 +657,9 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
                 label="D.N.I"
                 onChange={(e) => setUser({ ...user, dni: e.target.value })}
                 value={user.dni}
-                name="address2"
-                
+                name="dni"
+                error={!!formErrors.dni}
+                helperText={formErrors.dni}
               />
                <FormControl sx={{ m: 1, width: 300 }}>
                 <InputLabel id="demo-multiple-chip-label">Roles</InputLabel>
@@ -687,7 +694,6 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
             
             </>
           )}
-          
           <Button
             variant="contained"
             className="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold"
@@ -732,30 +738,49 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
         }}
       >
         {isLoading ? (
-  <Box
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    height="100vh"
-  >
-    <Loading /> {/* Muestra el componente Loading */}
-  </Box>
-) : (
-  <DataGrid
-    rows={data}
-    columns={columns}
-    components={{ Toolbar: GridToolbar }}
-    getRowId={(row) => row.user_id}
-    autoHeight={true}
-  />
-)} 
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="100vh"
+          >
+            <Loading /> {/* Muestra el componente Loading */}
+          </Box>
+        ) : (
+          <DataGrid
+            rows={data}
+            columns={columns}
+            slots={{ toolbar: GridToolbar }}
+            getRowId={(row) => row.user_id}
+            autoHeight={true}
+          />
+        )} 
       </Box>
     </Box>
   );
-
 }
+const checkoutSchema = yup.object().shape({
+  first_name: yup.string().required("El nombre es obligatorio").min(3, "El nombre debe tener al menos 3 caracteres").max(25, "El nombre debe tener como maximo 25 caracteres"),
+  last_name: yup.string().required("El apellido es obligatorio").min(3, "El apellido debe tener al menos 3 caracteres").max(20, "El apellido debe tener como maximo 20 caracteres"),
+  email: yup.string().email("Ingrese un correo electrónico válido, por ej: ejemplo@ejemplo.com").required("El correo electrónico es obligatorio").max(30, "El correo debe tener como maximo 30 caracteres"),
+  password: yup.string().min(8, "La contraseña debe tener al menos 8 caracteres").max(20, "La contraseña debe tener como maximo 20 caracteres").required("La contraseña es obligatoria"),
+  address: yup.string().required("La dirección es obligatoria").min(5, "La dirección debe tener al menos 5 caracteres").max(50, "La dirección debe tener como maximo 50 caracteres"),
+  date_of__birth: yup.string().required("La fecha de nacimiento es obligatoria"),
+  phone_number: yup.string().required("El numero de telefono es obligatorio").min(7, "El numero de telefono debe tener al menos 7 digitos").max(13, "El numero de telefono debe tener como maximo 13 digitos"),
+  dni: yup.string().required("El DNI es obligatorio").min(7, "El DNI debe tener al menos 7 digitos").max(12, "El DNI debe tener como maximo 12 digitos"),
+  // emergency_contact: yup.string().required("El numero de contacto es obligatorio"),
+  // Agrega más campos y reglas de validación según tus necesidades
+});
+
+const checkoutEditSchema = yup.object().shape({
+  first_name: yup.string().min(3, "El nombre debe tener al menos 3 caracteres").max(25, "El nombre debe tener como máximo 25 caracteres"),
+  last_name: yup.string().min(3, "El apellido debe tener al menos 3 caracteres").max(20, "El apellido debe tener como máximo 20 caracteres"),
+  email: yup.string().email("Ingrese un correo electrónico válido, por ejemplo: ejemplo@ejemplo.com").max(30, "El correo debe tener como máximo 30 caracteres"),
+  address: yup.string().min(5, "La dirección debe tener al menos 5 caracteres").max(50, "La dirección debe tener como máximo 50 caracteres"),
+  date_of_birth: yup.string(),
+  phone_number: yup.string().min(7, "El número de teléfono debe tener al menos 7 dígitos").max(13, "El número de teléfono debe tener como máximo 13 dígitos"),
+  dni: yup.string().min(7, "El DNI debe tener al menos 7 dígitos").max(12, "El DNI debe tener como máximo 12 dígitos"),
+});
+
 
 export default Users;
-
-
-

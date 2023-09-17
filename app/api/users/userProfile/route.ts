@@ -62,61 +62,60 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  export async function PUT(req: Request, res: Response) {
-    const body = await req.json();
-    const {values} = body;
-    const {first_name, last_name, email, date_of__birth, emergency_contact, phone_number, dni,  gender, address, user_id, password} = values;
-     
-     const formattedDateOfBirth = new Date(date_of__birth);
-     const formatted_phone_number = parseInt(phone_number);
-     const formatted_emergency_contact = parseInt(emergency_contact);
-     const formatted_dni = parseInt(dni);
-     const hashedPassword = await bcrypt.hash(password, 12);
-     try {
+export async function PUT(req: Request, res: Response) {
+  const body = await req.json();
+  const {values} = body;
+  const {first_name, last_name, email, date_of__birth, emergency_contact, phone_number, dni,  gender, address, user_id, password} = values;
+  const formattedDateOfBirth = new Date(date_of__birth);
+  const formatted_phone_number = parseInt(phone_number);
+  const formatted_emergency_contact = parseInt(emergency_contact);
+  const formatted_dni = parseInt(dni);
+  const hashedPassword = await bcrypt.hash(password, 12);
+  try {
 
-     if(password === '') {
-        const updateUser = await prisma.usser.update({
-            where: {
-              user_id: user_id,
-            },
-            data: {
-              first_name: values.first_name,
-              last_name: values.last_name,
-              email: email,
-              date_of__birth: formattedDateOfBirth,
-              address: address,
-              emergency_contact: formatted_emergency_contact,
-              phone_number : formatted_phone_number,
-              // gender: gender,
-              dni: formatted_dni,
-              updated_at: new Date()
-          }
-          })
-        return NextResponse.json(updateUser);
-     } else {
-        const updateUser = await prisma.usser.update({
-            where: {
-              user_id: user_id,
-            },
-            data: {
-              first_name: first_name,
-              last_name: last_name,
-              email: email,
-              date_of__birth: formattedDateOfBirth,
-              address: address,
-              emergency_contact: formatted_emergency_contact,
-              phone_number : formatted_phone_number,
-              // gender: gender,
-              dni: formatted_dni,
-              password: hashedPassword ,
-              updated_at: new Date()
-          }
-          })
-          const { password, ...result } = updateUser;
-          return new Response(JSON.stringify(result))
-     }
-      } catch (error) {
-        console.error(error);
-        throw error;
+  if(password === '') {
+    const updateUser = await prisma.usser.update({
+        where: {
+          user_id: user_id,
+        },
+        data: {
+          first_name: values.first_name,
+          last_name: values.last_name,
+          email: email,
+          date_of__birth: formattedDateOfBirth,
+          address: address,
+          emergency_contact: formatted_emergency_contact,
+          phone_number : formatted_phone_number,
+          // gender: gender,
+          dni: formatted_dni,
+          updated_at: new Date()
       }
+      })
+    return NextResponse.json(updateUser);
+  } else {
+    const updateUser = await prisma.usser.update({
+        where: {
+          user_id: user_id,
+        },
+        data: {
+          first_name: first_name,
+          last_name: last_name,
+          email: email,
+          date_of__birth: formattedDateOfBirth,
+          address: address,
+          emergency_contact: formatted_emergency_contact,
+          phone_number : formatted_phone_number,
+          // gender: gender,
+          dni: formatted_dni,
+          password: hashedPassword ,
+          updated_at: new Date()
+      }
+      })
+      const { password, ...result } = updateUser;
+      return new Response(JSON.stringify(result))
   }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

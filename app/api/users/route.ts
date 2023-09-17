@@ -81,12 +81,11 @@ export async function POST(
         dni: formatted_dni,
     }
   });
-
   for(let i = 0; i < rolesLength; i++){
     const userRol = await prisma.user_rol.create({
       data: {
         user_id: user.user_id,
-        rol_id: body.user.roles[0][i] === 'Student' ? 1 : body.user.roles[0][i] === 'Instructor' ? 2 : 3,
+        rol_id: body.user.roles[i] === 'Student' ? 1 : body.user.roles[0][i] === 'Instructor' ? 2 : 3,
       }
   })
   }
@@ -100,7 +99,6 @@ export async function PUT(req: Request, res: Response) {
   const {rolesLength} = data;
   const {rolesID} = data;
   const {first_name, last_name, email, date_of__birth, emergency_contact, phone_number, dni, address, user_id, roles} = user;
-   
    const formattedDateOfBirth = new Date(date_of__birth);
    const formatted_phone_number = parseInt(phone_number);
    const formatted_emergency_contact = parseInt(emergency_contact);
@@ -123,27 +121,20 @@ export async function PUT(req: Request, res: Response) {
       }
       })
       
-      
       const deleteUserRoles = await prisma.user_rol.deleteMany({
         where: {
           user_id: user_id,
         }
       })
       
-      
-     
-     
       for(let i = 0; i < rolesLength; i++){
         const userRol = await prisma.user_rol.create({
-          
           data: {
             user_id: user_id,
             rol_id: Number(rolesID[i]),
           }
       })
     }
-  
-     
       return NextResponse.json(updateUser);
 
     } catch (error) {
