@@ -38,10 +38,10 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
 }
 
  function Users ({roles} : any) {
-  const [formErrors, setFormErrors] = useState({});
   const fetcher = (arg: any, ...args: any) => fetch(arg, ...args).then(res => res.json())
   const { data, error, isLoading } = useSWR('/api/users', fetcher)
   const [loading, setIsLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
   const [userRol, setUserRol] =  useState<string[]>([]);
   const [rolesID, setRolesID] =  useState<string[]>([]);
   const [editUserRol, setEditUserRol] =  useState<string[]>([]);

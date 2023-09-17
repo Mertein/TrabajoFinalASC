@@ -1,22 +1,21 @@
 'use client'
 import { useState } from "react";
 import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams } from '@mui/x-data-grid';
-import { Box, Button, IconButton, Input, Modal, TextField, Typography} from '@mui/material';
+import { Box, Button, IconButton, Modal, TextField, Typography} from '@mui/material';
 import {useTheme} from '@mui/system';
 import { Delete, Edit } from '@mui/icons-material';
 import Loading from '@/app/(views)/instructor/MyCourses/loading';
 import Header from '@/app/components/Header/header';
 import { tokens } from '@/app/theme';
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import useSWR, { mutate } from 'swr';
 import { format} from 'date-fns';
 import { Close as CloseIcon } from "@mui/icons-material";
+import * as yup from 'yup';
 
  function Categories () {
-
   const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -32,6 +31,7 @@ import { Close as CloseIcon } from "@mui/icons-material";
   const fetcher = (arg: any, ...args: any) => fetch(arg, ...args).then(res => res.json())
   const { data, error, isLoading } = useSWR('/api/getCategories', fetcher)
   const [loading, setIsLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
   const [category_name, setCategoryName] = useState('');
   const [editingCategory, setEditingCategory] = useState<any>(null);
   const [editCategoryName, setEditCategoryName] = useState('');
@@ -49,15 +49,8 @@ import { Close as CloseIcon } from "@mui/icons-material";
   setEditCategoryName('');
   setImgUrl('');
   setEditImgUrl('');
+  setFormErrors({});
   };
-
-  const { data: session, status } = useSession() 
-
-  if (status === "unauthenticated") {
-    alert("No has iniciado sesión");
-    router.push('/')
-  }
-
 
   const handleDeleteClick =  (id: number ): void => {
     const confirmed = window.confirm('¿Estás seguro de que quieres eliminar esta categoria?');
@@ -78,30 +71,55 @@ import { Close as CloseIcon } from "@mui/icons-material";
     }
   }
 
-  const handleEditCategory = () => {
-    setIsLoading(true);
-    axios.put('/api/getCategories', {
-      data: {
-        category_id: editingCategory.category_id,
-        category_name: editCategoryName,
-        file_category: editImgUrl,
+  const handleEditCategory = async () => {
+    const isValid = await checkoutSchema.isValid({
+      category_name: editCategoryName,
+      file_category: editImgUrl,
+    });
+
+    if (isValid) {
+      setIsLoading(true);
+      axios
+        .put('/api/getCategories', {
+          data: {
+            category_id: editingCategory.category_id,
+            category_name: editCategoryName,
+            file_category: editImgUrl,
+          },
+        })
+        .then((response) => {
+          setEditingCategory(null);
+          setEditCategoryName('');
+          setEditImgUrl('');
+          handleClose();
+          toast.success('Categoría actualizada con éxito');
+          mutate('/api/getCategories');
+        })
+        .catch((error) => {
+          toast.error('Error al actualizar la categoría');
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+      setFormErrors({});
+    } else {
+      try {
+        await checkoutSchema.validate(
+          { category_name: editCategoryName, file_category: editImgUrl },
+          { abortEarly: false }
+        );
+        setFormErrors({});
+      } catch (errors) {
+        const newFormErrors = {};
+        // @ts-ignore
+        errors.inner.forEach((error) => {
+          // @ts-ignore
+          newFormErrors[error.path] = error.message;
+        });
+        setFormErrors(newFormErrors);
       }
-    }).then((response) => {
-        setEditingCategory(null);
-        setEditCategoryName('');
-        setEditImgUrl('');
-        handleClose();
-        toast.success('Categoría actualizada con éxito');
-        // Invalidar la caché y realizar una nueva solicitud para obtener los datos actualizados
-        mutate('/api/getCategories');
-      })
-      .catch((error) => {
-        toast.error('Error al actualizar la categoría');
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }
+    }
+  };
 
   const handleEditClick = (id: number): void => {
     const selectedCategory = data.find((category: { category_id: number; }) => category.category_id === id);
@@ -113,43 +131,43 @@ import { Close as CloseIcon } from "@mui/icons-material";
     }
   };
 
-  const handleAddClick = () => {
-    setIsLoading(true);
-    // if (!file) return;
-    axios
-      .post('/api/getCategories', { category_name, imgUrl })
-      .then((response) => {
-        setCategoryName('');
-        setImgUrl('');
-        handleClose();
-        toast.success('Categoría agregada con éxito');
-        // Invalidar la caché y realizar una nueva solicitud para obtener los datos actualizados
-        mutate('/api/getCategories');
-      })
-      .catch((error) => {
-        toast.error('Error al agregar la categoría');
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+  const handleAddClick = async () => {
+    const isValid = await checkoutSchema.isValid({category_name: category_name, file_category: imgUrl});
+    if (isValid) {
+      setIsLoading(true);
+      axios
+        .post('/api/getCategories', { category_name, imgUrl })
+        .then((response) => {
+          setCategoryName('');
+          setImgUrl('');
+          handleClose();
+          toast.success('Categoría agregada con éxito');
+          mutate('/api/getCategories');
+        })
+        .catch((error) => {
+          toast.error('Error al agregar la categoría');
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+        setFormErrors({});
+    } else {
+      try {
+        await checkoutSchema.validate({category_name: category_name, file_category: imgUrl}, { abortEarly: false });
+      } catch (errors : any) {
+        const errorMessages = errors.inner.map((error : any) => error.message);
+        console.log('Errores de validación creacion:', errorMessages);
+        // Puedes mostrar estos mensajes de error al usuario
+        const newFormErrors = {};
+        errors.inner.forEach((error : any) => {
+          // @ts-ignore
+          newFormErrors[error.path] = error.message;
+        });
+        setFormErrors(newFormErrors);
+      }
+    }
   };
 
-  //   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   if (!e.target.files?.[0]) return;
-  //   setFile(e.target.files?.[0]);
-  //   console.log(file);
-  // };
-  
-  // const handleFileEditChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   if (!e.target.files?.[0]) return;
-  //   setEditFile(e.target.files?.[0]);
-  //   console.log(file);
-  // };
-  
-
-
-
-   
   const columns: GridColDef[] = [
     { field: 'category_id', headerName: 'ID', width: 70,  flex : 1,},
     { 
@@ -173,7 +191,6 @@ import { Close as CloseIcon } from "@mui/icons-material";
       field: "actions",
       headerName: "Acciones",
       flex : 1,
-      
       renderCell: (params: GridCellParams) => (
         <>
           <IconButton
@@ -227,12 +244,22 @@ import { Close as CloseIcon } from "@mui/icons-material";
                 variant="filled"
                 onChange={(e) => setEditCategoryName(e.target.value)}
                 value={editCategoryName}
+                name="category_name"
+                // @ts-ignore
+                error={!!formErrors.category_name}
+                // @ts-ignore
+                helperText={formErrors.category_name}
               />
               <TextField
                 label="Url Imagen Categoría"
                 variant="filled"
                 onChange={(e) => setEditImgUrl(e.target.value)}
                 value={editImgUrl}
+                name="file_category"
+                // @ts-ignore
+                error={!!formErrors.file_category}
+                // @ts-ignore
+                helperText={formErrors.file_category}
               />
             </>
           )}
@@ -243,12 +270,21 @@ import { Close as CloseIcon } from "@mui/icons-material";
                 variant="filled"
                 onChange={(e) => setCategoryName(e.target.value)}
                 value={category_name}
+                // @ts-ignore
+                error={!!formErrors.category_name}
+                // @ts-ignore
+                helperText={formErrors.category_name}
               />
               <TextField
                 label="Url Imagen Categoría"
                 variant="filled"
                 onChange={(e) => setImgUrl(e.target.value)}
                 value={imgUrl}
+                name="file_category"
+                // @ts-ignore
+                error={!!formErrors.file_category}
+                // @ts-ignore
+                helperText={formErrors.file_category}
               />
             </>
           )}
@@ -296,28 +332,36 @@ import { Close as CloseIcon } from "@mui/icons-material";
         }}
       >
         {isLoading ? (
-  <Box
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    height="100vh"
-  >
-    <Loading /> {/* Muestra el componente Loading */}
-  </Box>
-) : (
-  <DataGrid
-    rows={data}
-    columns={columns}
-    components={{ Toolbar: GridToolbar }}
-    getRowId={(row) => row.category_id}
-    autoHeight={true}
-  />
-)} 
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="100vh"
+          >
+            <Loading />
+          </Box>
+        ) : (
+          <DataGrid
+            rows={data}
+            columns={columns}
+            slots={{ toolbar: GridToolbar }}
+            getRowId={(row) => row.category_id}
+            autoHeight={true}
+          />
+        )} 
       </Box>
     </Box>
   );
-
 }
+
+const checkoutSchema = yup.object().shape({
+  category_name: yup.string().required("El nombre de la Categoría es obligatorio").min(3, "El nombre debe tener al menos 3 caracteres").max(20, "El nombre debe tener como maximo 25 caracteres"),
+  file_category: yup
+  .string()
+  .required("La URL de la Categoría es obligatoria")
+  .max(200, "La URL debe tener como máximo 200 caracteres") 
+  .url("La URL debe ser válida"),
+});
 
 export default Categories;
 
