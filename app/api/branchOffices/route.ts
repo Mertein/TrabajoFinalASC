@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       data: {
         branch_name: body.branch_name,
         branch_address: body.branch_address,
-        people_capacity: body.people_capacity,
+        people_capacity: Number(body.people_capacity),
       },
     })
     return new NextResponse(JSON.stringify(branchOffices), {status: 200});
@@ -53,7 +53,7 @@ export async function PUT(req: Request, res: Response) {
       data: {
         branch_name,
         branch_address,
-        people_capacity,
+        people_capacity: Number(people_capacity),
       }
     })
     const [fields] = await Promise.all([updateBranch]);

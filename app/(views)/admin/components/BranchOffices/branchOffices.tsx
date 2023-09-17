@@ -15,7 +15,7 @@ import useSWR, { mutate } from 'swr';
 import { format} from 'date-fns';
 import { useState } from 'react';
 import {Close as CloseIcon} from '@mui/icons-material';
-
+import * as yup from 'yup';
 
 
 function BranchOffices() {
@@ -36,11 +36,12 @@ function BranchOffices() {
   const [loading, setIsLoading] = useState(false);
   const [branch_name, setBranchName] = useState('');
   const [branch_address, setBranchAddress] = useState('');
-  const [people_capacity, setPeopleCapacity] = useState('');
+  const [people_capacity, setPeopleCapacity] = useState(0);
   const [editingBranch, setEditingBranch] = useState<any>(null);
   const [editBranchAdress, setEditBranchAddress] = useState('');
-  const [editPeopleCapacity, setEditPeopleCapacity] = useState('');
+  const [editPeopleCapacity, setEditPeopleCapacity] = useState(0);
   const [editBranchName, setEditBranchName] = useState('');
+  const [formErrors, setFormErrors] = useState({});
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const router = useRouter();
@@ -51,10 +52,9 @@ function BranchOffices() {
     setBranchName('');
     setEditingBranch(null);
     setBranchAddress('');
-    setPeopleCapacity('');
+    setPeopleCapacity(0);
+    setFormErrors({});
   };
-  const { data: session, status } = useSession();
-
   const handleDeleteClick = (id: number): void => {
     const confirmed = window.confirm('¿Estás seguro de que quieres eliminar esta categoría?');
     setIsLoading(true);
@@ -74,14 +74,23 @@ function BranchOffices() {
     }
   };
 
-  const handleEditBranch = () => {
-    setIsLoading(true);
+ 
+const handleEditBranch = async () => {
+  setIsLoading(true);
+
+  try {
+    await checkoutSchema.validate({
+      branch_name: editBranchName,
+      branch_address: editBranchAdress,
+      people_capacity: editPeopleCapacity,
+    }, { abortEarly: false });
+
     axios.put('/api/branchOffices', {
       data: {
         branch_id: editingBranch?.branch_id,
         branch_name: editBranchName,
         branch_address: editBranchAdress,
-        people_capacity: parseInt(editPeopleCapacity),
+        people_capacity: editPeopleCapacity,
       }
     })
     .then((response) => {
@@ -97,7 +106,16 @@ function BranchOffices() {
     .finally(() => {
       setIsLoading(false);
     });
-  };
+  } catch (validationErrors) {
+    const errorMessages = {};
+    // @ts-ignore
+    validationErrors.inner.forEach((error) => {
+      // @ts-ignore
+      errorMessages[error.path] = error.message;
+    });
+    setFormErrors(errorMessages);
+  }
+};
 
   const handleEditClick = (id: number): void => {
     const selectedBranch = data.find((branch: { branch_id: number }) => branch.branch_id === id);
@@ -110,23 +128,44 @@ function BranchOffices() {
     }
   };
 
-  const handleAddClick = () => {
+  const handleAddClick = async () => {
     setIsLoading(true);
-  
-    axios.post('/api/branchOffices', { branch_name, branch_address,  people_capacity: parseInt(people_capacity)})
-    .then((response) => {
-      setBranchName('');
-      handleClose();
-      toast.success('Sucursal agregada con éxito');
-      mutate('/api/branchOffices');
-    })
-    .catch((error) => {
-      toast.error('Error al agregar la Sucursal');
-    })
-    .finally(() => {
-      setIsLoading(false);
-    });
+
+    try {
+      await checkoutSchema.validate({
+        branch_name,
+        branch_address,
+        people_capacity,
+      }, { abortEarly: false });
+        axios.post('/api/branchOffices', {
+        branch_name,
+        branch_address,
+        people_capacity: people_capacity,
+      })
+      .then((response) => {
+        setBranchName('');
+        handleClose();
+        toast.success('Sucursal agregada con éxito');
+        mutate('/api/branchOffices');
+      })
+      .catch((error) => {
+        toast.error('Error al agregar la Sucursal');
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+    } catch (validationErrors) {
+      const errorMessages = {};
+      // @ts-ignore
+      validationErrors.inner.forEach((error) => {
+           // @ts-ignore
+        errorMessages[error.path] = error.message;
+          // @ts-ignore
+      });
+      setFormErrors(errorMessages);
+    }
   };
+  
 
   const columns: GridColDef[] = [
     { field: 'branch_id', headerName: 'ID', width: 70,  flex: 1 },
@@ -203,19 +242,32 @@ function BranchOffices() {
                   variant="filled"
                   onChange={(e) => setEditBranchName(e.target.value)}
                   value={editBranchName}
+                     // @ts-ignore
+                  error={!!formErrors.branch_name}
+                     // @ts-ignore
+                  helperText={formErrors.branch_name}
                 />
                 <TextField
                   label="Dirección Sucursal"
                   variant="filled"
                   onChange={(e) => setEditBranchAddress(e.target.value)}
                   value={editBranchAdress}
+                     // @ts-ignore
+                  error={!!formErrors.branch_address}
+                     // @ts-ignore
+                  helperText={formErrors.branch_address}
                 />
                 <TextField
                   type='number'
                   label="Capacidad de Personas"
                   variant="filled"
+                   // @ts-ignore
                   onChange={(e) => setEditPeopleCapacity(e.target.value)}
                   value={editPeopleCapacity}
+                     // @ts-ignore
+                  error={!!formErrors.people_capacity}
+                     // @ts-ignore
+                  helperText={formErrors.people_capacity}
                 />
               </>
             )}
@@ -226,19 +278,32 @@ function BranchOffices() {
                 variant="filled"
                 onChange={(e) => setBranchName(e.target.value)}
                 value={branch_name}
+                   // @ts-ignore
+                error={!!formErrors.branch_name}
+                   // @ts-ignore
+                helperText={formErrors.branch_name}
               />
               <TextField
                   label="Dirección Sucursal"
                   variant="filled"
                   onChange={(e) => setBranchAddress(e.target.value)}
                   value={branch_address}
+                     // @ts-ignore
+                  error={!!formErrors.branch_address}
+                     // @ts-ignore
+                  helperText={formErrors.branch_address}
                 />
                 <TextField
                   type='number'
                   label="Capacidad de Personas"
                   variant="filled"
+                   // @ts-ignore
                   onChange={(e) => setPeopleCapacity(e.target.value)}
                   value={people_capacity}
+                     // @ts-ignore
+                  error={!!formErrors.people_capacity}
+                     // @ts-ignore
+                  helperText={formErrors.people_capacity}
                 />
               </>
             )}
@@ -308,5 +373,24 @@ function BranchOffices() {
     </Box>
   );
 }
+
+const checkoutSchema = yup.object().shape({
+  branch_name: yup
+    .string()
+    .required('El nombre de la sucursal es obligatorio')
+    .min(3, 'El nombre de la sucursal debe tener al menos 3 caracteres')
+    .max(25, 'El nombre de la sucursal no puede tener más de 25 caracteres'),
+  branch_address: yup
+    .string()
+    .required('La dirección de la sucursal es obligatoria')
+    .min(5, 'La dirección de la sucursal debe tener al menos 5 caracteres')
+    .max(30, 'La dirección de la sucursal no puede tener más de 30 caracteres'),
+  people_capacity: yup
+    .number()
+    .required('La capacidad de personas es obligatoria')
+    .positive('La capacidad debe ser un número positivo')
+    .integer('La capacidad debe ser un número entero'),
+});
+
 
 export default BranchOffices;
