@@ -9,7 +9,6 @@ export async function POST(request: NextRequest) {
     const data = await request.formData();
     const file: File | null = data.get("file") as unknown as File;
     const id = data.get("id") as unknown as string;
-  
     if (!file) {
       return NextResponse.json({ success: false });
     }
@@ -27,18 +26,19 @@ export async function POST(request: NextRequest) {
     })
 
     if(findFile) {
-        await prisma.files.delete({
-            where: {
-                id: findFile.id
-            }
-        })
+      await prisma.files.delete({
+          where: {
+              id: findFile.id
+          }
+      })
 
-    const filePath = findFile.path? path.join(process.cwd(), findFile.path, findFile.name) : '';
-    unlink(filePath, (err) => {
-      if (err) throw err;
-      console.log('path/file.txt was deleted');
-    });
+      const filePath = findFile.path? path.join(process.cwd(), findFile.path, findFile.name) : '';
+      unlink(filePath, (err) => {
+        if (err) throw err;
+        console.log('path/file.txt was deleted');
+      });
     }
+
      const filesPromise = await prisma.files.create({
         data: {
           path: "public/Users/ProfilePicture",

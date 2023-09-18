@@ -54,8 +54,6 @@ const Form = ({ user }: any) => {
         method: "POST",
         body: data,
       });
-      console.log(res);
-      console.log(res.ok)
       if (res.ok) {
         console.log("File uploaded successfully");
         toast.success("Foto de perfil actualizado correctamente");
