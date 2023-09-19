@@ -35,7 +35,6 @@ const FaqManagement = () => {
   }, [Faqs]);
 
   const handleFaqSubmit = async (newFaq: Faq) => {
-    console.log('Creando')
     try {
       const response = await axios.post('/api/faqs', newFaq);
       if(response.status === 200){
@@ -55,7 +54,6 @@ const FaqManagement = () => {
 
   const handleCancelEdit = (isCancel: boolean) => {
     if(isCancel) {
-      console.log('Cancelando')
       setEditingFaq(null);
       setEditedFaq(null);
     }
@@ -74,7 +72,6 @@ const FaqManagement = () => {
   };
 
   const handleSaveEdit = async (newFaq: Faq) => {
-    console.log('Editando')
     try {
       const response = await axios.put(`/api/faqs`, newFaq);
       if (response.status === 200) {
@@ -93,6 +90,7 @@ const FaqManagement = () => {
 
 
   const handleDeleteFaq = async (id: number) => {
+    if(!confirm('¿Estás seguro de eliminar esta FAQ?')) return;
     try {
       const response = await axios.delete(`/api/faqs/${id}`);
       if(response.status === 200){
