@@ -144,11 +144,6 @@ export async function POST(request: Request) {
   }
 }
   
-
-    
-
-    
-
 export async function PUT(request: Request) {
   const session = await getServerSession(authOptions);
   const user_id = session?.user?.user_id;
@@ -158,9 +153,73 @@ export async function PUT(request: Request) {
   }
 
   const body:RequestBody = await request.json();
-  console.log(body)
+  // console.log(body)
 
-    try {          
+    try {  
+        // Obtener las clases existentes para el curso específico
+        const existingClasses = await prisma.class_course.findMany({
+          where: {
+            course_id: body.course_id, // Filtrar por el ID del curso
+          },
+        });
+  
+        // Obtener las programaciones existentes para las clases existentes
+        const existingSchedules = await prisma.schedules.findMany({
+          where: {
+            class_id: {
+              in: existingClasses.map((cls) => cls.class_id),
+            },
+          },
+        });
+
+        const verifyIfExistShedule = body.schedule.map(async (scheduleItem) => {
+          // Verificar si existe una clase con horario superpuesto en la misma sucursal
+            const isOverlapping = await prisma.schedules.findFirst({
+              where: {
+                branch_id: body.id_branch,
+                date: new Date(scheduleItem.date),
+                OR: [
+                  {
+                    AND: [
+                      { start_time: { lte: scheduleItem.end_time } },
+                      { end_time: { gte: scheduleItem.start_time } },
+                    ],
+                  },
+                  {
+                    AND: [
+                      { start_time: { gte: scheduleItem.start_time } },
+                      { start_time: { lte: scheduleItem.end_time } },
+                    ],
+                  },
+                ],
+              },
+            });
+  
+            const isExistingSchedule = existingSchedules.some((existingSchedule) => {
+              return (
+                existingSchedule.date !== null &&
+                existingSchedule.date.toISOString() ===
+                new Date(scheduleItem.date).toISOString()
+              );
+            });
+  
+             // Retornar la superposición solo si no es una programación existente
+            if (isOverlapping && !isExistingSchedule) {
+              return isOverlapping;
+            } else {
+              return null;
+            }
+        });
+      
+      const verifyIfExistSheduleResult = await Promise.all(verifyIfExistShedule);
+
+      var errorMessage = "Existen horarios superpuestos en la misma sucursal.";
+      
+      if (verifyIfExistSheduleResult.some(result => result !== null)) {
+          console.log('verifyIfExistShedule:', verifyIfExistSheduleResult);
+          return NextResponse.json({ error: errorMessage });
+      }
+    console.log(body.description)
     const updateCoursePromises = await prisma.course.update({
         where: {
           course_id: body.course_id,
@@ -226,7 +285,6 @@ export async function PUT(request: Request) {
           throw error;
       }
     });
-
     const createdSchedules = await Promise.all(createSchedulesPromises);
     const updateCourse = await Promise.all([updateCoursePromises]);
     return NextResponse.json({ updateCourse, createdSchedules });

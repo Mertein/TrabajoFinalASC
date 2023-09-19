@@ -1,5 +1,5 @@
 'use client'
-import React, { use, useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import {
   FormControlLabel,
   Box,
@@ -11,6 +11,7 @@ import {
   MenuItem,
   Checkbox,
   IconButton,
+  InputAdornment,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Formik } from "formik";
@@ -20,7 +21,7 @@ import toast from "react-hot-toast";
 import Header from "../Header/header";
 import { Close as CloseIcon } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
-import { set } from "date-fns";
+import { mutate } from "swr";
 
 interface ModifyCourseFormProps {
   initialCourseData: any;
@@ -87,7 +88,6 @@ const ModifyCourseForm: React.FC<ModifyCourseFormProps> = ({
     }
   }, []);
 
-  
   const handleFormSubmit = async (data : CourseFormValues) => {  
 
     if(data.isFree === false && data.price_course === 0){
@@ -121,22 +121,27 @@ const ModifyCourseForm: React.FC<ModifyCourseFormProps> = ({
       };
     });
     
-    for(let i = 0; i < startAndEnd.length; i++) {
-      const newScheduleStartTime = startAndEnd[i].start_time
-      const newScheduleEndTime = startAndEnd[i].end_time
-      for(let j = 0; j < startAndEnd.length; j++) {
+    for (let i = 0; i < startAndEnd.length; i++) {
+      const newScheduleStartTime = startAndEnd[i].start_time;
+      const newScheduleEndTime = startAndEnd[i].end_time;
+      const newScheduleDate = new Date(startAndEnd[i].date); // Convertir la fecha a un objeto Date
+    
+      for (let j = 0; j < startAndEnd.length; j++) {
         if (i !== j) {
-          const existingScheduleStartTime = startAndEnd[j].start_time
-          const existingScheduleEndTime = startAndEnd[j].end_time
-          // console.log('New start',newScheduleStartTime)
-          // console.log('New end',newScheduleEndTime)
-          // console.log('Old Start', existingScheduleStartTime)
-          // console.log('Old End',existingScheduleEndTime)
-          if (newScheduleStartTime >= existingScheduleStartTime && newScheduleStartTime < existingScheduleEndTime) {
-            return toast.error('El horario de inicio de una clase no puede estar dentro del horario de otra clase.');
-          }
-          if (newScheduleEndTime > existingScheduleStartTime && newScheduleEndTime <= existingScheduleEndTime) {
-            return toast.error('El Horario de Finalización de una Clase no puede estar dentro del horario de otra Clase que vas a crear.');
+          const existingScheduleStartTime = startAndEnd[j].start_time;
+          const existingScheduleEndTime = startAndEnd[j].end_time;
+          const existingScheduleDate = new Date(startAndEnd[j].date); // Convertir la fecha a un objeto Date
+    
+          // Comprobar que las fechas coinciden
+          if (newScheduleDate.getTime() === existingScheduleDate.getTime()) {
+            if (
+              (newScheduleStartTime >= existingScheduleStartTime &&
+                newScheduleStartTime < existingScheduleEndTime) ||
+              (newScheduleEndTime > existingScheduleStartTime &&
+                newScheduleEndTime <= existingScheduleEndTime)
+            ) {
+              return toast.error('El horario de una clase coincide con otra en la misma fecha.');
+            }
           }
         }
       }
@@ -171,14 +176,17 @@ const ModifyCourseForm: React.FC<ModifyCourseFormProps> = ({
     data.scheduleLength = schedule.length;
     data.description = descriptionFields;
     data.course_id = initialCourseData.course_id;
-
     try {
       const responseCreateCourse = await axios.put('/api/createCourse', data);
       if (responseCreateCourse.status === 200) {
+          const response = responseCreateCourse.data;
+          if (response.error === 'Existen horarios superpuestos en la misma sucursal.') {
+            toast.error('Existen horarios superpuestos en la misma sucursal.');
+            return; // Detener el flujo y mostrar el mensaje de error
+          }
           toast.success('Curso Actualizado con Éxito');
-          const response = responseCreateCourse.data; // Aquí tienes acceso a los datos de la respuesta
-          console.log('Response',response);
           const courseId = response.updateCourse[0].course_id;
+          mutate(`/api/course/${courseId}`);
           route.push(`/instructor/CreateCourse/${courseId}`);
           // const classUpdatePromises = response.createdSchedules.map(async (scheduleEntry) => {
           //   try {
@@ -200,19 +208,21 @@ const ModifyCourseForm: React.FC<ModifyCourseFormProps> = ({
           // // Wait for all the schedule update promises to complete
           // await Promise.all(classUpdatePromises);
       } else {
-          toast.error('Error al actualizar el curso');
+        toast.error('Error al actualizar el curso');
       }
   } catch (error) {
       console.error('Hubo un error en la solicitud:', error);
       toast.error('Error al Actualizar el curso');
   }
   };
-
+  
+  const [newScheduleIndices, setNewScheduleIndices] = useState<number[]>([]);
   const handleAddSchedule = () => {
-    setSchedule([...schedule, { date: '' , start_time: '', end_time: '' }]);
+    const newSchedules = [...schedule, { date: "", start_time: "", end_time: "" }];
+    const newIndex = newSchedules.length - 1;
+    setSchedule(newSchedules);
+    setNewScheduleIndices([...newScheduleIndices, newIndex]);
   };
-
-
   const handleDescriptionChange = (index: number, value: string) => {
     setDescriptionFields((prevFields) => {
       const newFields = [...prevFields];
@@ -233,12 +243,26 @@ const ModifyCourseForm: React.FC<ModifyCourseFormProps> = ({
     });
   };
 
-  const handleRemoveSchedule = (index: number) => {
-    setSchedule((prevSchedule) => {
-      const newSchedule = [...prevSchedule];
-      newSchedule.splice(index, 1); // Elimina el elemento del array usando splice
-      return newSchedule;
-    });
+  const handleRemoveSchedule = async (index: number) => {
+    if (newScheduleIndices.includes(index)) {
+      const newSchedules = [...schedule];
+      newSchedules.splice(index, 1);
+      setSchedule(newSchedules);
+    } else {
+      if(!confirm('¿Está seguro que desea eliminar este horario?, también se eliminará la clase asociada a este horario, si das clic en Aceptar se perderá la clase y no se podrá recuperar.')) return;
+      try {
+        const response = await axios.delete(`/api/class/${schedule[index].class_id}`);
+        if (response.status === 200) {
+          toast.success('Clase eliminada con Éxito');
+          const newSchedules = [...schedule];
+          newSchedules.splice(index, 1);
+          setSchedule(newSchedules);
+        }
+      } catch (error) {
+        console.error('Hubo un error en la solicitud:', error);
+        toast.error('Error al eliminar la Clase');
+      }
+    }
   };
 
   const handleScheduleChange = (index: any, field: any, value: any) => {
@@ -253,9 +277,6 @@ const ModifyCourseForm: React.FC<ModifyCourseFormProps> = ({
     });
   };
 
-
-
- 
   return (
     <Box m="20px">
       <Header title="Editar un Curso" subtitle="Editar Curso" />
@@ -399,7 +420,14 @@ const ModifyCourseForm: React.FC<ModifyCourseFormProps> = ({
                       onBlur={handleBlur}
                       name={`descriptionFields[${index}]`}
                       inputProps={{
-                        maxLength: 100,
+                        maxLength: 70,
+                      }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {`${value.length}/${70}`} 
+                          </InputAdornment>
+                        ),
                       }}
                     />
                       </FormControl>
@@ -500,11 +528,9 @@ const ModifyCourseForm: React.FC<ModifyCourseFormProps> = ({
                     }}
                   />
                   </FormControl>
-                  {/* {index !== 0 && (
                     <IconButton color='error'  onClick={() => handleRemoveSchedule(index)} >
                       <CloseIcon />
                     </IconButton>
-                  )} */}
                 </Box>
               ))}
                 <Button sx={{ mt: 4, mr: 4 }}  variant="outlined" color='warning' onClick={handleAddSchedule}>Agregar horario</Button>
@@ -512,7 +538,7 @@ const ModifyCourseForm: React.FC<ModifyCourseFormProps> = ({
             </Box>
             <Box display="flex" justifyContent="flex-start" mt="50px">
               <Button type="submit" variant="outlined" color="secondary">
-                Update Course
+                Actualizar Curso
               </Button>
             </Box>
           </form>

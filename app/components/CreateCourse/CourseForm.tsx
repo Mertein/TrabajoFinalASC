@@ -1,6 +1,6 @@
 // @ts-nocheck
 'use client'
-import {FormControlLabel,  Box, Button, FormControl, InputLabel, TextField, Select, MenuItem, Checkbox,IconButton, Tooltip} from "@mui/material";
+import {FormControlLabel,  Box, Button, FormControl, InputLabel, TextField, Select, MenuItem, Checkbox,IconButton, Tooltip, InputAdornment} from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {Formik } from "formik";
 import {useState} from "react";
@@ -12,7 +12,6 @@ import { useSession } from "next-auth/react";
 import {Close as CloseIcon} from '@mui/icons-material';
 import { useRouter } from "next/navigation"
 import './style.css'
-
 
 interface CreateCourse {  
   course_name: string;
@@ -39,15 +38,10 @@ interface schedules {
   end_time: '';
 }
 
-
-
-
-
 const CourseForm =  ({categories, branchOffices, class_course}  : any) => {
   const route = useRouter();
   const { data: session } = useSession();
   const [descriptionFields, setDescriptionFields] = useState<string[]>(["", "", "", ""]);
-  
   
   const handleDescriptionChange = (index: number, value: string) => {
     setDescriptionFields((prevFields) => {
@@ -157,19 +151,16 @@ const CourseForm =  ({categories, branchOffices, class_course}  : any) => {
     data.description = descriptionFields;
     // try {
       const responseCreateCourse = await axios.post('/api/createCourse', data);
-      console.log(responseCreateCourse.data)
       if (responseCreateCourse.status === 200) {
         const response = responseCreateCourse.data;
         if (response.error === 'Existen horarios superpuestos en la misma sucursal.') {
           toast.error('Existen horarios superpuestos en la misma sucursal.');
           return; // Detener el flujo y mostrar el mensaje de error
-      }
+        }
           toast.success('Curso Creado con Éxito');
           const courseId = response.createCourse.course_id;
-          console.log(response);
           route.push(`/instructor/CreateCourse/${courseId}`);
       } else {
-          console.log('hola',responseCreateCourse)
           toast.error('Error al crear el curso');
           throw new Error('Error al crear el curso');
 
@@ -472,7 +463,14 @@ const isScheduleAvailable = (scheduleDate: any, startTime: any, endTime: any) =>
                       onBlur={handleBlur}
                       name={`descriptionFields[${index}]`}
                       inputProps={{
-                        maxLength: 100,
+                        maxLength: 70,
+                      }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {`${value.length}/${70}`} 
+                          </InputAdornment>
+                        ),
                       }}
                     />
                       </FormControl>
@@ -661,6 +659,3 @@ end_date_discount: yup
 
 export default CourseForm;
 
-function async(arg0: any, any: unknown) {
-  throw new Error("Function not implemented.");
-}

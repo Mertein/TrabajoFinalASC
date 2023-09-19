@@ -149,7 +149,7 @@ model schedules {
   end_time       String          @db.VarChar
   start_time     String          @db.VarChar
   class_id       Int
-  Renamedclass   class_course    @relation(fields: [class_id], references: [class_id], onDelete: NoAction, onUpdate: NoAction, map: "schedules___fk")
+  Renamedclass   class_course    @relation(fields: [class_id], references: [class_id], onDelete: Cascade, onUpdate: NoAction, map: "schedules___fk")
   branch_offices branch_offices? @relation(fields: [branch_id], references: [branch_id], onDelete: Cascade, onUpdate: NoAction, map: "schedules_branch_offices_branch_id_fk")
 }
 
