@@ -131,24 +131,14 @@ const NoticeAutomatic = () => {
               <Button
                   onClick={handleGoToFaq}
                   variant='outlined'
-                  className='bg-indigo-500  text-white font-bold py-2 px-4 rounded'
-                  sx={{
-                    '&:hover': {
-                      backgroundColor: 'primary.dark', // Fondo de color del botón al pasar el mouse
-                    },
-                  }}
+                  className='bg-indigo-500  text-white font-bold py-2 px-4 rounded hover:bg-indigo-700 hover:text-white'
                 >
                   Administrar Faq
                 </Button>
                 <Button
                   onClick={handleClose}
                   variant='outlined'
-                  className='bg-red-500  text-white font-bold py-2 px-4 rounded'
-                  sx={{
-                    '&:hover': {
-                      backgroundColor: 'primary.dark', // Fondo de color del botón al pasar el mouse
-                    },
-                  }}
+                  className='bg-red-500  text-white font-bold py-2 px-4 rounded hover:bg-red-700 hover:text-white'
                 >
                   Cerrar
                 </Button>

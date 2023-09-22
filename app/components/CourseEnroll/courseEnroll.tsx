@@ -1,6 +1,6 @@
 'use client'
 import React, { ChangeEvent, FormEvent, use, useEffect, useState } from 'react';
-import { Button, Container, Modal, Box, TextField } from '@mui/material';
+import { Button, Container, Modal, Box, TextField, InputAdornment } from '@mui/material';
 import { useRouter, usePathname } from 'next/navigation';
 import axios from 'axios';
 import useSWR, {mutate} from 'swr';
@@ -403,6 +403,17 @@ function ClassCourse({ courses }: any) {
                       onChange={handleClassDescriptionChange}
                       multiline
                       rows={4}
+                      inputProps={{
+                        maxLength: 255,
+                      }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            {`${clase.description_class.length}/${255}`} 
+                          </InputAdornment>
+                        ),
+                      }}
+                      
                     />
                     <Button variant='contained' disabled={!classDescription} className='bg-red-500' color='info'  onClick={() => handleSaveClassDescription(clase.class_id)}>Guardar Descripcion</Button>
                      <div className="flex items-center mb-4">
@@ -467,6 +478,16 @@ function ClassCourse({ courses }: any) {
                         value={fileTitle}
                         onChange={(e) => setFileTitle(e.target.value)}
                         className="mb-0 mr-2 flex"
+                        inputProps={{
+                          maxLength: 100,
+                        }}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {`${fileTitle.length}/${100}`}
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                         <input
                         type="file"
@@ -486,11 +507,11 @@ function ClassCourse({ courses }: any) {
                     </form>
                   </>
                 ) : (
-                  <><h1 className='text-2xl font-serif'>Descripción de la Clase:</h1>
-                    <p className='text-lg'>{clase.description_class}</p>
+                  <><h1 className='text-2xl font-serif font-bold'>Descripción de la Clase:</h1>
+                    <p className='text-lg break-words'>{clase.description_class}</p>
                     {clase.files.length > 0 && (
                       <>
-                        <h6 className="text-2xl font-semibold mt-4">Archivos</h6>
+                        <h6 className="text-2xl font-bold mt-4">Archivos:</h6>
                         {clase.files.map((file : any) => (
                           <Box key={file.id} className="flex flex-col mb-2 text-xl">
                             <span className="mb-1">{file.title}:</span>
