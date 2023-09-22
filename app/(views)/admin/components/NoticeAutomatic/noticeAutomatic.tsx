@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { Modal, Button} from '@mui/material';
+import { Modal} from '@mui/material';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
@@ -38,30 +38,22 @@ const NoticeAutomatic = () => {
   
   useEffect(() => {
     if (!ultimaActualizacion) {
-      return; // Salir si ultimaActualizacion no está definida
+      return; 
     }
-    const unaSemanaEnMillisegundos = 7 * 24 * 60 * 60 * 1000; // Una semana en milisegundos
+    const unaSemanaEnMillisegundos = 7 * 24 * 60 * 60 * 1000; 
     const ahora = new Date().getTime();
-    // Función asincrónica para manejar la lógica de actualización
     const handleUpdate = async () => {
       if (ultimaActualizacion) {
         const ultimaActualizacionLocal = new Date(ultimaActualizacion[0].updated_at).getTime();
-        console.log("Hora actual (ahora):", new Date(ahora).toLocaleString());
-        console.log("Hora de última actualización (ultimaActualizacionLocal):", new Date(ultimaActualizacionLocal).toLocaleString());
-        console.log(ultimaActualizacion[0].updated_at)
   
-        if (ahora - ultimaActualizacionLocal <= unaSemanaEnMillisegundos) {
-          // console.log('No es necesario actualizar');
+        if (ahora - ultimaActualizacionLocal >= unaSemanaEnMillisegundos) {
           setMostrarModal(true);
           try {
             const response = await axios.put('/api/updateTime');
             if (response.status === 200) {
-              // toast.success('Se ha actualizado la fecha de última actualización');
-              console.log('Fecha de última actualización actualizada');
             }
           } catch (error) {
             console.error('Error al actualizar:', error);
-            // toast.error('Error al actualizar la fecha de última actualización');
           }
         }
       }
@@ -95,7 +87,6 @@ const NoticeAutomatic = () => {
         setPreguntaMasPopular(preguntaMasPopular);
         setPreguntaMenosPopular(preguntaMenosPopular);
         setPreguntaMasDisgustada(preguntaMasDisgustada);
-        console.log("Data from API:", data);
       } else {
         console.error('Error al obtener datos desde la API:', response.status);
       }
@@ -108,47 +99,64 @@ const NoticeAutomatic = () => {
   return (
     <div>
       <Modal open={mostrarModal} onClose={handleClose}>
-        <div className=" fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
           <div className="bg-white p-4 rounded-lg w-120 text-black font-serif">
-            <div className="text-2xl font-bold text-center pb-5">
-              Esta es la pregunta en la sección de Feedback que más ha sido reseñada negativamente en la última semana:
-            </div>
-            <div className="text-center">
-              {preguntaMasDisgustada && (
-                <div>
-                  <h5 className="text-lg font-semibold mb-2">Categoría:</h5>
-                  <p className="mb-2">{preguntaMasDisgustada.categoria}</p>
-                  <h5 className="text-lg font-semibold mb-2">Pregunta:</h5>
-                  <p className="mb-2">{preguntaMasDisgustada.pregunta}</p>
-                  <h5 className="text-lg font-semibold mb-2">Respuesta:</h5>
-                  <p className="mb-2">{preguntaMasDisgustada.respuesta}</p>
-                  <h5 className="text-lg font-semibold mb-2">Cantidad de Usuarios a los que no les sirvió la respuesta:</h5>
-                  <p className="mb-2">{preguntaMasDisgustada.dislikes}</p>
-                  <h5 className="text-lg font-semibold mb-2">Comentario dejado por el Usuario:</h5>
-                  <p className="mb-2">{preguntaMasDisgustada.feedback}</p>
+            {preguntaMasDisgustada?.dislikes === 0 ? (
+              <>
+                <div className="text-2xl font-bold text-center pb-5">
+                  No hay preguntas en la sección de Feedback que hayan sido reseñadas negativamente en la última semana.
                 </div>
-              )}
-              <div className="flex flex-col justify-center mt-4">
-              <button
-                  onClick={handleGoToFaq}
-                  className='bg-indigo-500  text-white font-bold py-2 px-4 rounded hover:bg-indigo-700 hover:text-white'
-                >
-                  Administrar Faq
-                </button>
                 <button
                   onClick={handleClose}
-                  className='bg-red-500  text-white font-bold py-2 px-4 rounded hover:bg-red-700 hover:text-white'
+                  className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700 hover:text-white w-full"
                 >
                   Cerrar
                 </button>
-                
-              </div>
-            </div>
+              </>
+            ) : (
+              <>
+                <div className="text-2xl font-bold text-center pb-5">
+                  Esta es la pregunta en la sección de Feedback que más ha sido reseñada negativamente en la última semana:
+                </div>
+                <div className="text-center">
+                  {preguntaMasDisgustada && (
+                    <div>
+                      <h5 className="text-lg font-semibold mb-2">Categoría:</h5>
+                      <p className="mb-2">{preguntaMasDisgustada.categoria}</p>
+                      <h5 className="text-lg font-semibold mb-2">Pregunta:</h5>
+                      <p className="mb-2">{preguntaMasDisgustada.pregunta}</p>
+                      <h5 className="text-lg font-semibold mb-2">Respuesta:</h5>
+                      <p className="mb-2">{preguntaMasDisgustada.respuesta}</p>
+                      <h5 className="text-lg font-semibold mb-2">Cantidad de Usuarios a los que no les sirvió la respuesta:</h5>
+                      <p className="mb-2">{preguntaMasDisgustada.dislikes}</p>
+                      <h5 className="text-lg font-semibold mb-2">Comentario dejado por el Usuario:</h5>
+                      <p className="mb-2">{preguntaMasDisgustada.feedback}</p>
+                    </div>
+                  )}
+                  <div className="flex flex-col justify-center mt-4">
+                    <button
+                      onClick={handleGoToFaq}
+                      className="bg-indigo-500 text-white font-bold py-2 px-4 rounded hover:bg-indigo-700 hover:text-white"
+                    >
+                      Administrar Faq
+                    </button>
+                    <button
+                      onClick={handleClose}
+                      className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700 hover:text-white"
+                    >
+                      Cerrar
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </Modal>
     </div>
   );
+  
+
 }
 
 export default NoticeAutomatic;

@@ -36,7 +36,6 @@ const FaqForm: React.FC<FaqFormProps> = ({ onSubmit, categories, editingFaq, han
     },
     validationSchema,
     onSubmit: (values) => {
-      console.log('values', values)
       if (editingFaq) {
         if(values.newCategory === '' && values.category === '') {
           toast.error('Debe seleccionar una Categoría existente o crear una nueva')
@@ -57,7 +56,6 @@ const FaqForm: React.FC<FaqFormProps> = ({ onSubmit, categories, editingFaq, han
           toast.error('Debe seleccionar una Categoría existente o crear una nueva')
           return;
         }
-        console.log(values.category)
 
         if(values.newCategory.length > 50 && values.category === '') {
           toast.error('La nueva Categoría no puede superar los 50 caracteres.')

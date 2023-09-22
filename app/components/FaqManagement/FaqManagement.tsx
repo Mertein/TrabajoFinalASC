@@ -5,7 +5,7 @@ import FaqForm from './FaqForm';
 import axios from 'axios';
 import useSWR, { mutate } from "swr";
 import toast from 'react-hot-toast';
-import { AlertTitle, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import Header from '../Header/header';
 import FaqGraph from './FaqGraph';
 

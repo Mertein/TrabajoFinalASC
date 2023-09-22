@@ -49,13 +49,13 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   const body = await request.json();
   try {
-    if(body.category === '') {
+    if(body.category === '' || body.category === null) {
       const fieldsPromise = await prisma.faqs.update({
         where: {
           id: Number(body.id),    
         },
         data: {
-            category: body.category,
+            category: body.newCategory,
             question : body.question,
             answer : body.answer,
         }
@@ -73,7 +73,7 @@ export async function PUT(request: Request) {
           id: Number(body.id),    
         },
         data: {
-            category: body.newCategory,
+            category: body.category,
             question : body.question,
             answer : body.answer,
         }
