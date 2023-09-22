@@ -51,7 +51,7 @@ const NoticeAutomatic = () => {
         console.log("Hora de última actualización (ultimaActualizacionLocal):", new Date(ultimaActualizacionLocal).toLocaleString());
         console.log(ultimaActualizacion[0].updated_at)
   
-        if (ahora - ultimaActualizacionLocal >= unaSemanaEnMillisegundos) {
+        if (ahora - ultimaActualizacionLocal <= unaSemanaEnMillisegundos) {
           // console.log('No es necesario actualizar');
           setMostrarModal(true);
           try {
