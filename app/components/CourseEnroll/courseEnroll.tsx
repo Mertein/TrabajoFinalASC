@@ -459,18 +459,16 @@ function ClassCourse({ courses }: any) {
                             </a>
                             {file.class_id === clase.class_id && (
                               <Button
-                                variant="contained"
-                                color="secondary"
-                                className="bg-red-500 text-white px-2 py-1 rounded-md ml-2"
+                                variant="text"
+                                className="bg-red-500 text-white px-2 py-1 rounded-md ml-2 hover:bg-red-700"
                                 onClick={() => handleRemoveFile(clase.class_id, file.id)}
                               >
                                 Eliminar
                               </Button>
                             )}
                             <Button
-                              variant="contained"
-                              color="primary"
-                              className="bg-indigo-500 text-white px-2 py-1 rounded-md ml-2"
+                              variant="text"
+                              className="bg-indigo-500 text-white px-2 py-1 rounded-md ml-2 hover:bg-indigo-700"
                               onClick={() => handleSaveFileTitle(clase.class_id, file.id, file.title)}
                             >
                               Guardar
@@ -510,7 +508,7 @@ function ClassCourse({ courses }: any) {
                         className="mr-2  flex"
                       />
                       <Button
-                        variant="contained"
+                        variant="text"
                         type="submit"
                         className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-400"
                         disabled={!file || !fileTitle}
