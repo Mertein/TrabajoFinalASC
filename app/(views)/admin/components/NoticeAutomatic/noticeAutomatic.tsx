@@ -49,6 +49,7 @@ const NoticeAutomatic = () => {
         const ultimaActualizacionLocal = new Date(ultimaActualizacion[0].updated_at).getTime();
         console.log("Hora actual (ahora):", new Date(ahora).toLocaleString());
         console.log("Hora de última actualización (ultimaActualizacionLocal):", new Date(ultimaActualizacionLocal).toLocaleString());
+        console.log(ultimaActualizacion[0].updated_at)
   
         if (ahora - ultimaActualizacionLocal >= unaSemanaEnMillisegundos) {
           // console.log('No es necesario actualizar');
@@ -95,6 +96,7 @@ const NoticeAutomatic = () => {
         setPreguntaMasPopular(preguntaMasPopular);
         setPreguntaMenosPopular(preguntaMenosPopular);
         setPreguntaMasDisgustada(preguntaMasDisgustada);
+        console.log("Data from API:", data);
       } else {
         console.error('Error al obtener datos desde la API:', response.status);
       }

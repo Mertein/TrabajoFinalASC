@@ -437,9 +437,20 @@ function ClassCourse({ courses }: any) {
                               label="Título del Archivo"
                               variant="filled"
                               size="medium"
+                              fullWidth
                               className="mb-1 mr-2 flex"
                               value={file.title}
                               onChange={(event) => handleFileLabelChange(event, file.id)}
+                              inputProps={{
+                                maxLength: 100,
+                              }}
+                              InputProps={{
+                                endAdornment: (
+                                  <InputAdornment position='end'>
+                                    {`${file.title.length}/${100}`}
+                                  </InputAdornment>
+                                )
+                              }}
                             />
                             <FilePreview file={file} />
 
@@ -470,10 +481,12 @@ function ClassCourse({ courses }: any) {
                     )}
                     <form onSubmit={(e) => handleUploadFiles(e, clase.class_id)}>
                   
-                    <Box className="flex-col p-10 text-end ">
+                    <Box className="flex-col p-10 text-end space-y-2 ">
+                    <div className="flex space-x-2 items-center">
                       <TextField
                         label="Título del Archivo"
                         variant="filled"
+                        fullWidth
                         size="small"
                         value={fileTitle}
                         onChange={(e) => setFileTitle(e.target.value)}
@@ -489,6 +502,8 @@ function ClassCourse({ courses }: any) {
                           ),
                         }}
                       />
+                       </div>
+                       <div className="flex space-x-2 items-center">
                         <input
                         type="file"
                         onChange={handleFileInputChange}
@@ -496,13 +511,13 @@ function ClassCourse({ courses }: any) {
                       />
                       <Button
                         variant="contained"
-                        color="primary"
                         type="submit"
-                        className="bg-indigo-500 text-white px-4 py-2 rounded-md "
+                        className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-400"
                         disabled={!file || !fileTitle}
                       >
                         Subir archivo
                       </Button>
+                      </div>
                     </Box>
                     </form>
                   </>
