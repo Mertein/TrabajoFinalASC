@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button} from '@mui/material';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import toast from 'react-hot-toast';
 
 interface Pregunta {
   faqId: number;
@@ -130,20 +129,18 @@ const NoticeAutomatic = () => {
                 </div>
               )}
               <div className="flex flex-col justify-center mt-4">
-              <Button
+              <button
                   onClick={handleGoToFaq}
-                  variant='outlined'
                   className='bg-indigo-500  text-white font-bold py-2 px-4 rounded hover:bg-indigo-700 hover:text-white'
                 >
                   Administrar Faq
-                </Button>
-                <Button
+                </button>
+                <button
                   onClick={handleClose}
-                  variant='outlined'
                   className='bg-red-500  text-white font-bold py-2 px-4 rounded hover:bg-red-700 hover:text-white'
                 >
                   Cerrar
-                </Button>
+                </button>
                 
               </div>
             </div>

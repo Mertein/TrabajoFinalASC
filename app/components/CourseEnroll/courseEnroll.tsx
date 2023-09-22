@@ -458,21 +458,19 @@ function ClassCourse({ courses }: any) {
                                Descargar {file.name}
                             </a>
                             {file.class_id === clase.class_id && (
-                              <Button
-                                variant="contained"
+                              <button
                                 className="bg-red-500 text-white px-2 py-1 rounded-md ml-2 hover:bg-red-700"
                                 onClick={() => handleRemoveFile(clase.class_id, file.id)}
                               >
                                 Eliminar
-                              </Button>
+                              </button>
                             )}
-                            <Button
-                              variant="contained"
+                            <button
                               className="bg-indigo-500 text-white px-2 py-1 rounded-md ml-2 hover:bg-indigo-700"
                               onClick={() => handleSaveFileTitle(clase.class_id, file.id, file.title)}
                             >
                               Guardar
-                            </Button>
+                            </button>
                           </Box>
                         ))}
                     </>
@@ -507,14 +505,13 @@ function ClassCourse({ courses }: any) {
                         onChange={handleFileInputChange}
                         className="mr-2  flex"
                       />
-                      <Button
-                        variant="contained"
+                      <button
                         type="submit"
                         className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-400"
                         disabled={!file || !fileTitle}
                       >
                         Subir archivo
-                      </Button>
+                      </button>
                       </div>
                     </Box>
                     </form>
