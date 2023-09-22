@@ -47,8 +47,8 @@ const NoticeAutomatic = () => {
     const handleUpdate = async () => {
       if (ultimaActualizacion) {
         const ultimaActualizacionLocal = new Date(ultimaActualizacion[0].updated_at).getTime();
-        // console.log("Hora actual (ahora):", new Date(ahora).toLocaleString());
-        // console.log("Hora de última actualización (ultimaActualizacionLocal):", new Date(ultimaActualizacionLocal).toLocaleString());
+        console.log("Hora actual (ahora):", new Date(ahora).toLocaleString());
+        console.log("Hora de última actualización (ultimaActualizacionLocal):", new Date(ultimaActualizacionLocal).toLocaleString());
   
         if (ahora - ultimaActualizacionLocal >= unaSemanaEnMillisegundos) {
           // console.log('No es necesario actualizar');
@@ -131,9 +131,8 @@ const NoticeAutomatic = () => {
               <Button
                   onClick={handleGoToFaq}
                   variant='outlined'
-                  className='bg-indigo-500 hover:bg-primary-dark text-white font-bold py-2 px-4 rounded'
+                  className='bg-indigo-500  text-white font-bold py-2 px-4 rounded'
                   sx={{
-                    backgroundColor: 'primary.main', // Fondo de color del botón en estado normal
                     '&:hover': {
                       backgroundColor: 'primary.dark', // Fondo de color del botón al pasar el mouse
                     },
@@ -144,9 +143,8 @@ const NoticeAutomatic = () => {
                 <Button
                   onClick={handleClose}
                   variant='outlined'
-                  className='bg-red-500 hover:bg-primary-dark text-white font-bold py-2 px-4 rounded'
+                  className='bg-red-500  text-white font-bold py-2 px-4 rounded'
                   sx={{
-                    backgroundColor: 'primary.main', // Fondo de color del botón en estado normal
                     '&:hover': {
                       backgroundColor: 'primary.dark', // Fondo de color del botón al pasar el mouse
                     },
