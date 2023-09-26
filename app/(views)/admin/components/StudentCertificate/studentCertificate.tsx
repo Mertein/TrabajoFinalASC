@@ -18,11 +18,21 @@ const StatusBadge = styled(Typography)(({ theme, completed, courseended }: any) 
   display: 'inline-block',
   padding: theme.spacing(0.5, 1),
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: completed >= 7 && courseended
-    ? theme.palette.success.main
-    : completed >= 7 && !courseended
-    ? theme.palette.warning.main
-    : theme.palette.error.main,
+  backgroundColor: (() => {
+    if (completed >= 7 && courseended) {
+      return theme.palette.success.main;
+    } else if (completed >= 7 && !courseended) {
+      return theme.palette.warning.main;
+    } else if (completed < 7 && completed > 0 && courseended) {
+      return theme.palette.error.main;
+    } else if (completed == 0 && courseended) {
+      return theme.palette.grey[500];
+    } else if (completed == 0 && !courseended) {
+      return theme.palette.warning.main;
+    } else {
+      return theme.palette.error.main;
+    }
+  })(),
   color: theme.palette.common.white,
 }));
 
@@ -32,9 +42,12 @@ function StudentCertificate({data} : any) {
   const [selectedCertificate, setSelectedCertificate] = useState<string | null>(null);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [isLoading, setIsLoading] = useState(false);
+
   const  handleGrantCertificate = (enrollmentId: any) => {
     router.push(`/admin/certificate/studentCertificate/${enrollmentId}`)
   };
+  
   const columns: GridColDef[] = [
     { field: `id`, headerName: 'Fila ID', width: 70, flex: 1 },
     { field: 'course_id', headerName: 'Curso ID', width: 70, flex: 1 },
@@ -85,7 +98,7 @@ function StudentCertificate({data} : any) {
       valueGetter: (params: GridValueGetterParams) =>
         `${params.row.usser.dni}`,
     },
-    { field: 'completion_status', headerName: 'Estado del Alunno en el Curso', description: 'Estado del Alunno en el Curso', width:180,  renderCell: renderCompletionStatus, valueGetter: (params: GridValueGetterParams) => `${params.row.grade.length > 0  ? params.row.grade[0].value : 0}`
+    { field: 'completion_status', headerName: 'Estado del Alunno en el Curso', description: 'Estado del Alumno en el Curso', width:180,  renderCell: renderCompletionStatus, valueGetter: (params: GridValueGetterParams) => `${params.row.grade.length > 0  ? params.row.grade[0].value : 0}`
     },
     {
       field: 'certificate_url',
@@ -114,14 +127,14 @@ function StudentCertificate({data} : any) {
               <ApprovalRoundedIcon />
             </IconButton>
 
-            <IconButton  color="error" disabled={params.row.files[0] ? false : true} onClick={() => handleDeleteCertificate(params.row.files[0])}>
+            <IconButton className={` ${isLoading ? 'cursor-not-allowed' : ''}`} color='error' disabled={isLoading || params.row.files[0] ? false : true} onClick={() => handleDeleteCertificate(params.row.files[0])}>
               <Delete />
             </IconButton>
             </>
           );
         } else {
           return (
-            <IconButton  color="error" disabled={params.row.files[0] ? false : true} onClick={() => handleDeleteCertificate(params.row.files[0])}>
+            <IconButton color="error" disabled={params.row.files[0] ? false : true} onClick={() => handleDeleteCertificate(params.row.files[0])}>
             <Delete />
           </IconButton>
           )
@@ -144,13 +157,16 @@ function StudentCertificate({data} : any) {
       const endDateUTC = new Date(endDate.getTime() + endDate.getTimezoneOffset() * 60000);
   
       const courseHasEnded = hasCourseEnded(endDateUTC);
-  
       if (completionStatus >= 7 && courseHasEnded) {
-        return <StatusBadge completed={completionStatus} courseended={courseHasEnded.toString()}>Aprobado</StatusBadge>;
+        return <StatusBadge completed={completionStatus} courseended={courseHasEnded}>Aprobado</StatusBadge>;
       } else if (completionStatus >= 7 && !courseHasEnded) {
-        return <StatusBadge completed={completionStatus} courseended={courseHasEnded.toString()}>El curso sigue dictándose</StatusBadge>;
-      } else if (completionStatus < 7 && courseHasEnded) {
-        return <StatusBadge completed={completionStatus} courseended={courseHasEnded.toString()}>Desaprobado</StatusBadge>;
+        return <StatusBadge completed={completionStatus} courseended={false}>El curso sigue dictándose</StatusBadge>;
+      } else if (completionStatus < 7 && completionStatus > 0 && courseHasEnded) {
+        return <StatusBadge completed={completionStatus} courseended={true}>Desaprobado</StatusBadge>;
+      } else if (completionStatus == 0 && courseHasEnded) {
+        return <StatusBadge completed={completionStatus} courseended={true}>No tiene Nota</StatusBadge>;
+      } else if (completionStatus == 0 && !courseHasEnded) {
+        return <StatusBadge completed={completionStatus} courseended={false}>El curso sigue dictándose</StatusBadge>;
       }
         else {
         return <StatusBadge completed={completionStatus} courseended={courseHasEnded.toString()}>Desaprobado</StatusBadge>;
@@ -160,7 +176,7 @@ function StudentCertificate({data} : any) {
   }
 
   function renderCertificate(params: GridCellParams) {
-    if(!data[params.id].files[0]) return <StatusBadge completed={true} courseEnded={false}>No tiene certificado</StatusBadge>;
+    if(!data[params.id].files[0]) return <StatusBadge completed={0} courseended={true}>No tiene certificado</StatusBadge>;
     const certificateUrl: string | null = params.value as string | null || `/Users/Certificates/${data[params.id].files[0].name}`;
     if (!certificateUrl) {
       return <></>;
@@ -180,14 +196,19 @@ function StudentCertificate({data} : any) {
   const handleDeleteCertificate = async (params: GridCellParams) => {
     const confirmed = window.confirm('¿Estás seguro de que desea eliminar el Certificado al Estudiante?');
     if (confirmed) {
+      setIsLoading(true);
       try {
         const response = await axios.delete(`/api/certificate/grantStudentCertificate/${params.id}`);
         if(response) {
           toast.success('Se elimino el Certificado correctamente');
+          router.refresh();
         }
       } catch (error) {
         toast.error('No se pudo Eliminar el Certificado');
         console.error('Error al eliminar el archivo:', error);
+      } finally {
+        mutate(`/api/certificate/grantStudentCertificate/${params.id}`);
+        setIsLoading(false);
       }
     }
 }

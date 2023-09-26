@@ -23,7 +23,7 @@ const CertificateGenerator = ({params}: any) => {
   const [src, setSrc] = useState<string>("");
   const fetcher = (arg: any, ...args: any) => fetch(arg, ...args).then(res => res.json())
   const { data, error, isLoading } = useSWR(`/api/enrollmentCourseID/${params.id}`, fetcher)
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (data && data.course.usser.files[0]?.path !== '') {
         const pathWithoutPublic = data.course.usser.files[0]?.path.replace('public', '');
@@ -45,7 +45,7 @@ const CertificateGenerator = ({params}: any) => {
   console.log(data);
 
   const generate = () => {
-    QRCode.toDataURL('localhost:3000/certificateValidate/' + params.id).then(setSrc)
+    QRCode.toDataURL(`${process.env.NEXTAUTH_URL}/certificateValidate/` + params.id).then(setSrc)
   }
   const startDateTimestamp = data?.course?.start_date;
   const startDate = new Date(startDateTimestamp);

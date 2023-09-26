@@ -14,6 +14,7 @@ import { mutate } from 'swr';
 
 const Certificate = ({ name, course, dateOfConductStart, dateOfConductEnd, signature, signatureDetails,  url, enrollmentId, instructor, src, category} : any) => {
   const certificateRef = useRef(null);
+  const [isLoading ,setIsLoading] = useState(false);
   const [certificatePdf, setCertificatePdf] = useState('');
   const formattedStart = dateOfConductStart
   ? moment(dateOfConductStart).locale('es').format('dddd DD [de] MMMM ')
@@ -23,8 +24,6 @@ const Certificate = ({ name, course, dateOfConductStart, dateOfConductEnd, signa
   const formattedEnd = dateOfConductEnd
     ? moment(dateOfConductEnd).locale('es').format('dddd DD [de] MMMM [de] YYYY')
     : '-';
-    console.log(formattedStart)
-    console.log(formattedEnd)
     const generateUniqueFileName = (type: string) => {
       const timestamp = Date.now();
       return `certificate_${timestamp}.${type}`;
@@ -32,7 +31,6 @@ const Certificate = ({ name, course, dateOfConductStart, dateOfConductEnd, signa
 
   const handleDownloadCertificate = () => {
     alert('Descargando certificado');
-    
     if(certificateRef.current === null) {
       return console.log('No se pudo descargar el certificado');
     }
@@ -49,6 +47,7 @@ const Certificate = ({ name, course, dateOfConductStart, dateOfConductEnd, signa
   const handleGrant = async (e : any) => {
     e.preventDefault();
     if(certificatePdf === '') return console.log('No se pudo descargar el certificado');
+    setIsLoading(true);
     try {
       const canvas = await html2canvas(certificateRef.current!, {
         backgroundColor: null,
@@ -77,8 +76,10 @@ const Certificate = ({ name, course, dateOfConductStart, dateOfConductEnd, signa
         if (response.ok) {
           // Show a success notification or message here
           toast.success('Certificado Otorgado con exito.');
-          mutate(`/api/enrollmentCourseID/${enrollmentId}`)
-          route.push('/admin/certificate/studentCertificate')
+          route.push('/admin/certificate/studentCertificate');
+          setTimeout(() => {
+            route.refresh();
+          }, 1000);
         } else {
           throw new Error("Hubo un error al otrorgar el certificado.");
         }
@@ -89,6 +90,8 @@ const Certificate = ({ name, course, dateOfConductStart, dateOfConductEnd, signa
       console.error(error);
       // Show an error notification or message here
       toast.error('Hubo un error al otrorgar el certificado.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -138,8 +141,8 @@ const Certificate = ({ name, course, dateOfConductStart, dateOfConductEnd, signa
          
         </div>
       </div>
-      <Button  style={{ marginTop: ' 3rem' }} onClick={handleDownloadCertificate} variant='contained' color='success' className="border-2 border-black  w-full  bg-green-700 p-4 shadow-md transition-all duration-300 cursor-pointer text-white hover:bg-black " type='button'>Descargar PDF</Button>
-      <Button  style={{ marginTop: ' 3rem' }} onClick={handleDownloadCertificate} variant='contained' color='success' className="border-2 border-black  w-full  bg-green-700 p-4 shadow-md transition-all duration-300 cursor-pointer text-white hover:bg-black" disabled={!certificatePdf} type='submit'>Otorgar Certificado</Button>
+      <button  style={{ marginTop: ' 3rem' }} onClick={handleDownloadCertificate}  className="border-2 border-black  w-full  bg-green-500 p-4 shadow-md transition-all duration-300 cursor-pointer text-white hover:bg-green-700 " type='button'>Descargar PDF</button>
+      <button  style={{ marginTop: ' 3rem' }} className="border-2 border-black  w-full  bg-blue-500 p-4 shadow-md transition-all duration-300 cursor-pointer text-white hover:bg-blue-700  disabled:bg-gray-400 disabled:cursor-not-allowed" disabled={!certificatePdf || isLoading} type='submit'>Otorgar Certificado</button>
     </form>
   </>
   )
