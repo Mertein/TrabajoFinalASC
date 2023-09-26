@@ -7,14 +7,7 @@ export async function GET(request: Request) {
   const user_id = session?.user?.user_id;
   try {
     const fieldsPromise = await prisma.user_interactions.findMany({
-      where: {
-        user_id: user_id,
-      },
-      select: {
-        id: true,
-        faq_id: true,
-        isLike: true,
-        feedback: true,
+      include: {
         usser: true,
         faqs: true,
       },

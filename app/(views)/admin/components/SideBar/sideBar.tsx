@@ -280,7 +280,7 @@ const Sidebar = ({user}: any) => {
               setSelected={setSelected}
             />
             <Item
-              title="Adminsitrar Feedbacks"
+              title="Ver Feedbacks"
               to="/admin/feedbacks"
               icon={ <FeedbackIcon/>}
               selected={selected}

@@ -27,7 +27,6 @@ function Feedback() {
   const [feedbacks, setFeedbacks] = useState<FeedbackItem[]>([]);
   const [selectedFeedback, setSelectedFeedback] = useState<FeedbackItem | null>(null);
 
-
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [orderBy, setOrderBy] = useState<string>('isLike'); //// Inicialmente, ordena por la columna "¿Le sirvió?"
 
