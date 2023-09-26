@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast';
 import 'video.js/dist/video-js.css';
 import FilePreview from '../FilePreview/FilePreview';
 import { useSession } from 'next-auth/react';
+import { set } from 'date-fns';
 
 interface Class {
   class_id: number;
@@ -50,6 +51,7 @@ function ClassCourse({ courses }: any) {
   const [fileTitle, setFileTitle] = useState('');
   const [classDescription, setClassDescription] = useState('');
   const [classCount, setClassCount] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (Classes) {
@@ -208,10 +210,9 @@ function ClassCourse({ courses }: any) {
   };
 
   const handleRemoveFile = async (classId: number, fileId: number) => {
-    const confirmed = window.confirm('¿Estás seguro de eliminar este archivo?');
-    console.log('File',fileId)
-    console.log('Clase',classId)
+    const confirmed = window.confirm('¿Estás seguro de eliminar este archivo?');    
     if (confirmed) {
+     setLoading(true);
       try {
         const response = await axios.delete(`/api/class/${classId}/files/${fileId}`);
         if(response) {
@@ -221,6 +222,8 @@ function ClassCourse({ courses }: any) {
       } catch (error) {
         toast.error('No se pudo Eliminar el Archivo');
         console.error('Error al eliminar el archivo:', error);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -228,6 +231,7 @@ function ClassCourse({ courses }: any) {
   const handleUploadFiles = async (e: FormEvent<HTMLFormElement>, class_id: string | Blob) => {
     e.preventDefault();
     if (!file) return;
+    setLoading(true);
     try {
       const data = new FormData();
       data.set("file", file);
@@ -237,24 +241,20 @@ function ClassCourse({ courses }: any) {
         method: "POST",
         body: data,
       });
-
-      console.log(response);
       if(response) {
         mutate(`/api/class/${courses.course_id}`);
         toast.success('Se subio el archivo correctamente');
       }
-      
       setFileTitle('');
-
     } catch (error) {
       toast.error('Error al agregar los archivos a la clase, faltan los archivos');
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   const handleSaveFileTitle = (classId: number, fileId: number, title: string) => {
-    // Realiza la llamada a la API para guardar los cambios del título del archivo
-    // Puedes utilizar axios u otra librería para realizar la solicitud
-    // Ejemplo de solicitud con axios:
+    setLoading(true);      
     axios
       .put(`/api/class/`, 
       {
@@ -270,6 +270,9 @@ function ClassCourse({ courses }: any) {
       })
       .catch((error) => {
         toast.error('Error al guardar los cambios del título:', error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -288,9 +291,7 @@ function ClassCourse({ courses }: any) {
   };
   
   const handleSaveClassDescription = (classId: number) => {
-    // Realiza la llamada a la API para guardar los cambios en la descripción de la clase
-    // Puedes utilizar axios u otra librería para realizar la solicitud
-    // Ejemplo de solicitud con axios:
+    setLoading(true);
     axios
       .put(`/api/class`, { description_class: classDescription, classId })
       .then((response) => {
@@ -301,6 +302,8 @@ function ClassCourse({ courses }: any) {
       .catch((error) => {
         console.error('Error al guardar los cambios de la descripción:', error);
         toast.error('Error al guardar los cambios de la descripción');
+      }).finally(() => {
+        setLoading(false);
       });
   };
 
@@ -415,7 +418,7 @@ function ClassCourse({ courses }: any) {
                       }}
                       
                     />
-                    <Button variant='contained' disabled={!classDescription} className='bg-red-500' color='info'  onClick={() => handleSaveClassDescription(clase.class_id)}>Guardar Descripcion</Button>
+                    <Button variant='contained' disabled={!classDescription || loading} className='bg-red-500' color='info'  onClick={() => handleSaveClassDescription(clase.class_id)}>Guardar Descripcion</Button>
                      <div className="flex items-center mb-4">
                       <input
                         type="checkbox"
@@ -459,15 +462,17 @@ function ClassCourse({ courses }: any) {
                             </a>
                             {file.class_id === clase.class_id && (
                               <button
-                                className="bg-red-500 text-white px-2 py-1 rounded-md ml-2 hover:bg-red-700"
+                                className="bg-red-500 text-white px-2 py-1 rounded-md ml-2 hover:bg-red-700  disabled:bg-gray-400 disabled:cursor-not-allowed"
                                 onClick={() => handleRemoveFile(clase.class_id, file.id)}
+                                disabled={loading}
                               >
                                 Eliminar
                               </button>
                             )}
                             <button
-                              className="bg-indigo-500 text-white px-2 py-1 rounded-md ml-2 hover:bg-indigo-700"
+                              className="bg-indigo-500 text-white px-2 py-1 rounded-md ml-2 hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                               onClick={() => handleSaveFileTitle(clase.class_id, file.id, file.title)}
+                              disabled={loading}
                             >
                               Guardar
                             </button>
@@ -507,8 +512,8 @@ function ClassCourse({ courses }: any) {
                       />
                       <button
                         type="submit"
-                        className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-400"
-                        disabled={!file || !fileTitle}
+                        className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        disabled={!file || !fileTitle || loading}
                       >
                         Subir archivo
                       </button>

@@ -24,6 +24,25 @@ const getAudit = async () => {
       prisma.user_rol_hist.findMany(),
     ]);
 
+    const removeDecimalProperties = (item: { [x: string]: any; })  => {
+      for (const key in item) {
+        if (typeof item[key] === "object" && item[key] !== null && "toNumber" in item[key]) {
+          delete item[key];
+        }
+      }
+    };
+
+    // paymentHist.forEach(removeDecimalProperties);
+    // branchOfficeHist.forEach(removeDecimalProperties);
+    // categoryHist.forEach(removeDecimalProperties);
+    // courseHist.forEach(removeDecimalProperties);
+    // enrollmentHist.forEach(removeDecimalProperties);
+    // fileHist.forEach(removeDecimalProperties);
+    // gradeHist.forEach(removeDecimalProperties);
+    // schedulesHist.forEach(removeDecimalProperties);
+    // userRolHist.forEach(removeDecimalProperties);
+
+
     const fields = {
       branchOfficeHist,
       categoryHist,
@@ -36,7 +55,6 @@ const getAudit = async () => {
       userRolHist,
     };
 
-    console.log('fields', fields);
     return fields;
   } catch (error) {
     console.error(error);

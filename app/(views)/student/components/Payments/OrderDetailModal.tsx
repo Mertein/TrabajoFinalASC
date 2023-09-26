@@ -64,6 +64,7 @@ export default function OrderDetailModal({ order, onClose } : any ) {
                       <TableCell style={styles.tableCell}>Producto</TableCell>
                       <TableCell style={styles.tableCell}>Cantidad</TableCell>
                       <TableCell style={styles.tableCell}>Precio Unitario</TableCell>
+                      <TableCell style={styles.tableCell}>Porcentaje de Descuento</TableCell>
                       <TableCell style={styles.tableCell}>Total</TableCell>
                     </TableRow>
                   </TableHead>
@@ -72,7 +73,8 @@ export default function OrderDetailModal({ order, onClose } : any ) {
                         <TableCell style={styles.tableCell}>{order.enrollment_course.course.course_name}</TableCell>
                         <TableCell style={styles.tableCell}>1</TableCell>
                         <TableCell style={styles.tableCell}>${order.enrollment_course.course.isFree === false ? order.enrollment_course.course.price_course : 'Gratis'}</TableCell>
-                        <TableCell style={styles.tableCell}>${order.enrollment_course.course.isFree === false ? order.enrollment_course.course.price_course : '--------'}</TableCell>
+                        <TableCell style={styles.tableCell}>{order.enrollment_course.course.isFree === false ? order.enrollment_course.course.apply_discount === true ? order.enrollment_course.course.discount_percentage : 0 : '--------'}%</TableCell>
+                        <TableCell style={styles.tableCell}>${order.enrollment_course.course.isFree === false ? order.enrollment_course.course.apply_discount === true ? order.enrollment_course.course.price_course - (order.enrollment_course.course.price_course * order.enrollment_course.course.discount_percentage) / 100 : order.enrollment_course.course.price_course : '--------'}</TableCell>
                       </TableRow>
                   </TableBody>
                 </Table>

@@ -222,7 +222,7 @@ export default function OrdersPage() {
         // Tabla de conceptos
         const conceptosData = [
           ["Cantidad", "Código", "Descripción", "% Bonificación", "Precio Unitario", "Subtotal"],
-          [`1,00`,"0", selected.enrollment_course.course.course_name, `${selected.enrollment_course.course.apply_discount === true ? selected.enrollment_course.course.discount_percentage : 0}`, `${selected.enrollment_course.course.price_course}`, `${selected.enrollment_course.course.apply_discount === true ? selected.enrollment_course.course.price_course - selected.enrollment_course.course.discount_percentage : selected.enrollment_course.course.price_course > 0 ? selected.enrollment_course.course.price_course: 0}`],
+          [`1,00`,"0", selected.enrollment_course.course.course_name, `${selected.enrollment_course.course.apply_discount === true ? selected.enrollment_course.course.discount_percentage : 0}`, `${selected.enrollment_course.course.price_course}`, `${selected.enrollment_course.course.apply_discount === true ? selected.enrollment_course.course.price_course - (selected.enrollment_course.course.price_course * selected.enrollment_course.course.discount_percentage) / 100  : selected.enrollment_course.course.price_course > 0 ? selected.enrollment_course.course.price_course: 0}`],
         ];
 
         const tableOptions  = {
@@ -242,9 +242,9 @@ export default function OrdersPage() {
         doc.autoTable(tableOptions);
         
         // Total
-        doc.text(`Subtotal $ ${selected.enrollment_course.course.apply_discount === true ? selected.enrollment_course.course.price_course - selected.enrollment_course.course.discount_percentage : selected.enrollment_course.course.price_course > 0 ? selected.enrollment_course.course.price_course: 0}`, 370, (doc as any).autoTable.previous.finalY + 10);
-        doc.text(`Total Descuento $ ${selected.enrollment_course.course.apply_discount === true ? selected.enrollment_course.course.discount_percentage : 0}`, 370, (doc as any).autoTable.previous.finalY + 20);
-        doc.text(`TOTAL $ ${selected.enrollment_course.course.apply_discount === true ? selected.enrollment_course.course.price_course - selected.enrollment_course.course.discount_percentage : selected.enrollment_course.course.price_course > 0 ? selected.enrollment_course.course.price_course: 0}`, 370, (doc as any).autoTable.previous.finalY + 30);
+        doc.text(`Subtotal $ ${selected.enrollment_course.course.apply_discount === true ? selected.enrollment_course.course.price_course - (selected.enrollment_course.course.price_course * selected.enrollment_course.course.discount_percentage) / 100 : selected.enrollment_course.course.price_course > 0 ? selected.enrollment_course.course.price_course: 0}`, 370, (doc as any).autoTable.previous.finalY + 10);
+        doc.text(`Total Descuento $ ${selected.enrollment_course.course.apply_discount === true ? (selected.enrollment_course.course.price_course * selected.enrollment_course.course.discount_percentage) / 100 : 0}`, 370, (doc as any).autoTable.previous.finalY + 20);
+        doc.text(`TOTAL $ ${selected.enrollment_course.course.apply_discount === true ? selected.enrollment_course.course.price_course - (selected.enrollment_course.course.price_course * selected.enrollment_course.course.discount_percentage) / 100  : selected.enrollment_course.course.price_course > 0 ? selected.enrollment_course.course.price_course: 0}`, 370, (doc as any).autoTable.previous.finalY + 30);
     
         // Observaciones
         doc.setFillColor(240, 240, 240); // Color gris claro

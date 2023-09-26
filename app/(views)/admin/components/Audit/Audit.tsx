@@ -1,12 +1,10 @@
 'use client'
-import { useState } from "react";
-import { DataGrid, GridColDef, GridRowParams, GridToolbar, GridValueGetterParams} from '@mui/x-data-grid';
-import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, Table, TableBody, TableCell, TableRow, TextField, Typography} from '@mui/material';
+import { useEffect, useState } from "react";
+import { DataGrid, GridColDef, GridToolbar, GridValueGetterParams} from '@mui/x-data-grid';
+import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, Typography} from '@mui/material';
 import {useTheme} from '@mui/system';
 import Header from '@/app/components/Header/header';
 import { tokens } from '@/app/theme';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { Close as CloseIcon } from "@mui/icons-material";
 import { format } from "date-fns";
 
@@ -27,7 +25,6 @@ function Auditoria({ data }: { data: any }) {
     { value: "paymentHist", label: "Historial de Pagos"},
     { value: "schedulesHist", label: "Historial de Horarios" },
     { value: "userRolHist", label: "Historial de Roles de Usuario"},
-    // ... (agregar más opciones si es necesario)
   ];
 
   const handleRowClick = (params: any) => {
@@ -48,30 +45,28 @@ function Auditoria({ data }: { data: any }) {
     p: 4,
   };
   
+
+  useEffect (() => {
+    console.log('data', data)
+    console.log('filteredData', filteredData)
+  }, [filteredData])
+  
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const { data: session, status } = useSession() 
-
-  if (status === "unauthenticated") {
-    alert("No has iniciado sesión");
-    router.push('/')
-  }
-
   const idFieldMapping: Record<string, string> = {
     courseHist: 'course_id_hist',
     branchOfficeHist: 'branch_id_hist',
-    categoryHist: 'category_id',
-    enrollmentHist: 'enrollment_id',
+    categoryHist: 'category_id_hist',
+    enrollmentHist: 'enrollment_id_hist',
     fileHist: 'id_hist',
     gradeHist: 'grade_id_hist',
     paymentHist: 'payment_id_hist',
     schedulesHist: 'schedule_id_hist',
-    userRolHist: 'user_id_hist',
+    userRolHist: 'user_rol_id',
   };
 
   const getColumnsForTable = (table: string): GridColDef[] => {
@@ -79,6 +74,7 @@ function Auditoria({ data }: { data: any }) {
     switch (table) {
       case "courseHist":
         return [
+          { field: 'course_id_hist', headerName: 'ID', width: 100 },
           { field: 'course_id', headerName: 'ID de Curso', width: 100 },
           { field: 'course_name', headerName: 'Nombre del Curso', flex: 1 },
           { field: 'c_operation', headerName: 'Accion', flex: 1 },
@@ -86,55 +82,60 @@ function Auditoria({ data }: { data: any }) {
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
           { field: 'start_date', headerName: 'Fecha Inicio', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.start_date), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'end_date', headerName: 'Fecha Fin', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.end_date), 'HH:mm:ss  dd/MM/yyyy'),},
-          // ... (otras columnas específicas para cursos)
         ];
       case "categoryHist":
         return [
+          {field : 'category_id_hist', headerName: 'ID', width: 100},
           { field: 'category_id', headerName: 'ID de Categoría', width: 100 },
           { field: 'category_name', headerName: 'Nombre de la Categoría', flex: 1 },
           { field: 'c_operation', headerName: 'Accion', flex: 1 },
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
-          // ... (otras columnas específicas para categorías)
         ];
 
       case "branchOfficeHist":
         return [
-          { field: 'branch_id_hist', headerName: 'ID de Sucursal', width: 100 },
+          {field : 'branch_id_hist', headerName: 'ID', width: 100}, 
+          { field: 'branch_id', headerName: 'ID de Sucursal', width: 100 },
           { field: 'branch_name', headerName: 'Nombre de la Sucursal', flex: 1 },
           { field: 'c_operation', headerName: 'Accion', flex: 1 },
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
-          // ... (otras columnas específicas para sucursales)
         ];
       case "enrollmentHist":
         return [
+          {field : 'enrollment_id_hist', headerName: 'ID', width: 100},
           { field: 'enrollment_id', headerName: 'ID de Inscripción', width: 100 },
           { field: 'c_operation', headerName: 'Accion', flex: 1 },
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
-          // ... (otras columnas específicas para inscripciones)
+          {field: 'completion_status', headerName: 'Completado', flex: 1},
+          {field: 'payment_status', headerName: 'Estado de Pago', flex: 1},
+          {field: 'enrollment_date', headerName: 'Fecha de Inscripción', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.enrollment_date), 'HH:mm:ss  dd/MM/yyyy'),},
+          {field: 'user_id', headerName: 'ID de Usuario', flex: 1},
+          {field: 'course_id', headerName: 'ID de Curso', flex: 1},
+          {field: 'feedback', headerName: 'Feedback', flex: 1},
         ];
       case "fileHist":
         return [
           { field: 'id_hist', headerName: 'ID de Archivo', width: 100 },
-          { field: 'file_name', headerName: 'Nombre del Archivo', flex: 1 },
+          { field: 'name', headerName: 'Nombre del Archivo', flex: 1 },
           { field: 'c_operation', headerName: 'Accion', flex: 1 },
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
-          // ... (otras columnas específicas para archivos)
         ];
       case "gradeHist":
         return [
+          {field : 'grade_id_hist', headerName: 'ID', width: 100},
           { field: 'grade_id', headerName: 'ID de Calificación', width: 100 },
           { field: 'grade', headerName: 'Calificación', flex: 1 },
           { field: 'c_operation', headerName: 'Accion', flex: 1 },
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
-          // ... (otras columnas específicas para calificaciones)
         ];
       case "paymentHist":
         return [
+          {field : 'payment_id_hist', headerName: 'ID', width: 100},
           { field: 'payment_id', headerName: 'ID de Pago', width: 100 },
           { field: 'payment_date', headerName: 'Fecha de Pago', flex: 1 },
           { field: 'payment_amount', headerName: 'Monto', flex: 1 },
@@ -143,23 +144,22 @@ function Auditoria({ data }: { data: any }) {
           { field: 'c_operation', headerName: 'Accion', flex: 1 },
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
-          // ... (otras columnas específicas para pagos)
         ];
       case "schedulesHist":
         return [
+          {field : 'schedule_id_hist', headerName: 'ID', width: 100},
           { field: 'schedule_id', headerName: 'ID de Horario', width: 100 },
-          { field: 'schedule_start_time', headerName: 'Hora de Inicio', flex: 1 },
-          { field: 'schedule_end_time', headerName: 'Hora de Fin', flex: 1 },
+          { field: 'start_time', headerName: 'Hora de Inicio', flex: 1 },
+          { field: 'end_time', headerName: 'Hora de Fin', flex: 1 },
           { field: 'c_operation', headerName: 'Accion', flex: 1 },
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
-          // ... (otras columnas específicas para horarios)
         ];
       case "userRolHist":
         return [
+          {field : 'user_rol_id', headerName: 'ID', width: 100},
           { field: 'user_id_hist', headerName: 'ID de Usuario', width: 100 },
           { field: 'rol_id_hist', headerName: 'ID de Rol', width: 100 },
-          { field: 'rol_name', headerName: 'Nombre de Rol', flex: 1 },
           { field: 'c_operation', headerName: 'Accion', flex: 1 },
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
@@ -259,11 +259,11 @@ function Auditoria({ data }: { data: any }) {
           rows={filteredData}
           columns={columns}
           slots={{
-            toolbar: GridToolbar, // Cambia 'Toolbar' a 'toolbar'
+            toolbar: GridToolbar,
           }}
           getRowId={(row) => row[idFieldMapping[selectedTable]]}
           autoHeight={true}
-          onRowClick={handleRowClick} // Agregar el manejador de clic en fila
+          onRowClick={handleRowClick} 
         />
       </Box>
     </Box>

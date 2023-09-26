@@ -25,6 +25,7 @@ const RegisterModal= () => {
   const { 
     register, 
     handleSubmit,
+    reset,
     formState: {
       errors,
     },
@@ -53,6 +54,7 @@ const RegisterModal= () => {
       toast.success('Registrado!');
       registerModal.onClose();
       loginModal.onOpen();
+      reset();
     })
     .catch((error) => {
       toast.error(error);
@@ -85,7 +87,7 @@ const RegisterModal= () => {
           />
           <Input
             id="first_name"
-            label="Primer Nombre"
+            label="Nombre"
             type="text"
             disabled={isLoading}
             register={register}
@@ -95,7 +97,7 @@ const RegisterModal= () => {
           />
           <Input
             id="last_name"
-            label="Segundo Nombre"
+            label="Apellido"
             type="text"
             disabled={isLoading}
             register={register}

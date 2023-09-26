@@ -16,7 +16,6 @@ model branch_offices {
   deleted_at      DateTime?
   updated_at      DateTime?  @updatedAt
   course          course[]
-  course_hist     course_hist[]
   schedules       schedules[]
 }
 
@@ -28,7 +27,6 @@ model category_course {
   updated_at    DateTime?  @updatedAt
   file_category String
   course        course[]
-  course_hist   course_hist[]
   files         files[]
 }
 
@@ -76,12 +74,10 @@ model course {
   end_date_discount      DateTime?                @db.Date
   start_date_discount    DateTime?                @db.Date
   class_course           class_course[]
-  class_hist             class_hist[]
   category_course        category_course          @relation(fields: [category_id], references: [category_id], onDelete: Cascade)
   branch_offices         branch_offices           @relation(fields: [id_branch], references: [branch_id], onDelete: Cascade)
   usser                  usser                    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   enrollment_course      enrollment_course[]
-  enrollment_course_hist enrollment_course_hist[]
   files                  files?
 }
 
@@ -102,7 +98,6 @@ model enrollment_course {
   grade             grade[]
   grade_hist        grade_hist[]
   payment           payment[]
-  payment_hist      payment_hist[]
 }
 
 model grade {
@@ -126,7 +121,7 @@ model payment {
   created_at        DateTime          @default(now())
   deleted_at        DateTime?
   updated_at        DateTime?  @updatedAt
-  enrollment_course enrollment_course @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: NoAction, onUpdate: NoAction, map: "payment_enrollment_course_enrollment_id_fk")
+  enrollment_course enrollment_course @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: Cascade, onUpdate: Cascade, map: "payment_enrollment_course_enrollment_id_fk")
 }
 
 model rol {
@@ -181,9 +176,7 @@ model usser {
   deleted_at             DateTime?
   updated_at             DateTime?  @updatedAt
   course                 course[]
-  course_hist            course_hist[]
   enrollment_course      enrollment_course[]
-  enrollment_course_hist enrollment_course_hist[]
   files                  files[]
   user_interactions      user_interactions[]
   user_rol               user_rol[]
@@ -214,7 +207,7 @@ model files {
   Renamedclass      class_course?      @relation(fields: [class_id], references: [class_id], onDelete: Cascade, map: "files_class_class_id_fk")
   course            course?            @relation(fields: [course_id], references: [course_id], onDelete: Cascade, map: "files_course_course_id_fk")
   enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: NoAction, onUpdate: NoAction, map: "files_enrollment_course_enrollment_id_fk")
-  usser             usser?             @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "files_usser_user_id_fk")
+  usser             usser?             @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "files_usser_user_id_fk")
 
   @@unique([enrollment_id, identifier], map: "idx_unique_user_id_identifier")
 }
@@ -256,7 +249,7 @@ model class_hist {
   created_at       DateTime  @default(now()) @db.Timestamp(6)
   updated_at       DateTime? @updatedAt
   deleted_at       DateTime? @db.Timestamp(6)
-  course           course?   @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction, map: "class_hist_course_course_id_fk")
+
 }
 
 model course_hist {
@@ -279,9 +272,6 @@ model course_hist {
   created_at         DateTime         @default(now()) @db.Timestamp(6)
   updated_at         DateTime?  @updatedAt
   deleted_at         DateTime?        @db.Timestamp(6)
-  branch_offices     branch_offices?  @relation(fields: [branch_id], references: [branch_id], onDelete: NoAction, onUpdate: NoAction, map: "course_hist_branch_offices_branch_id_fk")
-  category_course    category_course? @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction, map: "course_hist_category_course_category_id_fk")
-  usser              usser            @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "course_hist_usser_user_id_fk")
 }
 
 model enrollment_course_hist {
@@ -295,12 +285,10 @@ model enrollment_course_hist {
   enrollment_date    DateTime  @db.Date
   payment_status     Boolean?
   completion_status  Boolean?
-  feedback_course    String    @db.VarChar(400)
+  feedback_course    String?    @db.VarChar(400)
   created_at         DateTime  @default(now()) @db.Timestamp(6)
   updated_at         DateTime?  @updatedAt
   deleted_at         DateTime? @db.Timestamp(6)
-  course             course?   @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction, map: "enrollment_course_hist_course_course_id_fk")
-  usser              usser     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "enrollment_course_hist_usser_user_id_fk")
 }
 
 model files_hist {
@@ -339,7 +327,7 @@ model grade_hist {
   created_at        DateTime           @default(now()) @db.Timestamp(6)
   updated_at       DateTime?  @updatedAt
   deleted_at        DateTime?          @db.Timestamp(6)
-  enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: NoAction, onUpdate: NoAction, map: "grade_hist_enrollment_course_enrollment_id_fk")
+  enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: Cascade, onUpdate: Cascade, map: "grade_hist_enrollment_course_enrollment_id_fk")
 }
 
 model payment_hist {
@@ -357,7 +345,6 @@ model payment_hist {
   created_at        DateTime           @default(now()) @db.Timestamp(6)
   updated_at       DateTime?  @updatedAt
   deleted_at        DateTime?          @db.Timestamp(6)
-  enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: NoAction, onUpdate: NoAction, map: "payment_hist_enrollment_course_enrollment_id_fk")
 }
 
 model schedules_hist {

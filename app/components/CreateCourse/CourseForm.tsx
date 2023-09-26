@@ -42,6 +42,7 @@ const CourseForm =  ({categories, branchOffices, class_course}  : any) => {
   const route = useRouter();
   const { data: session } = useSession();
   const [descriptionFields, setDescriptionFields] = useState<string[]>(["", "", "", ""]);
+  const [isLoading, setLoading] = useState(false);
   
   const handleDescriptionChange = (index: number, value: string) => {
     setDescriptionFields((prevFields) => {
@@ -68,6 +69,8 @@ const CourseForm =  ({categories, branchOffices, class_course}  : any) => {
   }]);
 
   const handleFormSubmit = async (data: any)   => {
+    setLoading(true);
+    try {
     if(data.isFree === false && data.price_course === 0){
       return toast.error('El precio del curso no puede ser 0 si no es gratuito.');
     }
@@ -149,7 +152,6 @@ const CourseForm =  ({categories, branchOffices, class_course}  : any) => {
     data.schedule = schedule;
     data.scheduleLength = schedule.length;
     data.description = descriptionFields;
-    // try {
       const responseCreateCourse = await axios.post('/api/createCourse', data);
       if (responseCreateCourse.status === 200) {
         const response = responseCreateCourse.data;
@@ -165,10 +167,12 @@ const CourseForm =  ({categories, branchOffices, class_course}  : any) => {
           throw new Error('Error al crear el curso');
 
       }
-  // } catch (error) {
-      // console.error('Hubo un error en la solicitud:', error);
-      // toast.error('Error al crear el curso');
-  // }
+  } catch (error) {
+      console.error('Hubo un error en la solicitud:', error);
+      toast.error('Error al crear el curso');
+    } finally {
+      setLoading(false); 
+    }
   };
 
   const handleScheduleChange = (index: any, field: any, value: any) => {
@@ -197,8 +201,8 @@ const initialValues: CreateCourse = {
   course_name: "",
   description_course: "",
   price_course: 1,
-  category_id: 1,
-  id_branch: 1,
+  category_id: 0,
+  id_branch: 0,
   start_date: '',
   end_date: '',
   user_id: Number(session?.user?.user_id) || 0,
@@ -575,7 +579,7 @@ const isScheduleAvailable = (scheduleDate: any, startTime: any, endTime: any) =>
             </Box>        
             </Box>
             <Box display="flex" justifyContent="flex-start" mt="50px">
-              <Button  type="submit" color="secondary"   >
+              <Button  type="submit" variant="outlined" color="secondary" disabled={isLoading}   >
                 Crear nuevo curso
               </Button>
             </Box>
