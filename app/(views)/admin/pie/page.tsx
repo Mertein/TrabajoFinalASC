@@ -1,11 +1,11 @@
 import React from 'react'
-import getCategoryDistribution from '@/app/actions/getCategoryDistribution';
 import PieChart from '@/app/components/Graphs/PieChart';
+import getCategories from '@/app/actions/getCategories';
 export default async function() {
-  const data = await getCategoryDistribution();
+  const data = await getCategories();
   return (
     <div>
-      <PieChart data={data} />
+      <PieChart categories={data} />
 
     </div>
   )

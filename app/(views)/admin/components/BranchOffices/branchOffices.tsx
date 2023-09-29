@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react';
-import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams, esES } from '@mui/x-data-grid';
 import { Box, Button, IconButton, Modal, TextField, Typography } from '@mui/material';
 import {useTheme} from '@mui/system';
 import { Delete, Edit} from '@mui/icons-material';
@@ -8,7 +8,6 @@ import Loading from '@/app/(views)/instructor/MyCourses/loading';
 import Header from '@/app/components/Header/header';
 import { tokens } from '@/app/theme';
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import useSWR, { mutate } from 'swr';
@@ -16,7 +15,6 @@ import { format} from 'date-fns';
 import { useState } from 'react';
 import {Close as CloseIcon} from '@mui/icons-material';
 import * as yup from 'yup';
-
 
 function BranchOffices() {
   const modalStyle = {
@@ -367,6 +365,14 @@ const handleEditBranch = async () => {
             }}
             getRowId={(row) => row.branch_id}
             autoHeight={true}
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            slotProps={{
+              pagination: {
+                labelRowsPerPage: ('Filas por página'),
+                labelDisplayedRows: ({ from, to, count }) =>
+                  `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`,
+              }
+            }}
           />
         )}
       </Box>

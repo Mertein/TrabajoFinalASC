@@ -1,7 +1,7 @@
 'use client'
 import Header from '../../../components/Header/header';
 import { Box, IconButton } from "@mui/material";
-import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams, esES } from "@mui/x-data-grid";
 import { tokens } from "../../../theme";
 import { useTheme } from "@mui/material/styles";
 import { Visibility, Delete, Edit, Class, Person } from '@mui/icons-material';
@@ -182,6 +182,14 @@ const handleEditClick = (id: number) => {
             toolbar: GridToolbar,
           }}
           getRowId={(row) => row.course_id}
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+          slotProps={{
+          pagination: {
+            labelRowsPerPage: ('Filas por página'),
+            labelDisplayedRows: ({ from, to, count }) =>
+              `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`,
+          }
+        }}
         />}        
       </Box>
     </Box>

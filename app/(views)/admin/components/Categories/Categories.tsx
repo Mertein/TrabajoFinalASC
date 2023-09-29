@@ -1,6 +1,6 @@
 'use client'
 import { useState } from "react";
-import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams, esES } from '@mui/x-data-grid';
 import { Box, Button, IconButton, Modal, TextField, Typography} from '@mui/material';
 import {useTheme} from '@mui/system';
 import { Delete, Edit } from '@mui/icons-material';
@@ -347,6 +347,14 @@ import * as yup from 'yup';
             slots={{ toolbar: GridToolbar }}
             getRowId={(row) => row.category_id}
             autoHeight={true}
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            slotProps={{
+              pagination: {
+                labelRowsPerPage: ('Filas por página'),
+                labelDisplayedRows: ({ from, to, count }) =>
+                  `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`,
+              }
+            }}
           />
         )} 
       </Box>

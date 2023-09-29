@@ -1,8 +1,8 @@
 // @ts-nocheck
 'use client'
 import * as React from 'react';
-import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams } from '@mui/x-data-grid';
-import {Chip, Box, Button, FormControl, IconButton, Input, InputLabel, MenuItem, Modal, Select, SelectChangeEvent, TextField, Typography ,OutlinedInput, Theme} from '@mui/material';
+import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams, esES } from '@mui/x-data-grid';
+import {Chip, Box, Button, FormControl, IconButton,  InputLabel, MenuItem, Modal, Select, SelectChangeEvent, TextField, Typography ,OutlinedInput, Theme} from '@mui/material';
 import {useTheme} from '@mui/system';
 import * as yup from 'yup';
 import { Delete, Edit } from '@mui/icons-material';
@@ -16,7 +16,6 @@ import useSWR, { mutate } from 'swr';
 import { format} from 'date-fns';
 import { useEffect, useState } from 'react';
 import { Close as CloseIcon } from "@mui/icons-material";
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -753,6 +752,14 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
             slots={{ toolbar: GridToolbar }}
             getRowId={(row) => row.user_id}
             autoHeight={true}
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            slotProps={{
+              pagination: {
+                labelRowsPerPage: ('Filas por página'),
+                labelDisplayedRows: ({ from, to, count }) =>
+                  `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`,
+              }
+            }}
           />
         )} 
       </Box>

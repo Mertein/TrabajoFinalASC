@@ -1,11 +1,11 @@
 'use client'
 import React from 'react';
-import { DataGrid, GridCellParams, GridColDef, GridToolbar} from '@mui/x-data-grid';
+import { DataGrid, GridCellParams, GridColDef, GridToolbar, esES} from '@mui/x-data-grid';
 import { Box, IconButton, colors } from '@mui/material';
-import Loading from '@/app/(views)/instructor/MyCourses/loading';
 import {useTheme} from '@mui/system';
 import { tokens } from '@/app/theme';
 import { Delete, Edit } from '@mui/icons-material';
+
 interface Faq {
   id: number;
   question: string;
@@ -92,6 +92,14 @@ const FaqList: React.FC<FaqListProps> = ({ faqs, onEditFaq, onDeleteFaq }) => {
           toolbar: GridToolbar,
         }}
         autoHeight={true}
+        localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+        slotProps={{
+        pagination: {
+          labelRowsPerPage: ('Filas por página'),
+          labelDisplayedRows: ({ from, to, count }) =>
+            `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`,
+        }
+      }}
       />
   </Box>
   );

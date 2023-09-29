@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import { DataGrid, GridCellParams, GridColDef} from '@mui/x-data-grid';
+import { DataGrid, GridCellParams, GridColDef, esES} from '@mui/x-data-grid';
 import { useTheme } from '@mui/system';
 import { tokens } from '@/app/theme';
 import { Box, Typography, Button } from '@mui/material';
@@ -10,6 +10,8 @@ import useSWR from "swr";
 import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+
+
 type JsPDFWithAutoTable = jsPDF & {
   autoTable: (options: any) => void;
 };
@@ -65,7 +67,7 @@ export default function OrdersPage() {
     { field: 'products', headerName: 'Producto/s', flex: 1 },
     {
       field: 'actions',
-      headerName: 'Actions',
+      headerName: 'Acciones',
       width: 200,
       flex: 1,
       renderCell: (params: GridCellParams) => (
@@ -306,8 +308,16 @@ export default function OrdersPage() {
         ) : (
           <div style={{ height: 400, width: '100%' }}>
             <DataGrid
-              rows={rows || []} // Asegúrate de manejar los casos en los que rows sea null
+              rows={rows || []} 
               columns={columns}
+              localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+              slotProps={{
+              pagination: {
+                labelRowsPerPage: ('Filas por página'),
+                labelDisplayedRows: ({ from, to, count }) =>
+                  `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`,
+              }
+            }}
             />
           </div>
         )}

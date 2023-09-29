@@ -1,7 +1,7 @@
 'use client'
-import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridCellParams, GridColDef, GridToolbar, GridValueGetterParams, esES } from '@mui/x-data-grid';
 import { Box, IconButton, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button} from '@mui/material';
-import {ApprovalRounded as ApprovalRoundedIcon, Delete, Description} from '@mui/icons-material';
+import {ApprovalRounded as ApprovalRoundedIcon, Delete} from '@mui/icons-material';
 import styled from '@emotion/styled';
 import { useTheme } from '@mui/system';
 import Header from '@/app/components/Header/header';
@@ -287,8 +287,15 @@ function StudentCertificate({data} : any) {
             }}
             getRowId={(row) => row.id}
             autoHeight={true}
+            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            slotProps={{
+              pagination: {
+                labelRowsPerPage: ('Filas por página'),
+                labelDisplayedRows: ({ from, to, count }) =>
+                  `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`,
+              }
+            }}
           />
-        {/* )} */}
       </Box>
     </Box>
   );

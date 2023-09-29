@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from "react";
-import { DataGrid, GridColDef, GridToolbar, GridValueGetterParams} from '@mui/x-data-grid';
-import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, Typography} from '@mui/material';
+import { DataGrid, GridColDef, GridToolbar, GridValueGetterParams, esES} from '@mui/x-data-grid';
+import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField, Typography} from '@mui/material';
 import {useTheme} from '@mui/system';
 import Header from '@/app/components/Header/header';
 import { tokens } from '@/app/theme';
@@ -9,12 +9,13 @@ import { Close as CloseIcon } from "@mui/icons-material";
 import { format } from "date-fns";
 
 
-
-
 function Auditoria({ data }: { data: any }) {
   const [selectedTable, setSelectedTable] = useState("courseHist");
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const filteredData = data[selectedTable];
+  const [filteredData, setFilteredData] = useState(data[selectedTable]);
+  const [operationFilter, setOperationFilter] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
   const tableOptions = [
     { value: 'courseHist', label: 'Historial de Cursos'},
     { value: 'branchOfficeHist', label: 'Historial de Sucursales'},
@@ -28,10 +29,17 @@ function Auditoria({ data }: { data: any }) {
   ];
 
   const handleRowClick = (params: any) => {
-    console.log(params)
-    setSelectedRowData(params.row);
-    handleOpen();
-  };
+  const cOperation = params.row.c_operation;
+  let actionLabel = cOperation;
+
+  if (cOperation === 'U') {
+    actionLabel = 'Actualización';
+  } else if (cOperation === 'D') {
+    actionLabel = 'Borrado';
+  }
+  setSelectedRowData({...params.row, c_operation: actionLabel});
+  handleOpen();
+};
 
   const style = {
     position: 'absolute' as 'absolute',
@@ -45,11 +53,6 @@ function Auditoria({ data }: { data: any }) {
     p: 4,
   };
   
-
-  useEffect (() => {
-    console.log('data', data)
-    console.log('filteredData', filteredData)
-  }, [filteredData])
   
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -70,25 +73,52 @@ function Auditoria({ data }: { data: any }) {
   };
 
   const getColumnsForTable = (table: string): GridColDef[] => {
-    // Define las columnas correspondientes a la tabla seleccionada
     switch (table) {
       case "courseHist":
         return [
           { field: 'course_id_hist', headerName: 'ID', width: 100 },
           { field: 'course_id', headerName: 'ID de Curso', width: 100 },
           { field: 'course_name', headerName: 'Nombre del Curso', flex: 1 },
-          { field: 'c_operation', headerName: 'Accion', flex: 1 },
+          { field: 'c_operation', headerName: 'Accion', flex: 1, valueGetter: (params: GridValueGetterParams) => {
+            const cOperation = params.row.c_operation;
+            if (cOperation === 'U') {
+              return 'Actualización';
+            } else if (cOperation === 'D') {
+              return 'Borrado';
+            }
+            return '';
+          }},
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
-          { field: 'start_date', headerName: 'Fecha Inicio', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.start_date), 'HH:mm:ss  dd/MM/yyyy'),},
-          { field: 'end_date', headerName: 'Fecha Fin', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.end_date), 'HH:mm:ss  dd/MM/yyyy'),},
+          { field: 'start_date', headerName: 'Fecha Inicio', flex: 1, valueGetter: (params: GridValueGetterParams) => {
+            const startDate = params.row.start_date;
+            if (startDate) {
+              return format(new Date(startDate), 'HH:mm:ss dd/MM/yyyy');
+            }
+            return ''; // O un valor predeterminado si start_date es nulo
+          },},
+          { field: 'end_date', headerName: 'Fecha Fin', flex: 1, valueGetter: (params: GridValueGetterParams) => {
+            const endDate = params.row.end_date;
+            if (endDate) {
+              return format(new Date(endDate), 'HH:mm:ss dd/MM/yyyy');
+            }
+            return ''; // O un valor predeterminado si start_date es nulo
+          },},
         ];
       case "categoryHist":
         return [
           {field : 'category_id_hist', headerName: 'ID', width: 100},
           { field: 'category_id', headerName: 'ID de Categoría', width: 100 },
           { field: 'category_name', headerName: 'Nombre de la Categoría', flex: 1 },
-          { field: 'c_operation', headerName: 'Accion', flex: 1 },
+          { field: 'c_operation', headerName: 'Accion', flex: 1, valueGetter: (params: GridValueGetterParams) => {
+            const cOperation = params.row.c_operation;
+            if (cOperation === 'U') {
+              return 'Actualización';
+            } else if (cOperation === 'D') {
+              return 'Borrado';
+            }
+            return '';
+          }},
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
         ];
@@ -98,7 +128,15 @@ function Auditoria({ data }: { data: any }) {
           {field : 'branch_id_hist', headerName: 'ID', width: 100}, 
           { field: 'branch_id', headerName: 'ID de Sucursal', width: 100 },
           { field: 'branch_name', headerName: 'Nombre de la Sucursal', flex: 1 },
-          { field: 'c_operation', headerName: 'Accion', flex: 1 },
+          { field: 'c_operation', headerName: 'Accion', flex: 1, valueGetter: (params: GridValueGetterParams) => {
+            const cOperation = params.row.c_operation;
+            if (cOperation === 'U') {
+              return 'Actualización';
+            } else if (cOperation === 'D') {
+              return 'Borrado';
+            }
+            return '';
+          }},
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
         ];
@@ -106,12 +144,20 @@ function Auditoria({ data }: { data: any }) {
         return [
           {field : 'enrollment_id_hist', headerName: 'ID', width: 100},
           { field: 'enrollment_id', headerName: 'ID de Inscripción', width: 100 },
-          { field: 'c_operation', headerName: 'Accion', flex: 1 },
+          { field: 'c_operation', headerName: 'Accion', flex: 1, valueGetter: (params: GridValueGetterParams) => {
+            const cOperation = params.row.c_operation;
+            if (cOperation === 'U') {
+              return 'Actualización';
+            } else if (cOperation === 'D') {
+              return 'Borrado';
+            }
+            return '';
+          }},
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
           {field: 'completion_status', headerName: 'Completado', flex: 1},
           {field: 'payment_status', headerName: 'Estado de Pago', flex: 1},
-          {field: 'enrollment_date', headerName: 'Fecha de Inscripción', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.enrollment_date), 'HH:mm:ss  dd/MM/yyyy'),},
+          {field: 'enrollment_date', headerName: 'Fecha de Inscripción', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.created_at), 'HH:mm:ss  dd/MM/yyyy'),},
           {field: 'user_id', headerName: 'ID de Usuario', flex: 1},
           {field: 'course_id', headerName: 'ID de Curso', flex: 1},
           {field: 'feedback', headerName: 'Feedback', flex: 1},
@@ -120,7 +166,15 @@ function Auditoria({ data }: { data: any }) {
         return [
           { field: 'id_hist', headerName: 'ID de Archivo', width: 100 },
           { field: 'name', headerName: 'Nombre del Archivo', flex: 1 },
-          { field: 'c_operation', headerName: 'Accion', flex: 1 },
+          { field: 'c_operation', headerName: 'Accion', flex: 1, valueGetter: (params: GridValueGetterParams) => {
+            const cOperation = params.row.c_operation;
+            if (cOperation === 'U') {
+              return 'Actualización';
+            } else if (cOperation === 'D') {
+              return 'Borrado';
+            }
+            return '';
+          }},
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
         ];
@@ -129,7 +183,15 @@ function Auditoria({ data }: { data: any }) {
           {field : 'grade_id_hist', headerName: 'ID', width: 100},
           { field: 'grade_id', headerName: 'ID de Calificación', width: 100 },
           { field: 'grade', headerName: 'Calificación', flex: 1 },
-          { field: 'c_operation', headerName: 'Accion', flex: 1 },
+          { field: 'c_operation', headerName: 'Accion', flex: 1, valueGetter: (params: GridValueGetterParams) => {
+            const cOperation = params.row.c_operation;
+            if (cOperation === 'U') {
+              return 'Actualización';
+            } else if (cOperation === 'D') {
+              return 'Borrado';
+            }
+            return '';
+          }},
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
         ];
@@ -141,7 +203,15 @@ function Auditoria({ data }: { data: any }) {
           { field: 'payment_amount', headerName: 'Monto', flex: 1 },
           { field: 'payment_method', headerName: 'Método de Pago', flex: 1 },
           { field: 'payment_status', headerName: 'Estado de Pago', flex: 1 },
-          { field: 'c_operation', headerName: 'Accion', flex: 1 },
+          { field: 'c_operation', headerName: 'Accion', flex: 1, valueGetter: (params: GridValueGetterParams) => {
+            const cOperation = params.row.c_operation;
+            if (cOperation === 'U') {
+              return 'Actualización';
+            } else if (cOperation === 'D') {
+              return 'Borrado';
+            }
+            return '';
+          }},
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
         ];
@@ -151,7 +221,15 @@ function Auditoria({ data }: { data: any }) {
           { field: 'schedule_id', headerName: 'ID de Horario', width: 100 },
           { field: 'start_time', headerName: 'Hora de Inicio', flex: 1 },
           { field: 'end_time', headerName: 'Hora de Fin', flex: 1 },
-          { field: 'c_operation', headerName: 'Accion', flex: 1 },
+          { field: 'c_operation', headerName: 'Accion', flex: 1, valueGetter: (params: GridValueGetterParams) => {
+            const cOperation = params.row.c_operation;
+            if (cOperation === 'U') {
+              return 'Actualización';
+            } else if (cOperation === 'D') {
+              return 'Borrado';
+            }
+            return '';
+          }},
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
         ];
@@ -160,7 +238,15 @@ function Auditoria({ data }: { data: any }) {
           {field : 'user_rol_id', headerName: 'ID', width: 100},
           { field: 'user_id_hist', headerName: 'ID de Usuario', width: 100 },
           { field: 'rol_id_hist', headerName: 'ID de Rol', width: 100 },
-          { field: 'c_operation', headerName: 'Accion', flex: 1 },
+          { field: 'c_operation', headerName: 'Accion', flex: 1, valueGetter: (params: GridValueGetterParams) => {
+            const cOperation = params.row.c_operation;
+            if (cOperation === 'U') {
+              return 'Actualización';
+            } else if (cOperation === 'D') {
+              return 'Borrado';
+            }
+            return '';
+          }},
           { field: 'd_operation', headerName: 'Fecha de Operación', flex: 1, valueGetter: (params : GridValueGetterParams) => format(new Date(params.row.d_operation), 'HH:mm:ss  dd/MM/yyyy'),},
           { field: 'c_user_operation', headerName: 'Usuario', flex: 1 },
         ];
@@ -168,6 +254,21 @@ function Auditoria({ data }: { data: any }) {
         return [];
     }
   };
+
+  useEffect(() => {
+    // Actualizar los datos filtrados cuando cambian las fechas, la tabla seleccionada o el tipo de operación
+    const filtered = data[selectedTable].filter((item: any) => {
+      const itemCreatedAt = new Date(item.created_at).getTime();
+      const filterStartDate = startDate ? new Date(startDate).getTime() : Number.MIN_VALUE;
+      const filterEndDate = endDate ? new Date(endDate).getTime() : Number.MAX_VALUE;
+      const isOperationMatch = !operationFilter || item.c_operation === operationFilter;
+      return itemCreatedAt >= filterStartDate && itemCreatedAt <= filterEndDate && isOperationMatch;
+    });
+  
+    setFilteredData(filtered);
+  }, [startDate, endDate, selectedTable, operationFilter]);
+  
+
 
   const columns: GridColDef[]= getColumnsForTable(selectedTable);
     return (
@@ -205,12 +306,13 @@ function Auditoria({ data }: { data: any }) {
           </Box>
         </Box>
       </Modal>
-    <FormControl variant="outlined" sx={{ m: 2 }}>
+    <FormControl variant="filled" sx={{ mt: 2, mr: 1}}>
       <InputLabel htmlFor="table-select">Tabla</InputLabel>
       <Select
         value={selectedTable}
         onChange={(event) => setSelectedTable(event.target.value)}
         label="Tabla"
+        variant="filled"
         inputProps={{
           name: "table",
           id: "table-select",
@@ -222,7 +324,46 @@ function Auditoria({ data }: { data: any }) {
           </MenuItem>
         ))}
       </Select>
-  </FormControl>
+    </FormControl>
+    <TextField
+        label="Fecha de Inicio"
+        type="date"
+        variant='filled'
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        sx={{ mt: 2, width: 200 }} 
+      />
+      <TextField
+        label="Fecha de Fin"
+        type="date"
+        variant='filled'
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        sx={{ mt: 2, ml: 1, width: 200 }}   
+      />
+      <FormControl variant="filled" sx={{ mt: 2, ml: 1, width: 200}}>
+        <InputLabel htmlFor="operation-select">Tipo de Operación</InputLabel>
+        <Select
+          value={operationFilter}
+          onChange={(event) => setOperationFilter(event.target.value as string)}
+          label="Tipo de Operación"
+          variant="filled"
+          inputProps={{
+            name: "operation",
+            id: "operation-select",
+          }}
+        >
+          <MenuItem value="">Todos</MenuItem>
+          <MenuItem value="U">Actualización</MenuItem>
+          <MenuItem value="D">Borrado</MenuItem>
+        </Select>
+      </FormControl>
       <Box
         m="40px 0 0 0"
         
@@ -264,6 +405,14 @@ function Auditoria({ data }: { data: any }) {
           getRowId={(row) => row[idFieldMapping[selectedTable]]}
           autoHeight={true}
           onRowClick={handleRowClick} 
+          localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+            slotProps={{
+              pagination: {
+                labelRowsPerPage: ('Filas por página'),
+                labelDisplayedRows: ({ from, to, count }) =>
+                  `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`,
+              }
+            }}
         />
       </Box>
     </Box>

@@ -6,11 +6,9 @@ import logo from '../../../../public/images/logo.jpg'
 import html2canvas from 'html2canvas';
 import jsPDF  from "jspdf";
 import {useRef, useState } from 'react'
-import { Button } from '@mui/material';
 import toast from 'react-hot-toast';
 import signatureAcademy from '../../../../public/certificates-logos/signatureAcademy.png';
 import { useRouter } from 'next/navigation';
-import { mutate } from 'swr';
 
 const Certificate = ({ name, course, dateOfConductStart, dateOfConductEnd, signature, signatureDetails,  url, enrollmentId, instructor, src, category} : any) => {
   const certificateRef = useRef(null);

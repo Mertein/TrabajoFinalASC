@@ -8,7 +8,7 @@ import { toast } from 'react-hot-toast';
 import 'video.js/dist/video-js.css';
 import FilePreview from '../FilePreview/FilePreview';
 import { useSession } from 'next-auth/react';
-import { set } from 'date-fns';
+import { format, addDays} from 'date-fns';
 
 interface Class {
   class_id: number;
@@ -307,13 +307,12 @@ function ClassCourse({ courses }: any) {
       });
   };
 
- const startDateTimestamp = courses.start_date; // Supongo que courses.start_date contiene el timestamp
- const endDateTimestamp = courses.end_date; // Supongo que courses.end_date contiene el timestamp
+ const startDateTimestamp = courses.start_date; 
+ const endDateTimestamp = courses.end_date; 
 
-  // Función para obtener la fecha en formato español restando un día
   function obtenerFechaEnEspañol(timestamp : any) {
     const fecha = new Date(timestamp);
-    fecha.setDate(fecha.getDate() - 1); // Restar un día
+    fecha.setDate(fecha.getDate() + 1); // Restar u
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     return fecha.toLocaleDateString('es-ES', options as any);
   }
@@ -367,7 +366,8 @@ function ClassCourse({ courses }: any) {
               className="flex-1 justify-between items-center cursor-pointer px-4 py-2 bg-blue-500 text-white rounded-md"
               onClick={() => handleClassClick(clase.class_id)}
             >
-               {new Date(clase.schedules[0].date).toISOString().slice(0, 10)} {clase.schedules[0].start_time} - {clase.schedules[0].end_time}
+                {format(addDays(new Date(clase.schedules[0].date), 1), 'dd/MM/yyyy')} {clase.schedules[0].start_time} - {clase.schedules[0].end_time}
+
                <h6 className="text-lg font-semibold mb-2">{`Clase ${index + 1}`}</h6>
                {!isInstructorMode &&  clase.isVirtual && (
                 <span className="text-xs bg-yellow-500  text-white rounded-md px-2 py-1 items-end ">Virtual</span>

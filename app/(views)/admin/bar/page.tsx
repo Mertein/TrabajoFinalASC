@@ -1,11 +1,11 @@
 import React from 'react'
 import BarChart from '../../../components/Graphs/BarChart';
-import getCategoryDistribution from '@/app/actions/getCategoryDistribution';
+import getCategories from '@/app/actions/getCategories';
 export default async function() {
-  const data = await getCategoryDistribution();
+  const data = await getCategories();
   return (
     <div>
-      <BarChart categoryDistribution={data}/>
+      <BarChart categories={data}/>
     </div>
   )
 }
