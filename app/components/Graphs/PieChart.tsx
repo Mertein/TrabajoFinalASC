@@ -92,8 +92,8 @@ const PieChart = ({ categories } : any) => {
             defaultValue='Todas las categorías'
           >
             <MenuItem  value='Todas las categorías'>Todas las categorías</MenuItem>
-            {categories && categories.map((categories: any) => (
-              <MenuItem value={categories.category_id}>{categories.category_name}</MenuItem>
+            {categories && categories.map((categories: any, key: any) => (
+              <MenuItem key={key} value={categories.category_id}>{categories.category_name}</MenuItem>
             ))
             }
           </Select>
