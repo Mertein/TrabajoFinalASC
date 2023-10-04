@@ -45,8 +45,14 @@ const NoticeAutomatic = () => {
     const handleUpdate = async () => {
       if (ultimaActualizacion) {
         const ultimaActualizacionLocal = new Date(ultimaActualizacion[0].updated_at).getTime();
-  
+        console.log('1Una semana en nmilisegundos:', unaSemanaEnMillisegundos);
+        console.log('1Ahora:', ahora);
+        console.log('1Ultima actualizacion:', ultimaActualizacionLocal);
         if (ahora - ultimaActualizacionLocal >= unaSemanaEnMillisegundos) {
+          console.log('2Una semana en nmilisegundos:', unaSemanaEnMillisegundos);
+          console.log('2Ahora:', ahora);
+          console.log('2Ultima actualizacion:', ultimaActualizacionLocal);
+          
           setMostrarModal(true);
           try {
             const response = await axios.put('/api/updateTime');
