@@ -52,11 +52,11 @@ const NoticeAutomatic = () => {
           console.log('2Una semana en nmilisegundos:', unaSemanaEnMillisegundos);
           console.log('2Ahora:', ahora);
           console.log('2Ultima actualizacion:', ultimaActualizacionLocal);
-          
           setMostrarModal(true);
           try {
             const response = await axios.put('/api/updateTime');
             if (response.status === 200) {
+              route.refresh();
             }
           } catch (error) {
             console.error('Error al actualizar:', error);

@@ -45,7 +45,6 @@ const Form = ({ user }: any) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!file) return;
-    console.log(file);
     try {
       const data = new FormData();
       data.set("file", file);
@@ -65,19 +64,28 @@ const Form = ({ user }: any) => {
   };
 
   const onChange = (e: any) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setAvatarPreview(reader.result as string);
+    const file = e.target.files[0];
+    if (file) {
+      const allowedExtensions = ["jpg", "jpeg", "png", "gif"]; // Agrega las extensiones permitidas
+      const fileExtension = file.name.split(".").pop().toLowerCase();
+      if (!allowedExtensions.includes(fileExtension)) {
+        toast.error("Tipo de archivo no válido. Por favor, carga una imagen (jpg, jpeg, png, gif).");
+      } else if (file.size > 1024 * 1024 * 1024) { // 1 GB in bytes
+        toast.error("El archivo es demasiado grande. El tamaño máximo permitido es 1 GB.");
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (reader.readyState === 2) {
+            setAvatarPreview(reader.result as string);
+          }
+        };
+        setAvatar(file);
+        setFile(file);
+        reader.readAsDataURL(file);
       }
-    };
-
-    if (e.target.files) {
-      setAvatar(e.target.files[0]);
-      setFile(e.target.files[0])
-      reader.readAsDataURL(e.target.files[0]);
     }
   };
+  
 
   const initialValues = {
     user_id: user?.user_id as number,

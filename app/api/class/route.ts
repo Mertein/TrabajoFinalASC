@@ -18,6 +18,7 @@ export async function GET(req: Request, res: Response) {
     },
   });
 
+  console.log('holasdsd')
   const classesWithFiles = await Promise.all(
     classes.map(async (clase) => {
       const files = await prisma.files.findMany({
@@ -48,15 +49,14 @@ export async function POST(req: Request, res: Response) {
   const title = data.get("title") as unknown as string;
   console.log(class_id)
   console.log(file);
-
-  
-
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
-  console.log(buffer);
-    
 
     try {
+      const filePath = path.join(process.cwd(), "public/ClassesCourse", file.name);
+      await writeFile(filePath, buffer);
+      console.log(`open ${filePath} to see the uploaded file`);
+
       const filesPromise = await prisma.files.create({
          data: {
            path: "public/ClassesCourse/" + file.name,
@@ -68,11 +68,6 @@ export async function POST(req: Request, res: Response) {
            title: title,
          }
       })
-      if(filesPromise) {
-        const filePath = path.join(process.cwd(), "public/ClassesCourse", file.name);
-        await writeFile(filePath, buffer);
-        console.log(`open ${filePath} to see the uploaded file`);
-       }
         return new NextResponse(JSON.stringify(filesPromise), {status: 200});
       } catch (error) {
         console.error(error);

@@ -39,6 +39,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    const filePath = path.join(process.cwd(), "public/Users/ProfilePicture", file.name);
+    await writeFile(filePath, buffer);
+    console.log(`open ${filePath} to see the uploaded file`);
+
      const filesPromise = await prisma.files.create({
         data: {
           path: "public/Users/ProfilePicture",
@@ -50,11 +54,6 @@ export async function POST(request: NextRequest) {
           identifier: 'userPicture'
         }
      })
-     if(filesPromise) {
-      const filePath = path.join(process.cwd(), "public/Users/ProfilePicture", file.name);
-      await writeFile(filePath, buffer);
-      console.log(`open ${filePath} to see the uploaded file`);
-     }
       return new NextResponse(JSON.stringify(filesPromise), {status: 200});
     } catch (error) {
       console.error(error);

@@ -192,6 +192,7 @@ function ClassCourse({ courses }: any) {
     setClasses(updatedClasses);
   };
 
+  const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1 GB in bytes
   const allowedFileTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/gif', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'video/mp4', 'video/x-matroska'];
   const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) {
@@ -200,6 +201,12 @@ function ClassCourse({ courses }: any) {
     }
 
     const selectedFile = e.target.files[0];
+
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      alert('El archivo es demasiado grande. El tamaño máximo permitido es 1 GB.');
+      setFile(undefined); // Clear the file state
+      return;
+    }
 
     if (allowedFileTypes.includes(selectedFile.type)) {
       setFile(selectedFile);
