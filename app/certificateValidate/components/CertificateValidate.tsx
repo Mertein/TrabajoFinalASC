@@ -9,7 +9,7 @@ function CertificateValidate({data} : any) {
   
   useEffect(() => {
     if(data?.files?.length > 0) {
-      setUrl(`/Users/Certificates/${data.files[0]?.name}`);
+      setUrl(`${process.env.NEXT_PUBLIC_CDN}/UsersCertificates/${data.files[0]?.name}`);
       setIsValid(true);
 
     }

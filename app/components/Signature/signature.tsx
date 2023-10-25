@@ -11,7 +11,6 @@ function SignaturePad({user, signature}: any){
     const [url, setUrl] = useState<string>(''); 
     const [showSignatureArea, setShowSignatureArea] = useState(false);
     const canvasRef = useRef<any>(null);
-
     const handleClear = () =>{
         if (sign) {
             sign.clear();
@@ -21,12 +20,11 @@ function SignaturePad({user, signature}: any){
 
     useEffect(() => {
         if (signature.path && signature.path !== '') {
-            const pathWithoutPublic = signature.path.replace('public', '');
+            // const pathWithoutPublic = signature.path.replace('public', '');
             // Mostrar la imagen utilizando la función Image de Next.js
-            setUrl(pathWithoutPublic + signature.name);
+            setUrl(`${process.env.NEXT_PUBLIC_CDN}/UsersSignature/${signature.name}`);
         }
     }, [signature]);
-
 
     const handleDelete = async (id : number) =>{
         console.log('ID',id);
@@ -62,19 +60,15 @@ function SignaturePad({user, signature}: any){
         canvas.toBlob((blob : any) => {
             // Crear un nuevo objeto de tipo File
             const uniqueFileName = uuidv4() + '.png';
-            console.log('hola',uniqueFileName)
             const file = new File([blob], uniqueFileName, { type: "image/png" });
             const data = new FormData();
             data.set("file", file);
             data.append("id", user.user_id);
             data.append("file_id", signature.id || '');
             // Aquí tienes el objeto de tipo File que contiene la firma
-
-
             if(signature.path && signature.path !== ''){
                 data.append("fileNameOld", signature.name);
                 data.append("filePathOld", signature.path);
-                console.log('PUT')
                 fetch(`/api/signatures`, {
                     method: 'PUT',
                     body: data,
@@ -89,7 +83,6 @@ function SignaturePad({user, signature}: any){
                     console.error('Error al actualizar la firma:', error);
                 });
             } else {
-                console.log('POST')
                 fetch('/api/signatures', {
                     method: 'POST',
                     body: data,
@@ -108,7 +101,6 @@ function SignaturePad({user, signature}: any){
             return;
         }
     };
-
     return(
       <Box m="20px" >
         <Header title="Firma Digital" subtitle="Mi Firma" />
@@ -125,7 +117,6 @@ function SignaturePad({user, signature}: any){
                                     ref={(ref) => { setSign(ref); canvasRef.current = ref }}
                                 />
                             </div>
-
                             <br />
                             <button style={{ height: "30px", width: "80px", margin: "10px", backgroundColor: "red", color: "white" }} type='button' onClick={handleClear}>Limpiar</button>
                             <button style={{ height: "30px", width: "160px", margin: "10px", backgroundColor: "green", color: "white" }} type='submit'>Guardar Firma</button>

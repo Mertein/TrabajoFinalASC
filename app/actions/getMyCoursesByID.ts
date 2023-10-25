@@ -12,7 +12,7 @@ type Course = {
 
 
 async function getMyCourses(id: number): Promise<Course[]> {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/getMyCourses/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/getMyCourses/${id}`, {
     cache: 'no-store',
   });
 
