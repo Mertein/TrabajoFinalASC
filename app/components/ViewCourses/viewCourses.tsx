@@ -26,6 +26,7 @@ const MenuProps = {
 };
 function ViewCourses() {
   const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).then((res) => res.json());
+  const CDNCourseURL = 'https://dqppsiohkcussxaivbqa.supabase.co/storage/v1/object/public/files/Course/';
   const { data: courses, error, isLoading } = useSWR('/api/getCourses', fetcher );
   const { data: categories, error: errorCategories, isLoading: isLoadingCategories } = useSWR('/api/getCategories', fetcher);
   const router = useRouter();
@@ -163,7 +164,7 @@ function ViewCourses() {
                   <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
                     {
                       course.files !== null &&
-                      <Image src={`/Course/${course.files.name}`} width={350} height={300} alt="Foto del Curso" />
+                      <Image src={CDNCourseURL + course.files.name} width={350} height={300} alt="Foto del Curso" />
                     }           
                     <CardContent>
                       <Typography gutterBottom variant="h3" style={{textAlign:'center'}} component="div">
@@ -241,7 +242,7 @@ function ViewCourses() {
                   <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
                     {
                       course.files !== null &&
-                      <Image src={`/Course/${course.files.name}`} width={350} height={300} alt="Foto del Curso" />
+                      <Image src={CDNCourseURL + course.files.name} width={350} height={300} alt="Foto del Curso" />
                     }           
                     <CardContent>
                       <Typography gutterBottom variant="h3" style={{textAlign:'center'}} component="div">
@@ -317,7 +318,7 @@ function ViewCourses() {
                   <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
                     {
                       course.files !== null &&
-                      <Image src={`/Course/${course.files.name}`} width={350} height={300} alt="Foto del Curso" />
+                      <Image src={CDNCourseURL + course.files.name} width={350} height={300} alt="Foto del Curso" />
                     }           
                     <CardContent>
                       <Typography gutterBottom variant="h3" style={{textAlign:'center'}} component="div">

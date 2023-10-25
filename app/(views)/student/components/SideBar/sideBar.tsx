@@ -42,6 +42,7 @@ const Sidebar = ({user}: any) => {
   const { data: session, status } = useSession();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const CDNURL = 'https://dqppsiohkcussxaivbqa.supabase.co/storage/v1/object/public/files/UsersProfilePicture/';
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
   const router = useRouter();
@@ -105,7 +106,7 @@ const Sidebar = ({user}: any) => {
                     alt="profile-user"
                     width={100}
                     height={100}
-                    src={`/Users/ProfilePicture/${user.files[0].name}`}
+                    src={ CDNURL + user.files[0].name}
                     style={{ cursor: "pointer", borderRadius: "50%" }}
                   />
                 ) : (

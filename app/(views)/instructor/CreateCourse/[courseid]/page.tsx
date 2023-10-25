@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { toast } from 'react-hot-toast';
 import useSWR, { mutate } from 'swr';
 import { useRouter } from 'next/navigation';
+
   function CourseUploadImage({params} : any) {
   const [file, setFile] = useState<File | undefined>();
   const [image, setImage] = useState<File | undefined>();
@@ -18,18 +19,12 @@ import { useRouter } from 'next/navigation';
     if (!data) return;
     setImage(data);
   }, [data]);
-  console.log(data)
-  console.log(image);
 
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!file) return;
-    console.log(file)
-
     if(image) {
-      console.log('entro')
-
       try {
         const data = new FormData();
         data.set("file", file);
@@ -50,8 +45,6 @@ import { useRouter } from 'next/navigation';
         console.error(error);
       }
     } else if (!image) {
-      console.log('entro al else')
-
       try {
         const data = new FormData();
         data.set("file", file);

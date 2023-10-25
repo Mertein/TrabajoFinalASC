@@ -6,11 +6,7 @@ import {useTheme} from '@mui/material/styles';
 import 'react-pro-sidebar/dist/css/styles.css';
 import { tokens } from '../../../../theme';
 import { PersonOutlined as PersonOutlinedIcon, Route } from '@mui/icons-material';
-import { BarChartOutlined as BarChartOutlinedIcon } from '@mui/icons-material';
-import { PieChartOutlineOutlined as PieChartOutlineOutlinedIcon } from '@mui/icons-material';
-import { TimelineOutlined as TimelineOutlinedIcon } from '@mui/icons-material';
 import { MenuOutlined as MenuOutlinedIcon } from '@mui/icons-material';
-import { MapOutlined as MapOutlinedIcon } from '@mui/icons-material';
 import {Memory as MemoryIcon} from '@mui/icons-material';
 import { Class as ClassIcon } from '@mui/icons-material';
 import Link from 'next/link';
@@ -24,6 +20,7 @@ import { useRouter } from 'next/navigation';
 const Item = ({ title, to, icon, selected, setSelected } : {title: any, to: any, icon: any, selected: any, setSelected: any}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const CDNURL = 'https://dqppsiohkcussxaivbqa.supabase.co/storage/v1/object/public/files/UsersProfilePicture/';
   return (
     <MenuItem
       active={selected === title}
@@ -45,6 +42,7 @@ const Sidebar = ({user}: any) => {
   const { data: session, status } = useSession();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const CDNURL = 'https://dqppsiohkcussxaivbqa.supabase.co/storage/v1/object/public/files/UsersProfilePicture/';
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
@@ -109,7 +107,7 @@ const Sidebar = ({user}: any) => {
                     alt="profile-user"
                     width={100}
                     height={100}
-                    src={`/Users/ProfilePicture/${user.files[0].name}`}
+                    src={ CDNURL + user.files[0].name}
                     style={{ cursor: "pointer", borderRadius: "50%" }}
                   />
                 ) : (

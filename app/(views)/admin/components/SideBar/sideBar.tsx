@@ -13,7 +13,6 @@ import { Class as ClassIcon } from "@mui/icons-material";
 import {AlignHorizontalLeft as AlignHorizontalLeftIcon} from '@mui/icons-material';
 import { Help as HelpIcon } from "@mui/icons-material";
 import Link from "next/link";
-import { School as SchoolIcon } from "@mui/icons-material";
 import Image from "next/image";
 import { People as PeopleIcon } from "@mui/icons-material";
 import {Approval as ApprovalIcon} from "@mui/icons-material";
@@ -21,7 +20,6 @@ import { Category as CategoryIcon } from "@mui/icons-material";
 import { LocationCity as LocationCityIcon } from "@mui/icons-material";
 import { Feedback as FeedbackIcon } from "@mui/icons-material";
 import {Pageview as PageviewIcon} from '@mui/icons-material';
-import { Person as PersonIcon } from "@mui/icons-material";
 import { PersonOutlined as PersonOutlinedIcon } from "@mui/icons-material";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -48,6 +46,7 @@ const Item = ({ title, to, icon, selected, setSelected } : {title: any, to: any,
 const Sidebar = ({user}: any) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const CDNURL = 'https://dqppsiohkcussxaivbqa.supabase.co/storage/v1/object/public/files/UsersProfilePicture/';
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
   const router = useRouter();
@@ -112,7 +111,7 @@ const Sidebar = ({user}: any) => {
                     alt="profile-user"
                     width={100}
                     height={100}
-                    src={`/Users/ProfilePicture/${user.files[0].name}`}
+                    src={ CDNURL + user.files[0].name}
                     style={{ cursor: "pointer", borderRadius: "50%" }}
                   />
                 ) : (

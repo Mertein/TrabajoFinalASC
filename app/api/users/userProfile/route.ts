@@ -4,20 +4,28 @@ import { writeFile } from "fs/promises";
 import { unlink } from "fs";
 import bcrypt from 'bcrypt';
 import prisma from "../../../../lib/prismadb";
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 export async function POST(request: NextRequest) {
+    const supabase = createClientComponentClient()
     const data = await request.formData();
     const file: File | null = data.get("file") as unknown as File;
+    const uniqueIdentifier = Date.now();
     const id = data.get("id") as unknown as string;
     if (!file) {
       return NextResponse.json({ success: false });
     }
+    const fileName = `${uniqueIdentifier}_${file.name}`;
+    const { error: uploadError } = await supabase.storage.from('files/UsersProfilePicture').upload(fileName, file)
+
+    if (uploadError) {
+      throw uploadError
+    }
     
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    // const bytes = await file.arrayBuffer();
+    // const buffer = Buffer.from(bytes);
   
     try {
-
     const findFile = await prisma.files.findFirst({
         where: {
             user_id: Number(id),
@@ -32,21 +40,29 @@ export async function POST(request: NextRequest) {
           }
       })
 
-      const filePath = findFile.path? path.join(process.cwd(), findFile.path, findFile.name) : '';
-      unlink(filePath, (err) => {
-        if (err) throw err;
-        console.log('path/file.txt was deleted');
-      });
+      // const filePath = findFile.path? path.join(process.cwd(), findFile.path, findFile.name) : '';
+      // unlink(filePath, (err) => {
+      //   if (err) throw err;
+      //   console.log('path/file.txt was deleted');
+      // });
+      const { data, error } = await supabase
+      .storage
+      .from('files')
+      .remove(['UsersProfilePicture/' + findFile.name])
+  
+      if(error) {
+        throw error
+      }
     }
 
-    const filePath = path.join(process.cwd(), "public/Users/ProfilePicture", file.name);
-    await writeFile(filePath, buffer);
-    console.log(`open ${filePath} to see the uploaded file`);
+    // const filePath = path.join(process.cwd(), "public/Users/ProfilePicture", file.name);
+    // await writeFile(filePath, buffer);
+    // console.log(`open ${filePath} to see the uploaded file`);
 
      const filesPromise = await prisma.files.create({
         data: {
           path: "public/Users/ProfilePicture",
-          name: file.name,
+          name: fileName,
           type: file.type,
           size: file.size,
           format: 'file',
@@ -54,6 +70,9 @@ export async function POST(request: NextRequest) {
           identifier: 'userPicture'
         }
      })
+
+      const result = await Promise.all([filesPromise]);
+      console.log(result);
       return new NextResponse(JSON.stringify(filesPromise), {status: 200});
     } catch (error) {
       console.error(error);

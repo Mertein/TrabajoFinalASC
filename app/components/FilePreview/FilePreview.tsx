@@ -1,7 +1,8 @@
 import Image from 'next/image';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import videojs from 'video.js';
 import 'video.js/dist/video-js.css';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 interface Files {
   class_id: number;
   id: number;
@@ -14,30 +15,34 @@ interface Files {
 }
 
 const FilePreview = ({ file }: { file: Files }) => {
+  const CDNURL = 'https://dqppsiohkcussxaivbqa.supabase.co/storage/v1/object/public/files/ClassesCourse/';
+  const supabase = createClientComponentClient()
+  const [avatarUrl, setAvatarUrl] = useState('')
+
   useEffect(() => {
-
-    if (!file.type.startsWith('video/')) {
-      return;
+    async function downloadImage(path: string) {
+      try {
+        const { data } = supabase
+        .storage
+        .from('files/ClassesCourse')
+        .getPublicUrl(path)
+        setAvatarUrl(data.publicUrl)
+      } catch (error) {
+        console.log('Error downloading image: ', error)
+      }
     }
-    const player = videojs(`video-${file.id}`, {
-      controls: true,
-      preload: 'auto'
-    });
+    if (file) downloadImage(file.name)
+  }, [file, supabase])
 
-    return () => {
-      // Limpiar el reproductor de video cuando el componente se desmonta
-      player.dispose();
-    };
-  }, [file.id]);
   const allowedFileTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/gif', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'video/mp4', 'video/x-matroska'];
   const renderPreview = () => {
     if (allowedFileTypes.includes(file.type)) {
       if (file.type.startsWith('image/')) {
-        return <Image src={`/ClassesCourse/${file.name}`} alt={file.title} width={1110} height={200} />;
+        return <Image src={avatarUrl} alt={file.title} width={1110} height={200} />;
       } else if (file.type === 'application/pdf') {
         return (
           <iframe
-            src={`/ClassesCourse/${file.name}`}
+            src={avatarUrl}
             title="PDF Preview"
             width={1110}
             height={650}
@@ -46,7 +51,6 @@ const FilePreview = ({ file }: { file: Files }) => {
       } else if (file.type.startsWith('video/')) {
         return (
           <video
-            id={`video-${file.id}`}
             className="video-js vjs-default-skin"
             controls
             preload="auto"
@@ -54,7 +58,7 @@ const FilePreview = ({ file }: { file: Files }) => {
             height="auto"
             data-setup='{}'
           >
-            <source src={`/ClassesCourse/${file.name}`} type="video/mp4" />
+            <source src={CDNURL + file.name} type="video/mp4" />
           </video>
         );
       } else {

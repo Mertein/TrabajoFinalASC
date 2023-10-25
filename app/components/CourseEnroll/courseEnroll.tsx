@@ -52,7 +52,7 @@ function ClassCourse({ courses }: any) {
   const [classDescription, setClassDescription] = useState('');
   const [classCount, setClassCount] = useState(1);
   const [loading, setLoading] = useState(false);
-
+  const CDNURL = 'https://dqppsiohkcussxaivbqa.supabase.co/storage/v1/object/public/files/ClassesCourse/';
   useEffect(() => {
     if (Classes) {
       setClasses(Classes);
@@ -463,8 +463,8 @@ function ClassCourse({ courses }: any) {
                               }}
                             />
                             <FilePreview file={file} />
-
-                            <a href={`/ClassesCourse/${file.name}`} className="text-blue-500" download={file.name}>
+                           
+                            <a href={ CDNURL + file.name} className="text-blue-500" download={CDNURL + file.name}>
                                Descargar {file.name}
                             </a>
                             {file.class_id === clase.class_id && (
@@ -540,7 +540,7 @@ function ClassCourse({ courses }: any) {
                            
                             <FilePreview file={file} />
 
-                            <a href={`/ClassesCourse/${file.name}`} className="text-blue-500" download={file.name}>
+                            <a href={ CDNURL + file.name} className="text-blue-500" download={CDNURL + file.name}>
                                Descargar {file.name}
                             </a>
                           </Box>

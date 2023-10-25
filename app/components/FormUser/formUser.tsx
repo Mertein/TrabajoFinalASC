@@ -10,15 +10,19 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { set } from "date-fns";
 
 const Form = ({ user }: any) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const CDNURL = 'https://dqppsiohkcussxaivbqa.supabase.co/storage/v1/object/public/files/UsersProfilePicture/';
   const router = useRouter();
+  const [isLoading, setLoading] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(
     user?.files && user.files[0]
-      ? `/Users/ProfilePicture/${user.files[0].name}`
+      ?   CDNURL + user.files[0].name
       : '/images/defaultProfile.jpg'
   );
+  console.log(user)
   const [avatar, setAvatar] = useState("");
   const [file, setFile] = useState<File | undefined>();
 
@@ -45,6 +49,7 @@ const Form = ({ user }: any) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!file) return;
+    setLoading(true);
     try {
       const data = new FormData();
       data.set("file", file);
@@ -60,6 +65,8 @@ const Form = ({ user }: any) => {
     } catch (error) {
       console.error(error);
       toast.error("Error al actualizar la foto de perfil");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -129,6 +136,7 @@ const Form = ({ user }: any) => {
                 className="mt-2"
                 type='submit'
                 // onClick={handleSaveChanges}
+                disabled={isLoading}
               >
                 Guardar Foto de Perfil
               </Button>

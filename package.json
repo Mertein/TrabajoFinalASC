@@ -24,6 +24,8 @@
     "@next/font": "^13.4.7",
     "@prisma/client": "^4.16.1",
     "@react-pdf/renderer": "^3.1.12",
+    "@supabase/auth-helpers-nextjs": "^0.8.1",
+    "@supabase/supabase-js": "^2.38.2",
     "@tiptap/pm": "^2.0.3",
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",

@@ -23,6 +23,7 @@ const nextConfig = {
       'plus.unsplash.com',
       'dummyimage.com',
       'img.freepik.com',
+      'dqppsiohkcussxaivbqa.supabase.co',
     ],    
   }
 }
