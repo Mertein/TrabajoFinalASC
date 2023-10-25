@@ -177,14 +177,14 @@ function StudentCertificate({data} : any) {
 
   function renderCertificate(params: GridCellParams) {
     if(!data[params.id].files[0]) return <StatusBadge completed={0} courseended={true}>No tiene certificado</StatusBadge>;
-    const certificateUrl: string | null = params.value as string | null || `/Users/Certificates/${data[params.id].files[0].name}`;
+    const certificateUrl: string | null = params.value as string | null || `${process.env.NEXT_PUBLIC_CDN}/UsersCertificates/${data[params.id].files[0].name}`;
     if (!certificateUrl) {
       return <></>;
     }
 
     return (
       <div onClick={() => setSelectedCertificate(certificateUrl)}>
-        <Image src={`/Users/Certificates/${data[params.id].files[0].name}`} alt="Certificado del Alumno" style={{ cursor: 'pointer' }} width={200} height={200} />
+        <Image src={`${process.env.NEXT_PUBLIC_CDN}/UsersCertificates/${data[params.id].files[0].name}`} alt="Certificado del Alumno" style={{ cursor: 'pointer' }} width={200} height={200} />
       </div>
     );
   }

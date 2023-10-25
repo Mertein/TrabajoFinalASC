@@ -5,6 +5,7 @@ import path from "path";
 import {getServerSession} from 'next-auth';
 import { authOptions } from "../auth/[...nextauth]/route";
 import { unlink } from "fs";
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export async function GET(req: Request, res: Response) {
   const session = await getServerSession(authOptions);
@@ -28,13 +29,23 @@ export async function GET(req: Request, res: Response) {
 }
 
 export async function POST(req: Request, res: Response) {
+  const supabase = createClientComponentClient();
   const data = await req.formData();
   const file: File | null = data.get("file") as unknown as File;
   const id = data.get("id") as unknown as number;
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-
+  // const bytes = await file.arrayBuffer();
+  // const buffer = Buffer.from(bytes);
     try {
+
+      const { data, error } = await supabase.storage
+      .from('files/UsersSignatures')
+      .upload(file.name, file);
+
+      // Handle error if upload failed
+      if(error) {
+        throw error;
+      }
+
       const filesPromise = await prisma.files.create({
          data: {
            path: "public/Users/Signatures/",
@@ -46,17 +57,16 @@ export async function POST(req: Request, res: Response) {
            identifier: 'userSignature',
          }
       })
-      if(filesPromise) {
-        const filePath = path.join(process.cwd(), "public/Users/Signatures", file.name);
-        await writeFile(filePath, buffer);
-        console.log(`open ${filePath} to see the uploaded file`);
-       }
+      // if(filesPromise) {
+      //   const filePath = path.join(process.cwd(), "public/Users/Signatures", file.name);
+      //   await writeFile(filePath, buffer);
+      //   console.log(`open ${filePath} to see the uploaded file`);
+      //  }
         return new NextResponse(JSON.stringify(filesPromise), {status: 200});
       } catch (error) {
         console.error(error);
         return new NextResponse("Database Error", {status: 500});
       }
-
 }
 
 export async function PUT(req: Request, res: Response) {
@@ -66,9 +76,38 @@ export async function PUT(req: Request, res: Response) {
   const file_id = data.get("file_id") as unknown as number;
   const filePathOld = data.get("filePathOld") as unknown as string;
   const fileNameOld = data.get("fileNameOld") as unknown as string;
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
+  const supabase = createClientComponentClient();
+  // const bytes = await file.arrayBuffer();
+  // const buffer = Buffer.from(bytes);
   try {
+    const fileUnique = await prisma.files.findUnique({
+      where: {
+        id: Number(file_id),
+      },
+    });
+
+    if (!fileUnique) {
+      return new NextResponse("File not found", { status: 404 });
+    }
+
+    const { data, error } = await supabase
+    .storage
+    .from('files')
+    .remove(['UsersSignature/' + fileUnique.name])
+
+    if(error) {
+      throw error;
+    }
+
+    const { data: dataUpload, error: errorUpload } = await supabase.storage
+      .from('files/UsersSignature')
+      .upload(file.name, file);
+
+      // Handle error if upload failed
+      if(error) {
+        throw error;
+      }
+
     const filesPromise = await prisma.files.update({
       where: {
         id: Number(file_id),
@@ -83,18 +122,6 @@ export async function PUT(req: Request, res: Response) {
          identifier: 'userSignature',
        }
     })
-    if(filesPromise) {
-
-      const pathOld = path.join(process.cwd(), filePathOld, fileNameOld);
-      unlink(pathOld, (err) => {
-        if (err) throw err;
-        console.log('path/file.txt was deleted');
-      });
-
-      const filePath = path.join(process.cwd(), "public/Users/Signatures", file.name);
-      await writeFile(filePath, buffer);
-      console.log(`open ${filePath} to see the uploaded file`);
-     }
       return new NextResponse(JSON.stringify(filesPromise), {status: 200});
     } catch (error) {
       console.error(error);

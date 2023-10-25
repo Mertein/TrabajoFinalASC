@@ -71,12 +71,12 @@ function CertificateStudent({ enrollments }: { enrollments: Enrollment[] }) {
               <div
                 key={key}
                 className="mx-3 mt-6 flex flex-col self-start rounded-lg bg-white shadow-lg dark:bg-gray-800 sm:shrink-0 sm:grow sm:basis-0"
-                onClick={() => handleCertificateClick(`/Users/Certificates/${enrollment.files[0].name}`)}
+                onClick={() => handleCertificateClick(`${process.env.NEXT_PUBLIC_CDN}/UsersCertificates/${enrollment.files[0].name}`)}
               >
                 <a href="#!">
                   <Image
                     className="rounded-t-lg"
-                    src={enrollment.files[0] ? `/Users/Certificates/${enrollment.files[0].name}` : 'image'}
+                    src={enrollment.files[0] ? `${process.env.NEXT_PUBLIC_CDN}/UsersCertificates/${enrollment.files[0].name}` : 'image'}
                     alt="Palm Springs Road"
                     width={500}
                     height={500}
@@ -92,7 +92,7 @@ function CertificateStudent({ enrollments }: { enrollments: Enrollment[] }) {
                 </div>
                 <CardActions>
                   <Button size="medium" color="info" variant='contained' className='bg-blue-400' type='button'>
-                    <a href={enrollment.files[0] ? `/Users/Certificates/${enrollment.files[0].name}` : 'image'}  download={enrollment.files[0].name}>
+                    <a href={enrollment.files[0] ? `${process.env.NEXT_PUBLIC_CDN}/UsersCertificates/${enrollment.files[0].name}` : 'image'}  download={enrollment.files[0].name}>
                        Descargar Certificado 
                     </a>
                   </Button>

@@ -24,6 +24,7 @@ const nextConfig = {
       'dummyimage.com',
       'img.freepik.com',
       'dqppsiohkcussxaivbqa.supabase.co',
+      'dqppsiohkcussxaivbqa.supabase.in',
     ],    
   }
 }

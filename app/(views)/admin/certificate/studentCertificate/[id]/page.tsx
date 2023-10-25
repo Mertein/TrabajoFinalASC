@@ -45,7 +45,7 @@ const CertificateGenerator = ({params}: any) => {
   console.log(data);
 
   const generate = () => {
-    QRCode.toDataURL(`${process.env.NEXTAUTH_URL}/certificateValidate/` + params.id).then(setSrc)
+    QRCode.toDataURL(`${process.env.NEXT_PUBLIC_URL}/certificateValidate/` + params.id).then(setSrc)
   }
   const startDateTimestamp = data?.course?.start_date;
   const startDate = new Date(startDateTimestamp);

@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
 
   if(url.includes('/student')) {
     if(!isStudent) {
-      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}`);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}`);
     }
   }
 
@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
 
   if(url.includes('/instructor')) {
     if(!isInstructor) {
-      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}`);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}`);
     }
   }
 
@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
 
   if(url.includes('/admin')) {
     if(!isAdmin) {
-      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}`);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}`);
     }
   }
     return NextResponse.next();

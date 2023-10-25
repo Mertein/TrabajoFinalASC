@@ -23,10 +23,10 @@ export async function POST(req: NextRequest, res: NextResponse ) {
 		  ],
 		  auto_return: "approved",
 		  back_urls: {
-			success: `${process.env.NEXTAUTH_URL}/student/viewCourses/${body.course.course_id}`,
-			failure: `${process.env.NEXTAUTH_URL}/student/viewCourses/${body.course.course_id}`,
+			success: `${process.env.NEXT_PUBLIC_URL}/student/viewCourses/${body.course.course_id}`,
+			failure: `${process.env.NEXT_PUBLIC_URL}/student/viewCourses/${body.course.course_id}`,
 		  },
-		  notification_url: `${process.env.NEXTAUTH_URL}/api/notify`,
+		  notification_url: `${process.env.NEXT_PUBLIC_URL}/api/notify`,
 		};
   
 		const response = await mercadopago.preferences.create(preference);
