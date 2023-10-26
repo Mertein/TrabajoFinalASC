@@ -136,7 +136,7 @@ console.log(courses)
         <Card sx={{ maxWidth: 345 }} key={id}>
         <CardActionArea>
           <Image
-            src={`/Course/${course.course.files.name}`}
+            src={`${process.env.NEXT_PUBLIC_CDN}/Course/${course.course.files.name}`}
             width={500}
             height={500}
             alt="Picture of the author"

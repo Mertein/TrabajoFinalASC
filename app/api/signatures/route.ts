@@ -18,9 +18,6 @@ export async function GET(req: Request, res: Response) {
       identifier: 'userSignature',
     },
   });
-  console.log(fieldsPromise);
-
-    // console.log(classesWithFiles);
     return new NextResponse(JSON.stringify(fieldsPromise), {status: 200});
   } catch (error) {
     console.error(error);

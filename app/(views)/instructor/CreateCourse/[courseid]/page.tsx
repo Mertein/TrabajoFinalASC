@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
   function CourseUploadImage({params} : any) {
   const [file, setFile] = useState<File | undefined>();
   const [image, setImage] = useState<File | undefined>();
+  const [loading, setLoading] = useState(false);
   const route = useRouter();
   const {courseid} = params
   const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).then((res) => res.json());
@@ -24,6 +25,7 @@ import { useRouter } from 'next/navigation';
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!file) return;
+    setLoading(true);
     if(image) {
       try {
         const data = new FormData();
@@ -43,6 +45,8 @@ import { useRouter } from 'next/navigation';
       } catch (error) {
         toast.error('Error al actualizar la imagen del curso');
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     } else if (!image) {
       try {
@@ -61,6 +65,8 @@ import { useRouter } from 'next/navigation';
         }
       } catch (error) {
         toast.error('Error al subir la imagen del curso');
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -86,7 +92,7 @@ import { useRouter } from 'next/navigation';
           />
           <button
             className="bg-green-900 text-zinc-100 p-2 rounded block w-full disabled:opacity-50"
-            disabled={!file}
+            disabled={!file || loading}
           >
             {image ? "Cambiar Imagen" : "Subir Imagen"}
           </button>
@@ -101,7 +107,7 @@ import { useRouter } from 'next/navigation';
           />
        ) : image && (
         <Image
-        src={`/Course/${data.name}`}
+        src={`${process.env.NEXT_PUBLIC_CDN}/Course/${data.name}`}
         alt="Imagen Curso"
         className="w-64 h-64 object-contain mx-auto"
         width={2000}

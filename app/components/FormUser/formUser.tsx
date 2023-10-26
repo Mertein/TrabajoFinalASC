@@ -14,12 +14,11 @@ import { set } from "date-fns";
 
 const Form = ({ user }: any) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const CDNURL = 'https://dqppsiohkcussxaivbqa.supabase.co/storage/v1/object/public/files/UsersProfilePicture/';
   const router = useRouter();
   const [isLoading, setLoading] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(
     user?.files && user.files[0]
-      ?   CDNURL + user.files[0].name
+      ?   process.env.NEXT_PUBLIC_CDN + 'UsersProfilePicture/' +  user.files[0].name
       : '/images/defaultProfile.jpg'
   );
   console.log(user)
@@ -27,6 +26,7 @@ const Form = ({ user }: any) => {
   const [file, setFile] = useState<File | undefined>();
 
   const handleFormSubmit = async (values: any) => {
+    setLoading(true);
     try {
       const res = await axios.put(`/api/users/userProfile`, { values });
       console.log('RES',res);
@@ -37,6 +37,8 @@ const Form = ({ user }: any) => {
     } catch (error) {
       console.error(error);
       toast.error("Error al actualizar el usuario");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -312,7 +314,7 @@ const Form = ({ user }: any) => {
             
 
             <Box display="flex" justifyContent="start" mt="20px">
-              <Button type="submit" color="secondary" variant="outlined" disabled={!user}>
+              <Button type="submit" color="secondary" variant="outlined" disabled={!user || isLoading}>
                 Guardar
               </Button>
             </Box>

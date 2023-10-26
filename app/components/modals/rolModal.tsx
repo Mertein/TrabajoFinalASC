@@ -3,12 +3,13 @@ import { useState } from "react";
 import Modal from "./modal";
 import Heading from "../Heading/heading";
 import { MenuItem } from 'react-pro-sidebar';
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useRolModal } from "@/app/hooks";
 import {useTheme} from '@mui/material/styles';
 import { tokens } from '../../theme';
 import { Typography } from '@mui/material';
 import { AccountBox, AdminPanelSettings,  School } from '@mui/icons-material';
+
 
 const Item = ({ title, to, icon, selected, setSelected } : {title: any, to: any, icon: any, selected: any, setSelected: any}) => {
   const theme = useTheme();
@@ -36,13 +37,15 @@ const Item = ({ title, to, icon, selected, setSelected } : {title: any, to: any,
   );
 };
 
+
 const RolModal = ({user} : any) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const router = useRouter();
+  const currentPath = usePathname();
   const rolModal = useRolModal();
   const [selected, setSelected] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const isMainPage = currentPath === "/";
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -60,14 +63,16 @@ const RolModal = ({user} : any) => {
           setSelected={setSelected}
         />
         ))}
-        <Item
-        key={'Inicio'}
-        title={'Inicio'}
-        to={`/`}
-        icon={<School/>} 
-        selected={selected}
-        setSelected={setSelected}
-      />
+        {!isMainPage  && (
+          <Item
+          key={'Inicio'}
+          title={'Inicio'}
+          to={`/`}
+          icon={<School/>} 
+          selected={selected}
+          setSelected={setSelected}
+        />
+        )}
       
     </div>
   );
