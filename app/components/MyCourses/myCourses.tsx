@@ -132,34 +132,38 @@ console.log(courses)
           label="Cursos en Progreso"
         />
       </FormControl>
-      {courses && filteredCourses.map((course: any, id: number) => (
-        <Card sx={{ maxWidth: 345 }} key={id}>
-        <CardActionArea>
-          <Image
-            src={`${process.env.NEXT_PUBLIC_CDN}/Course/${course.course.files.name}`}
-            width={500}
-            height={500}
-            alt="Picture of the author"
-          />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              {course.course.course_name}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {course.course.description_course}
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-        <CardActions className="space-x-48">
-          <Button size="large" color="info" onClick={() => handleCourse(course.course_id)}>
-            Ver Curso
-          </Button>
-          <Button size="small" color="secondary" onClick={() => handleCourseInfo(course.course_id)}>
-            Info del Curso
-          </Button>
-        </CardActions>
-      </Card>
-        ))}
+      <div className='flex'>
+        {courses && filteredCourses.map((course: any, id: number) => (
+          <div className='mr-10'>
+            <Card sx={{ maxWidth: 345}} key={id} >
+            <CardActionArea>
+              <Image
+                src={`${process.env.NEXT_PUBLIC_CDN}/Course/${course.course.files.name}`}
+                width={500}
+                height={500}
+                alt="Picture of the author"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  {course.course.course_name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {course.course.description_course}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+            <CardActions className="space-x-48">
+              <Button size="large" color="info" onClick={() => handleCourse(course.course_id)}>
+                Ver Curso
+              </Button>
+              <Button size="small" color="secondary" onClick={() => handleCourseInfo(course.course_id)}>
+                Info del Curso
+              </Button>
+            </CardActions>
+          </Card>
+        </div>
+          ))}
+      </div>
       </Box>
     </Box>
   );

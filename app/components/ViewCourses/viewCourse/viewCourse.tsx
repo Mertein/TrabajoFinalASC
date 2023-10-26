@@ -84,7 +84,7 @@ function ViewCourse({courses, params, schedules} : any) {
         type: null,
         content: "",
       });
-    }, 5000);
+    }, 15000);
   }, []);
 
   const handleCourseFree = async () => {
@@ -106,7 +106,6 @@ function ViewCourse({courses, params, schedules} : any) {
 
     })
 
-    console.log(await request.data)
     if (!request) {
       console.log('Error al inscribirse al curso')
       return;
@@ -117,7 +116,6 @@ function ViewCourse({courses, params, schedules} : any) {
     initMercadoPago(process.env.MERCADOPAGO_API_KEY!)
     //Destructuracion de datos
     const {course_name, description_course, price_course, user_id, start_date, end_date, description, isFree, isVirtual, usser, files} = courses;
-    console.log(files);
 
     const {branch_name, people_capacity, branch_address} = courses.branch_offices;
     const {files: fileUser} = usser;
@@ -134,11 +132,11 @@ function ViewCourse({courses, params, schedules} : any) {
     const currentDate = new Date();
 
     const discountedPrice =
-  courses.discount_percentage > 0 &&
-  isAfter(currentDate, new Date(courses.start_date_discount)) &&
-  isBefore(currentDate, new Date(courses.end_date_discount))
-    ? price_course - (price_course * courses.discount_percentage) / 100
-    : price_course;
+    courses.discount_percentage > 0 &&
+    isAfter(currentDate, new Date(courses.start_date_discount)) &&
+    isBefore(currentDate, new Date(courses.end_date_discount))
+      ? price_course - (price_course * courses.discount_percentage) / 100
+      : price_course;
 
     return   (
       <div>

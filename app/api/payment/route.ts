@@ -8,6 +8,7 @@ mercadopago.configure({
 export async function POST(req: NextRequest, res: NextResponse ) {
 	const body = await req.json();
 	try {
+		console.log(body)
 		const unit_price = body.discountedPrice !== undefined
       ? body.discountedPrice
       : body.course.price_course;

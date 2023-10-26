@@ -153,7 +153,7 @@ export async function PUT(request: Request) {
   }
 
   const body:RequestBody = await request.json();
-  // console.log(body)
+  console.log(body)
 
     try {  
         // Obtener las clases existentes para el curso específico
