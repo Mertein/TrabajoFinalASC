@@ -53,7 +53,7 @@ const MyCourses = () => {
     })
   : [];
 
-  console.log("Filtered Courses:", filteredCourses);
+  // console.log("Filtered Courses:", filteredCourses);
 
 const handleChange = (event: SelectChangeEvent<typeof selectedCategory>) => {
   const {
@@ -65,8 +65,6 @@ const handleChange = (event: SelectChangeEvent<typeof selectedCategory>) => {
   );
 };
 
-
-console.log(courses)
   return ( 
     <Box m="20px" >
       <Header title="Mis Cursos" subtitle="Ver todos mis Cursos" />
@@ -134,8 +132,7 @@ console.log(courses)
       </FormControl>
       <div className='flex'>
         {courses && filteredCourses.map((course: any, id: number) => (
-          <div className='mr-10'>
-            <Card sx={{ maxWidth: 345}} key={id} >
+            <Card sx={{ maxWidth: 345, marginRight: 3}} key={id} >
             <CardActionArea>
               <Image
                 src={`${process.env.NEXT_PUBLIC_CDN}/Course/${course.course.files.name}`}
@@ -161,7 +158,6 @@ console.log(courses)
               </Button>
             </CardActions>
           </Card>
-        </div>
           ))}
       </div>
       </Box>
