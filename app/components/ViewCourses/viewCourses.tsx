@@ -56,7 +56,7 @@ function ViewCourses() {
     } else if (isBefore(currentDate, endDate) && !(course.branch_offices.people_capacity <= course.enrollment_course.length)) {
       return 'En curso';
     } else if (course.branch_offices.people_capacity <= course.enrollment_course.length ) {
-      return 'Cursos agotados';
+      return 'Cupos agotados';
     } else {
       'return';
     }
@@ -160,11 +160,11 @@ function ViewCourses() {
             filteredCourses 
               .filter((course: any) => getCoursesStatus(course) === 'Proximos lanzamientos')
               .map((course: any) => (
-                <Card key={course.course_id} style={{margin:20, maxWidth: 350, maxHeight:500}} >
+                <Card key={course.course_id} style={{margin:20, maxWidth: 350, maxHeight:600}} >
                   <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
                     {
                       course.files !== null &&
-                      <Image src={CDNCourseURL + course.files.name} width={350} height={300} alt="Foto del Curso" />
+                      <Image src={CDNCourseURL + course.files.name} width={350} height={350} alt="Foto del Curso" />
                     }           
                     <CardContent>
                       <Typography gutterBottom variant="h3" style={{textAlign:'center'}} component="div">
@@ -238,7 +238,7 @@ function ViewCourses() {
             filteredCourses 
               .filter((course: any) => getCoursesStatus(course) === 'En curso')
               .map((course: any) => (
-                <Card key={course.course_id} style={{margin:20, maxWidth: 350, maxHeight:500}} >
+                <Card key={course.course_id} style={{margin:20, maxWidth: 350, maxHeight:600}} >
                   <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
                     {
                       course.files !== null &&
@@ -312,9 +312,9 @@ function ViewCourses() {
         <Carousel responsive={responsive}>
           {courses ? (
             filteredCourses 
-              .filter((course: any) => getCoursesStatus(course) === 'Cursos agotados')
+              .filter((course: any) => getCoursesStatus(course) === 'Cupos agotados')
               .map((course: any) => (
-                <Card key={course.course_id} style={{margin:20, maxWidth: 350, maxHeight:500}} >
+                <Card key={course.course_id} style={{margin:20, maxWidth: 350, maxHeight:600}} >
                   <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
                     {
                       course.files !== null &&

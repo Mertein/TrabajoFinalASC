@@ -120,6 +120,7 @@ export async function PUT(req: Request, res: Response) {
   }
 
   if(body.isVirtual !== '') {
+    console.log(body)
     try {
       const fieldsPromise = await prisma.class_course.update({
         where: {

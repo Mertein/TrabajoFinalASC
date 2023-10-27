@@ -151,8 +151,9 @@ function ClassCourse({ courses }: any) {
       return clase;
     });
 
-    const class_id = updatedClasses[0].class_id;
-    const isVirtual = updatedClasses[0].isVirtual;
+    const modifiedClass = updatedClasses.find((clase) => clase.class_id === expandedClassId);
+    const class_id = modifiedClass?.class_id;
+    const isVirtual = modifiedClass?.isVirtual;
     axios
       .put(`/api/class`, { class_id, isVirtual })
       .then((response) => {
@@ -192,8 +193,9 @@ function ClassCourse({ courses }: any) {
     setClasses(updatedClasses);
   };
 
-  const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1 GB in bytes
+  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 1 GB in bytes
   const allowedFileTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/gif', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'video/mp4', 'video/x-matroska'];
+
   const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0]) {
       setFile(undefined); // Limpiar el estado file
@@ -203,7 +205,7 @@ function ClassCourse({ courses }: any) {
     const selectedFile = e.target.files[0];
 
     if (selectedFile.size > MAX_FILE_SIZE) {
-      alert('El archivo es demasiado grande. El tamaño máximo permitido es 1 GB.');
+      alert('El archivo es demasiado grande. El tamaño máximo permitido es 50MB.');
       setFile(undefined); // Clear the file state
       return;
     }
@@ -248,7 +250,8 @@ function ClassCourse({ courses }: any) {
         method: "POST",
         body: data,
       });
-      if(response) {
+      console.log(response);
+      if(response.status === 200) {
         mutate(`/api/class/${courses.course_id}`);
         toast.success('Se subio el archivo correctamente');
       }
