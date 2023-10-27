@@ -132,7 +132,7 @@ const handleChange = (event: SelectChangeEvent<typeof selectedCategory>) => {
       </FormControl>
       <div className='flex'>
         {courses && filteredCourses.map((course: any, id: number) => (
-            <Card sx={{ maxWidth: 345, marginRight: 3}} key={id} >
+            <Card sx={{ maxWidth: 345, marginRight: 3}} key={course.course_id} >
             <CardActionArea>
               <Image
                 src={`${process.env.NEXT_PUBLIC_CDN}/Course/${course.course.files.name}`}
