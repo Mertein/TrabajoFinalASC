@@ -210,6 +210,7 @@ model files {
   usser             usser?             @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "files_usser_user_id_fk")
 
   @@unique([enrollment_id, identifier], map: "idx_unique_user_id_identifier")
+  @@unique([user_id, identifier], map: "idx_unique_user_id_identifierr")
 }
 
 model branch_offices_hist {

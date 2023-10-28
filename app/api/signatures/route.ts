@@ -33,6 +33,18 @@ export async function POST(req: Request, res: Response) {
   // const bytes = await file.arrayBuffer();
   // const buffer = Buffer.from(bytes);
     try {
+      
+      const filesPromise = await prisma.files.create({
+        data: {
+          path: "public/Users/Signatures/",
+          name: file.name,
+          type:file.type,
+          size: file.size,
+          user_id: Number(id),
+          format: 'file',
+          identifier: 'userSignature',
+        }
+     })
 
       const { data, error } = await supabase.storage
       .from('files/UsersSignatures')
@@ -43,17 +55,7 @@ export async function POST(req: Request, res: Response) {
         throw error;
       }
 
-      const filesPromise = await prisma.files.create({
-         data: {
-           path: "public/Users/Signatures/",
-           name: file.name,
-           type:file.type,
-           size: file.size,
-           user_id: Number(id),
-           format: 'file',
-           identifier: 'userSignature',
-         }
-      })
+    
       // if(filesPromise) {
       //   const filePath = path.join(process.cwd(), "public/Users/Signatures", file.name);
       //   await writeFile(filePath, buffer);
@@ -74,6 +76,7 @@ export async function PUT(req: Request, res: Response) {
   const filePathOld = data.get("filePathOld") as unknown as string;
   const fileNameOld = data.get("fileNameOld") as unknown as string;
   const supabase = createClientComponentClient();
+  console.log(file_id)
   // const bytes = await file.arrayBuffer();
   // const buffer = Buffer.from(bytes);
   try {
@@ -90,14 +93,14 @@ export async function PUT(req: Request, res: Response) {
     const { data, error } = await supabase
     .storage
     .from('files')
-    .remove(['UsersSignature/' + fileUnique.name])
+    .remove(['UsersSignatures/' + fileUnique.name])
 
     if(error) {
       throw error;
     }
 
     const { data: dataUpload, error: errorUpload } = await supabase.storage
-      .from('files/UsersSignature')
+      .from('files/UsersSignatures')
       .upload(file.name, file);
 
       // Handle error if upload failed

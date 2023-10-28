@@ -98,6 +98,7 @@ const handleEditClick = (id: number) => {
           <IconButton
             onClick={() => handleSchedule(params.row.course_id)}
             color="secondary"
+            title='Ver Alumnos y Calificaciones'
           >
             <Person />
           </IconButton>
@@ -105,6 +106,7 @@ const handleEditClick = (id: number) => {
           
           <IconButton color='warning'
             onClick={() => handleClassClick(params.row.course_id)}
+            title='Clases'
           >
             <Class />
           </IconButton>
@@ -112,12 +114,14 @@ const handleEditClick = (id: number) => {
           <IconButton
             onClick={() => handleCourseClick(params.row.course_id)}
             color="inherit"
+            title='Ver Inormación del Curso'
           >
             <Visibility />
           </IconButton>
           
           <IconButton color='info'
             onClick={() => handleEditClick(params.row.course_id)}
+            title='Editar Curso'
           >
             <Edit />
           </IconButton>
@@ -125,6 +129,7 @@ const handleEditClick = (id: number) => {
           <IconButton
             onClick={() => handleDeleteClick(params.row.course_id)}
             color="error"
+            title='Eliminar Curso'
           >
             <Delete />
           </IconButton>

@@ -185,7 +185,7 @@ function ViewCourses() {
                             {`$${(
                               course.price_course -
                               (course.price_course * course.discount_percentage) / 100
-                            ).toFixed(2)}`}{' '}
+                            ).toFixed(0)}`}{' '}
                               <Typography  color="success" style={{ fontSize: '15px'}}>
                               {`Promoción Hasta: ${format(new Date(course.end_date_discount), 'dd/MM/yyyy')}`}
                             </Typography>
@@ -263,7 +263,7 @@ function ViewCourses() {
                             {`$${(
                               course.price_course -
                               (course.price_course * course.discount_percentage) / 100
-                            ).toFixed(2)}`}{' '}
+                            ).toFixed(0)}`}{' '}
                              <Typography  color="success" style={{ fontSize: '15px'}}>
                               {`Promoción Hasta: ${format(new Date(course.end_date_discount), 'dd/MM/yyyy')}`}
                             </Typography>
@@ -339,7 +339,7 @@ function ViewCourses() {
                             {`$${(
                               course.price_course -
                               (course.price_course * course.discount_percentage) / 100
-                            ).toFixed(2)}`}{' '}
+                            ).toFixed(0)}`}{' '}
                               <Typography  color="success" style={{ fontSize: '15px'}}>
                               {`Promoción Hasta: ${format(new Date(course.end_date_discount), 'dd/MM/yyyy')}`}
                             </Typography>

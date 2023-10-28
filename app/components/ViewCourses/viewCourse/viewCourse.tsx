@@ -137,7 +137,6 @@ function ViewCourse({courses, params, schedules} : any) {
     isBefore(currentDate, new Date(courses.end_date_discount))
       ? price_course - (price_course * courses.discount_percentage) / 100
       : price_course;
-
     return   (
       <div>
       {mounted &&
@@ -305,7 +304,7 @@ function ViewCourse({courses, params, schedules} : any) {
               </span>
               Precio con descuento: {(
                 price_course - (price_course * courses.discount_percentage) / 100
-              ).toFixed(2)}$ ARS
+              ).toFixed(0)}$ ARS
             </Typography>
             ) : (
               <Typography variant="h3" className="text-2xl font-bold mb-4 text-white">
@@ -330,7 +329,7 @@ function ViewCourse({courses, params, schedules} : any) {
                   </span>
                   Precio con descuento: {(
                     price_course - (price_course * courses.discount_percentage) / 100
-                  ).toFixed(2)}$ ARS
+                  ).toFixed(0)}$ ARS
                 </Typography>
               ) : (
                 <Typography className="text-white">

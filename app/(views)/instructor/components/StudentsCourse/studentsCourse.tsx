@@ -232,6 +232,7 @@ function handleAddGradeStudent() {
           <IconButton
             onClick={() => handleGrade(params.row.enrollment_id)}
             color="secondary"
+            title='Otorgar/Editar nota del estudiante'
           >
             <SchoolSharpIcon />
           </IconButton>
@@ -239,6 +240,7 @@ function handleAddGradeStudent() {
           <IconButton
             onClick={() => handleDeleteClick(params.row.course_id)}
             color="warning"
+            title='Eliminar Calificación'
           >
             <DeleteIcon />
           </IconButton>
