@@ -26,7 +26,6 @@ const MenuProps = {
 };
 function ViewCourses() {
   const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).then((res) => res.json());
-  const CDNCourseURL = 'https://dqppsiohkcussxaivbqa.supabase.co/storage/v1/object/public/files/Course/';
   const { data: courses, error, isLoading } = useSWR('/api/getCourses', fetcher );
   const { data: categories, error: errorCategories, isLoading: isLoadingCategories } = useSWR('/api/getCategories', fetcher);
   const router = useRouter();
@@ -57,6 +56,8 @@ function ViewCourses() {
       return 'En curso';
     } else if (course.branch_offices.people_capacity <= course.enrollment_course.length ) {
       return 'Cupos agotados';
+    } else if (isAfter(currentDate, endDate)) {
+      return 'Finalizado';
     } else {
       'return';
     }
@@ -164,7 +165,7 @@ function ViewCourses() {
                   <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
                     {
                       course.files !== null &&
-                      <Image src={CDNCourseURL + course.files.name} width={350} height={350} alt="Foto del Curso" />
+                      <Image src={`${process.env.NEXT_PUBLIC_CDN}Course/${course.files.name}`} width={350} height={350} alt="Foto del Curso" />
                     }           
                     <CardContent>
                       <Typography gutterBottom variant="h3" style={{textAlign:'center'}} component="div">
@@ -242,7 +243,7 @@ function ViewCourses() {
                   <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
                     {
                       course.files !== null &&
-                      <Image src={CDNCourseURL + course.files.name} width={350} height={300} alt="Foto del Curso" />
+                      <Image src={`${process.env.NEXT_PUBLIC_CDN}Course/${course.files.name}`} width={350} height={300} alt="Foto del Curso" />
                     }           
                     <CardContent>
                       <Typography gutterBottom variant="h3" style={{textAlign:'center'}} component="div">
@@ -318,7 +319,7 @@ function ViewCourses() {
                   <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
                     {
                       course.files !== null &&
-                      <Image src={CDNCourseURL + course.files.name} width={350} height={300} alt="Foto del Curso" />
+                      <Image src={`${process.env.NEXT_PUBLIC_CDN}Course/${course.files.name}`} width={350} height={300} alt="Foto del Curso" />
                     }           
                     <CardContent>
                       <Typography gutterBottom variant="h3" style={{textAlign:'center'}} component="div">
@@ -375,6 +376,84 @@ function ViewCourses() {
                       Ver más Información del Curso
                     </Button>
                   </CardActions>
+                </Card>
+              ))
+          ) : (
+            <Typography variant="h6">Cargando...</Typography>
+          )}
+        </Carousel>
+      </Box>
+
+
+      
+      <Box border="50px inset grey"  p={3} maxWidth={1500} margin={5} paddingLeft={15}>
+        <Typography variant="h4" align="center" style={{ fontFamily: 'Arial, sans-serif', padding: 15 }}>
+          Finalizados
+        </Typography>
+        <Carousel responsive={responsive}>
+          {courses ? (
+            filteredCourses 
+              .filter((course: any) => getCoursesStatus(course) === 'Finalizado')
+              .map((course: any) => (
+                <Card key={course.course_id} style={{margin:20, maxWidth: 350, maxHeight:600}} >
+                  <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
+                    {
+                      course.files !== null &&
+                      <Image src={`${process.env.NEXT_PUBLIC_CDN}Course/${course.files.name}`} width={350} height={300} alt="Foto del Curso" />
+                    }           
+                    <CardContent>
+                      <Typography gutterBottom variant="h3" style={{textAlign:'center'}} component="div">
+                        {course.course_name}
+                      </Typography>
+                      <Box display="flex" alignItems="center">
+                        
+                        <Typography variant="h5" color="GrayText" style={{ marginLeft: '4px',fontSize:'20px'  }}>
+                        <MonetizationOnIcon color="success" fontSize="small"/>
+                        {course.discount_percentage > 0 && // Verifica si el curso tiene un descuento
+                        isAfter(currentDate, new Date(course.start_date_discount)) && // Verifica si está dentro del rango de descuento
+                        isBefore(currentDate, new Date(course.end_date_discount)) && (
+                          <>
+                            <span style={{ textDecoration: 'line-through'}}>
+                              {`$${course.price_course}`}
+                            </span>{' '}
+                            {/* Precio original tachado */}
+                            {`$${(
+                              course.price_course -
+                              (course.price_course * course.discount_percentage) / 100
+                            ).toFixed(0)}`}{' '}
+                             <Typography  color="success" style={{ fontSize: '15px'}}>
+                              {`Promoción Hasta: ${format(new Date(course.end_date_discount), 'dd/MM/yyyy')}`}
+                            </Typography>
+                             <Typography gutterBottom style={{color: 'black', fontSize: '14px'}}>
+                            {`Tiempo restante: ${formatDistanceToNow(
+                              new Date(course.end_date_discount),
+                              {locale: es }
+                            )}`}
+                            </Typography>
+                          </>
+                        )}
+                      {(!course.discount_percentage || // Si no hay descuento
+                        isBefore(currentDate, new Date(course.start_date_discount)) || // O si está fuera del rango de descuento
+                        isAfter(currentDate, new Date(course.end_date_discount))) && (
+                        <>
+                          {course.price_course > 0 ? `$${course.price_course}` : 'Gratis'}
+                        </>
+                      )}
+                        </Typography>
+                      </Box>
+                      <Box display="flex" alignItems="center">
+                        <Typography gutterBottom variant="h5" color="black" style={{ marginLeft: '4px', color: 'deeppink' }}>
+                          Categoría:
+                        </Typography>
+                        <Typography gutterBottom variant="h5" color="black" style={{ marginLeft: '4px', color: 'deeppink' }}>
+                          {course.category_course?.category_name}
+                        </Typography>
+                      </Box>
+                    </CardContent>
+                  </CardActionArea>
+                  <Button size="large" color="secondary" onClick={() => handleCourseClick(course.course_id)}>
+                      Ver más Información del Curso
+                    </Button>
                 </Card>
               ))
           ) : (

@@ -322,7 +322,7 @@ function ClassCourse({ courses }: any) {
 
   function obtenerFechaEnEspañol(timestamp : any) {
     const fecha = new Date(timestamp);
-    fecha.setDate(fecha.getDate() + 1); // Restar u
+    fecha.setDate(fecha.getDate() + 1); 
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     return fecha.toLocaleDateString('es-ES', options as any);
   }
