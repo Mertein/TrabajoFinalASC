@@ -13,6 +13,8 @@ import {
 } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react';
+import jsPDF  from "jspdf";
+import html2canvas from 'html2canvas';
 
 interface Enrollment {
   course: {
@@ -26,7 +28,7 @@ interface Enrollment {
 
 function CertificateStudent({ enrollments }: { enrollments: Enrollment[] }) {
   const [selectedCertificate, setSelectedCertificate] = useState<string | null>(null);
-
+  const [certificatePdf, setCertificatePdf] = useState('');
   const handleCertificateClick = (certificateUrl: string | null) => {
     setSelectedCertificate(certificateUrl);
   };
@@ -34,6 +36,23 @@ function CertificateStudent({ enrollments }: { enrollments: Enrollment[] }) {
   const handleCloseModal = () => {
     setSelectedCertificate(null);
   };
+
+  const generateUniqueFileName = (type: string) => {
+    const timestamp = Date.now();
+    return `certificate_${timestamp}.${type}`;
+  };
+
+  const handleDownloadCertificate = (enrollment: any) => {
+    if (enrollment.files[0] === null) {
+      return console.log('No se pudo descargar el certificado');
+    }
+    // Use the enrollment data to generate the certificate.
+    const pdf = new jsPDF('l', 'mm', [1000, 670]);
+    pdf.addImage(`${process.env.NEXT_PUBLIC_CDN}/UsersCertificates/${enrollment.files[0].name}`, 'PNG', 0, 0, 1000, 667);
+    pdf.save(generateUniqueFileName('pdf'));
+    setCertificatePdf(`${process.env.NEXT_PUBLIC_CDN}/UsersCertificates/${enrollment.files[0].name}`);
+  }
+  
 
   return (
     <Box m="20px">
@@ -91,10 +110,8 @@ function CertificateStudent({ enrollments }: { enrollments: Enrollment[] }) {
                   </p>
                 </div>
                 <CardActions>
-                  <Button size="medium" color="info" variant='contained' className='bg-blue-400' type='button'>
-                    <a href={enrollment.files[0] ? `${process.env.NEXT_PUBLIC_CDN}/UsersCertificates/${enrollment.files[0].name}` : 'image'}  download={enrollment.files[0].name}>
+                  <Button size="medium" color="info" variant='contained' className='bg-blue-400' type='button' onClick={() => handleDownloadCertificate(enrollment)}>
                        Descargar Certificado 
-                    </a>
                   </Button>
                 </CardActions>
               </div>

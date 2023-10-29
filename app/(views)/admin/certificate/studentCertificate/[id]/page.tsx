@@ -78,7 +78,6 @@ const CertificateGenerator = ({params}: any) => {
       setFormData({ ...formData, [name]: value });
     }
   };
-  console.log(data);
   return (
     <>
     <div className={styles.wrapper}>

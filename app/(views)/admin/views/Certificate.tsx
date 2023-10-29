@@ -17,14 +17,14 @@ const Certificate = ({ name, course, dateOfConductStart, dateOfConductEnd, signa
   const formattedStart = dateOfConductStart
   ? moment(dateOfConductStart).locale('es').format('dddd DD [de] MMMM ')
   : '-';
-  
+  // setDate(fecha.getDate() + 1)
   const route = useRouter();
   const formattedEnd = dateOfConductEnd
     ? moment(dateOfConductEnd).locale('es').format('dddd DD [de] MMMM [de] YYYY')
     : '-';
-    const generateUniqueFileName = (type: string) => {
-      const timestamp = Date.now();
-      return `certificate_${timestamp}.${type}`;
+  const generateUniqueFileName = (type: string) => {
+    const timestamp = Date.now();
+    return `certificate_${timestamp}.${type}`;
   };
 
   const handleDownloadCertificate = () => {
@@ -32,9 +32,12 @@ const Certificate = ({ name, course, dateOfConductStart, dateOfConductEnd, signa
     if(certificateRef.current === null) {
       return console.log('No se pudo descargar el certificado');
     }
-
-    html2canvas(certificateRef.current).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
+    html2canvas(certificateRef.current, {
+      logging: true,
+      allowTaint: false,
+      useCORS: true,
+    }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/jpg');
       const pdf = new jsPDF('l', 'mm', [1000, 670]);
       pdf.addImage(imgData, 'PNG', 0, 0, 1000, 667);
       pdf.save(generateUniqueFileName('pdf'));
@@ -49,6 +52,9 @@ const Certificate = ({ name, course, dateOfConductStart, dateOfConductEnd, signa
     try {
       const canvas = await html2canvas(certificateRef.current!, {
         backgroundColor: null,
+        logging: true,
+        allowTaint: false,
+        useCORS: true,
       });
       
       // Convert the canvas to a Blob
@@ -131,7 +137,7 @@ const Certificate = ({ name, course, dateOfConductStart, dateOfConductEnd, signa
               </div>
               {/* Instructor Signature */}
               <div className={`${styles.signatureBlock} ${styles.rightSignature}`}>
-                <img className={styles.signatureImage} src={url} alt='' />
+                <img className={styles.signatureImage} src={url} alt='signatureInstructor' />
                 <div className={styles.signatureLine}></div>
                 <span className="text-xs">Instructor {instructor}</span>
               </div>
