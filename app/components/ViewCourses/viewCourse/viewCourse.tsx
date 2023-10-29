@@ -291,14 +291,14 @@ function ViewCourse({courses, params, schedules} : any) {
           <Grid item xs={12} md={4}>
             <Paper className="p-4">
               <Box className="flex flex-col items-center">
-                <Image src={fileUser[0] ?  `${process.env.NEXT_PUBLIC_CDN}UsersProfilePicture/${fileUser[0].name}` : '/images/defaultProfile.jpg'} alt="Instructor" width={200} height={200} className="rounded-full" />
+                <Image src={fileUser[0] ?  `${process.env.NEXT_PUBLIC_CDN}/UsersProfilePicture/${fileUser[0].name}` : '/images/defaultProfile.jpg'} alt="Instructor" width={200} height={200} className="rounded-full" />
                 <Typography variant="h3" className="text-2xl font-bold mt-4 mb-2 text-white">
                   Instructor: {first_name} {last_name}
                 </Typography>
                 <Typography className="text-white text-center">{}</Typography>
               </Box>
               <Image
-                  src={files ?  `${process.env.NEXT_PUBLIC_CDN}Course/${files.name}` : 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Q3Vyc28lMjBkZWZhdWx0fGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60'}
+                  src={files ?  `${process.env.NEXT_PUBLIC_CDN}/Course/${files.name}` : 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Q3Vyc28lMjBkZWZhdWx0fGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60'}
                   alt="img"
                   width={800}
                   height={800}

@@ -26,9 +26,9 @@ const CertificateGenerator = ({params}: any) => {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (data && data.course.usser.files[0]?.path !== '') {
-        const pathWithoutPublic = data.course.usser.files[0]?.path.replace('public', '');
+        // const pathWithoutPublic = data.course.usser.files[0]?.path.replace('public', '');
         // Mostrar la imagen utilizando la función Image de Next.js
-        setUrl(pathWithoutPublic + data.course.usser.files[0]?.name);
+        setUrl(`${process.env.NEXT_PUBLIC_CDN}/UsersSignatures/${data.course.usser.files[0]?.name}`);
         const { usser, course } = data;
         setFormData({
           name: usser?.first_name + ' ' + usser?.last_name,

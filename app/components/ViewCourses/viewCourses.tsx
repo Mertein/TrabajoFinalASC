@@ -165,7 +165,7 @@ function ViewCourses() {
                   <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
                     {
                       course.files !== null &&
-                      <Image src={`${process.env.NEXT_PUBLIC_CDN}Course/${course.files.name}`} width={350} height={350} alt="Foto del Curso" />
+                      <Image src={`${process.env.NEXT_PUBLIC_CDN}/Course/${course.files.name}`} width={350} height={350} alt="Foto del Curso" />
                     }           
                     <CardContent>
                       <Typography gutterBottom variant="h3" style={{textAlign:'center'}} component="div">
@@ -243,7 +243,7 @@ function ViewCourses() {
                   <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
                     {
                       course.files !== null &&
-                      <Image src={`${process.env.NEXT_PUBLIC_CDN}Course/${course.files.name}`} width={350} height={300} alt="Foto del Curso" />
+                      <Image src={`${process.env.NEXT_PUBLIC_CDN}/Course/${course.files.name}`} width={350} height={300} alt="Foto del Curso" />
                     }           
                     <CardContent>
                       <Typography gutterBottom variant="h3" style={{textAlign:'center'}} component="div">
@@ -399,7 +399,7 @@ function ViewCourses() {
                   <CardActionArea style={{display: 'inline-block', backgroundColor: 'white', color: 'deeppink'  }}>
                     {
                       course.files !== null &&
-                      <Image src={`${process.env.NEXT_PUBLIC_CDN}Course/${course.files.name}`} width={350} height={300} alt="Foto del Curso" />
+                      <Image src={`${process.env.NEXT_PUBLIC_CDN}/Course/${course.files.name}`} width={350} height={300} alt="Foto del Curso" />
                     }           
                     <CardContent>
                       <Typography gutterBottom variant="h3" style={{textAlign:'center'}} component="div">
