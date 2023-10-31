@@ -96,7 +96,6 @@ model enrollment_course {
   usser             usser          @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   files             files[]
   grade             grade[]
-  grade_hist        grade_hist[]
   payment           payment[]
 }
 
@@ -107,7 +106,7 @@ model grade {
   created_at        DateTime           @default(now())
   deleted_at        DateTime?
   updated_at        DateTime?  @updatedAt
-  enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: NoAction, onUpdate: NoAction)
+  enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model payment {
@@ -328,7 +327,7 @@ model grade_hist {
   created_at        DateTime           @default(now()) @db.Timestamp(6)
   updated_at       DateTime?  @updatedAt
   deleted_at        DateTime?          @db.Timestamp(6)
-  enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: Cascade, onUpdate: Cascade, map: "grade_hist_enrollment_course_enrollment_id_fk")
+ 
 }
 
 model payment_hist {

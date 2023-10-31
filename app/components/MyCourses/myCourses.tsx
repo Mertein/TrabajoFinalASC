@@ -130,7 +130,7 @@ const handleChange = (event: SelectChangeEvent<typeof selectedCategory>) => {
           label="Cursos en Progreso"
         />
       </FormControl>
-      <div className='flex'>
+      <div className='flex flex-wrap'>
         {courses && filteredCourses.map((course: any, id: number) => (
             <Card sx={{ maxWidth: 345, marginRight: 3}} key={course.course_id} >
             <CardActionArea>
@@ -149,13 +149,16 @@ const handleChange = (event: SelectChangeEvent<typeof selectedCategory>) => {
                 </Typography>
               </CardContent>
             </CardActionArea>
-            <CardActions className="space-x-48">
-              <Button size="large" color="info" onClick={() => handleCourse(course.course_id)}>
-                Ver Curso
-              </Button>
-              <Button size="small" color="secondary" onClick={() => handleCourseInfo(course.course_id)}>
-                Info del Curso
-              </Button>
+            <CardActions className="justify-between">
+              <div className='flex'>
+
+                <Button size="large" color="info" onClick={() => handleCourse(course.course_id)}>
+                  Ver Curso
+                </Button>
+                <Button size="small" color="secondary" onClick={() => handleCourseInfo(course.course_id)}>
+                  Info del Curso
+                </Button>
+              </div>
             </CardActions>
           </Card>
           ))}

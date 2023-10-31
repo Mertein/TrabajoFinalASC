@@ -50,12 +50,12 @@ function ViewCourses() {
   const getCoursesStatus = (course: any) => {
     const startDate = new Date(course.start_date);
     const endDate = new Date(course.end_date);
-    if (isBefore(currentDate, startDate)) {
-      return 'Proximos lanzamientos';
-    } else if (isBefore(currentDate, endDate) && !(course.branch_offices.people_capacity <= course.enrollment_course.length)) {
-      return 'En curso';
-    } else if (course.branch_offices.people_capacity <= course.enrollment_course.length ) {
+    if (course.branch_offices.people_capacity <= course.enrollment_course.length ) {
       return 'Cupos agotados';
+    } else if (isBefore(currentDate, endDate) && isAfter(currentDate, startDate) && !(course.branch_offices.people_capacity <= course.enrollment_course.length)) {
+      return 'En curso';
+    } else if (isBefore(currentDate, startDate)) {
+      return 'Proximos lanzamientos';
     } else if (isAfter(currentDate, endDate)) {
       return 'Finalizado';
     } else {
