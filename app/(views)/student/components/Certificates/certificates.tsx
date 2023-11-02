@@ -53,6 +53,7 @@ function CertificateStudent({ enrollments }: { enrollments: Enrollment[] }) {
     setCertificatePdf(`${process.env.NEXT_PUBLIC_CDN}/UsersCertificates/${enrollment.files[0].name}`);
   }
   
+  const hasCertificates = enrollments.some((enrollment) => enrollment.files.length > 0);
 
   return (
     <Box m="20px">
@@ -115,11 +116,11 @@ function CertificateStudent({ enrollments }: { enrollments: Enrollment[] }) {
                   </Button>
                 </CardActions>
               </div>
-            ) : <Alert severity="info" key={key}>No tienes certificados</Alert>
+            ) : null
           ))
-        ) : (
-          <Alert severity="info">No tienes certificados</Alert>
-        )}
+        ) : null
+        }
+        {!hasCertificates && <Alert severity="info">No tienes certificados</Alert>}
       </div>
     </Box>
   );

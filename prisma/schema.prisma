@@ -205,7 +205,7 @@ model files {
   certificate       certificate?       @relation(fields: [certificate_id], references: [certificate_id], onDelete: NoAction, onUpdate: NoAction, map: "files_certificate_certificate_id_fk")
   Renamedclass      class_course?      @relation(fields: [class_id], references: [class_id], onDelete: Cascade, map: "files_class_class_id_fk")
   course            course?            @relation(fields: [course_id], references: [course_id], onDelete: Cascade, map: "files_course_course_id_fk")
-  enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: NoAction, onUpdate: NoAction, map: "files_enrollment_course_enrollment_id_fk")
+  enrollment_course enrollment_course? @relation(fields: [enrollment_id], references: [enrollment_id], onDelete: Cascade, onUpdate: Cascade, map: "files_enrollment_course_enrollment_id_fk")
   usser             usser?             @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "files_usser_user_id_fk")
 
   @@unique([enrollment_id, identifier], map: "idx_unique_user_id_identifier")
@@ -417,7 +417,7 @@ model user_interactions {
   feedback   String?
   isLike     Boolean?
   faqs       faqs?     @relation(fields: [faq_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_interactions_faqs_id_fk")
-  usser      usser?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "user_interactions_usser_user_id_fk")
+  usser      usser?    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "user_interactions_usser_user_id_fk")
 
   @@unique([user_id, faq_id], map: "user_interactions_user_id_faq_id_uindex")
 }
