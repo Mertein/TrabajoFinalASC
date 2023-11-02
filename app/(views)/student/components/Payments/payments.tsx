@@ -260,7 +260,6 @@ export default function OrdersPage() {
       .catch((error) => {
         console.error("Error al cargar la imagen:", error);
       });
-      console.log(selected)
     }
   };
 

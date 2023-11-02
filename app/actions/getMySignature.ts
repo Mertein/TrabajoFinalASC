@@ -31,7 +31,6 @@ const getMySignature = async () => {
         title: true,
       }
     });
-    console.log(fieldsPromise);
     
     const [fields] = await Promise.all([fieldsPromise]);
     return (fields as any) || [];

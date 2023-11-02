@@ -36,7 +36,6 @@ const LearningOptions =  (props) => {
   };
  
   const handleLikeClick =  async (id) => {
-    console.log("idLike", id)
     setShowFeedback(false);
     setShowThanksMessage(true);
     setTimeout(() => {

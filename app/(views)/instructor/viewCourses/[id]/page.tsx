@@ -11,7 +11,6 @@ export default  async function ({params}: any) {
   const schedules = await getMySchedulesByID(params.id);
   const studentEnrollment = await getStudentEnrollment(params.id);
   const studentsCourseEnrollments = await getEnrollmentCourse()
-  console.log(studentEnrollment)
   return (
     <ViewCourse courses={courses} params={params} schedules={schedules} studentEnrollment={studentEnrollment} studentsCourseEnrollments={studentsCourseEnrollments} />
   )

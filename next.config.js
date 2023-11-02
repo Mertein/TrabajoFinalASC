@@ -25,6 +25,7 @@ const nextConfig = {
       'img.freepik.com',
       'dqppsiohkcussxaivbqa.supabase.co',
       'dqppsiohkcussxaivbqa.supabase.in',
+      '127.0.0.1',
     ],    
   }
 }

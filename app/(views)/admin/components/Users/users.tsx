@@ -193,7 +193,6 @@ function getStyles(name: string, personName: readonly string[], theme: Theme) {
   
     const isValid = await checkoutEditSchema.isValid(editUser);
       if (isValid) {
-      console.log('entre');
       setIsLoading(true);
       axios.put('/api/users', {
         data: {

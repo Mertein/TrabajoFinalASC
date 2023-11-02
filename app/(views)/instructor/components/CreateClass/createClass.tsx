@@ -61,7 +61,6 @@ const ClassForm =  () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!file) return;
-    console.log(file)
     try {
       const data = new FormData();
       data.set("file", file);

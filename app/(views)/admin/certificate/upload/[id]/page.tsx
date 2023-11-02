@@ -33,7 +33,6 @@ function CertificateDetailPage({ params } : any) {
         const data = await res.json();// Obtener el certificado como objeto Blob
        
         setCertificate(data);
-        console.log(certificate);
       } else {
         console.error('Error fetching certificate');
       }

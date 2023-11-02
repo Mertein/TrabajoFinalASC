@@ -95,9 +95,6 @@ function handleGrade(enrollment_id: any): void {
   setEditGradeStudent(studentGrade);
   handleOpen();
 }
-console.log('enmrollmentid',enrollmentId)
-console.log('gradeStudent',gradeStudent)
-console.log('editGradeStudent',editGradeStudent);
 
 
 function handleAddGradeStudent() {

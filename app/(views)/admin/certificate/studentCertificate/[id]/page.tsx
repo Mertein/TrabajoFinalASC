@@ -42,7 +42,6 @@ const CertificateGenerator = ({params}: any) => {
         });
     }
 }, [data]);
-  console.log(data);
 
   const generate = () => {
     QRCode.toDataURL(`${process.env.NEXT_PUBLIC_URL}/certificateValidate/` + params.id).then(setSrc)
