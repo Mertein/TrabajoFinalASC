@@ -73,7 +73,6 @@ function ClassCourse({ courses }: any) {
 
   const router = useRouter();
   const currentPath = usePathname();
-
   const handleClassClick = (classId: number) => {
     if (expandedClassId === classId) {
       setExpandedClassId(null);

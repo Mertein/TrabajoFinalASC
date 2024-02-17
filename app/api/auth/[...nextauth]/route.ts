@@ -11,14 +11,14 @@ import prisma from "../../../../lib/prismadb";
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
     providers: [
-        // GithubProvider({
-        //     clientId: process.env.GITHUB_ID,
-        //     clientSecret: process.env.GITHUB_SECRET,
-        // }),
-        // GoogleProvider({
-        //     clientId: process.env.GOOGLE_ID,
-        //     clientSecret: process.env.GOOGLE_SECRET,
-        // }),
+        GithubProvider({
+            clientId: process.env.GITHUB_ID as string,
+            clientSecret: process.env.GITHUB_SECRET as string,
+        }),
+        GoogleProvider({
+            clientId: process.env.GOOGLE_ID as string,
+            clientSecret: process.env.GOOGLE_SECRET as string,
+        }),
         CredentialsProvider({
             name: "credentials",
             credentials: {
@@ -41,14 +41,14 @@ export const authOptions: NextAuthOptions = {
                   throw new Error('Invalid credentials');
                 }
 
-                // const isCorrectPassword = await bcrypt.compare(
-                //   credentials.password,
-                //   user.password
-                // );
+                const isCorrectPassword = await bcrypt.compare(
+                  credentials.password,
+                  user.password
+                );
 
-                // if (!isCorrectPassword) {
-                //   throw new Error('Invalid credentials');
-                // }
+                if (!isCorrectPassword) {
+                  throw new Error('Invalid credentials');
+                }
 
                 const userWithFiles = await prisma.usser.findUnique({
                   where: {
